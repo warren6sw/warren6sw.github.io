@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            CentOS安装Oracle11G |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">CentOS安装Oracle11G</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/CentOS/">CentOS</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        &gt; <a href="/categories/Oracle/">Oracle</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/CentOS/">CentOS</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Oracle/">Oracle</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>1.7k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>7 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="CentOS安装Oracle11G"><a href="#CentOS安装Oracle11G" class="headerlink" title="CentOS安装Oracle11G"></a>CentOS安装Oracle11G</h1><h2 id="一-下载上传Oracle11G"><a href="#一-下载上传Oracle11G" class="headerlink" title="一.下载上传Oracle11G"></a>一.下载上传Oracle11G</h2><p>1.下载</p>
+<p>链接如下:</p>
+<p><a class="link"   target="_blank" rel="noopener" href="http://liusw.top/2022/06/16/oracle%E4%B8%8B%E8%BD%BD%E5%9C%B0%E5%9D%80/" >oracle下载地址 | LiuSw’ Blog<i class="fas fa-external-link-alt"></i></a></p>
+<p>2.上传</p>
+<p>使用ftp软件或者rz  -y上传</p>
+<p><code>如果rz –y命令不能使用,请安装lrzsz</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install lrzsz -y</span><br></pre></td></tr></table></figure>
+
+<h2 id="二-基础配置"><a href="#二-基础配置" class="headerlink" title="二.基础配置"></a>二.基础配置</h2><p>0.设置交换空间</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">oracle需要设置交换空间</span><br></pre></td></tr></table></figure>
+
+<p>1.关闭selinux</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">&#x27;s/SELINUX=enforcing/SELINUX=disabled/&#x27;</span> /etc/selinux/config</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">vim /etc/selinux/config</span><br><span class="line"><span class="comment"># 将SELINUX=enforcing改成SELINUX=disabled</span></span><br></pre></td></tr></table></figure>
+
+<p>2.关闭防火墙</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br></pre></td></tr></table></figure>
+
+<p>3.安装依赖</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install gcc make binutils gcc-c++ compat-libstdc++-33elfutils-libelf-devel elfutils-libelf-devel-static ksh libaio libaio-develnumactl-devel sysstat unixODBC unixODBC-devel pcre-devel –y</span><br></pre></td></tr></table></figure>
+
+<p>4.添加安装用户和用户组</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">groupadd oinstall</span><br><span class="line">groupadd dba</span><br><span class="line">useradd -g oinstall -G dba oracle</span><br><span class="line">passwd oracle</span><br><span class="line"><span class="built_in">id</span> oracle</span><br></pre></td></tr></table></figure>
+
+<p>5.修改内核参数配置文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/sysctl.conf </span><br></pre></td></tr></table></figure>
+
+<p>在末尾添加以下内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">fs.aio-max-nr = 1048576</span><br><span class="line">fs.file-max = 6815744</span><br><span class="line">kernel.shmall = 2097152</span><br><span class="line"><span class="comment"># 其中kernel.shmmax = 1073741824为本机物理内存（2G）的一半，单位为byte。</span></span><br><span class="line">kernel.shmmax = 1073741824</span><br><span class="line">kernel.shmmni = 4096</span><br><span class="line">kernel.sem = 250 32000 100 128</span><br><span class="line">net.ipv4.ip_local_port_range = 9000 65500</span><br><span class="line">net.core.rmem_default = 262144</span><br><span class="line">net.core.rmem_max = 4194304</span><br><span class="line">net.core.wmem_default = 262144</span><br><span class="line">net.core.wmem_max = 1048576</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 加载配置</span></span><br><span class="line">sysctl -p</span><br></pre></td></tr></table></figure>
+
+<p>6.修改用户的限制文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/security/limits.conf</span><br></pre></td></tr></table></figure>
+
+<p>在末尾添加以下内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">oracle           soft    <span class="built_in">nproc</span>           2047</span><br><span class="line">oracle           hard    <span class="built_in">nproc</span>           16384</span><br><span class="line">oracle           soft    nofile          1024</span><br><span class="line">oracle           hard    nofile         65536</span><br><span class="line">oracle           soft    stack           10240 </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/pam.d/login</span><br></pre></td></tr></table></figure>
+
+<p>在末尾添加以下内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">session required  /lib64/security/pam_limits.so</span><br><span class="line">session required   pam_limits.so </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/profile</span><br></pre></td></tr></table></figure>
+
+<p>在末尾添加以下内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#oracle配置</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$USER</span> = <span class="string">&quot;oracle&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">if</span> [ <span class="variable">$SHELL</span> = <span class="string">&quot;/bin/ksh&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">      <span class="built_in">ulimit</span> -p 16384</span><br><span class="line">      <span class="built_in">ulimit</span> -n 65536</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">      <span class="built_in">ulimit</span> -u 16384 -n 65536</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<p>7.创建安装目录和设置文件权限</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /data/oracle/product/11.2.0</span><br><span class="line"><span class="built_in">mkdir</span> /data/oracle/oradata</span><br><span class="line"><span class="built_in">mkdir</span> /data/oracle/inventory</span><br><span class="line"><span class="built_in">mkdir</span> /data/oracle/fast_recovery_area</span><br><span class="line"><span class="built_in">chown</span> -R oracle:oinstall /data/oracle</span><br><span class="line"><span class="built_in">chmod</span> -R 775 /data/oracle</span><br></pre></td></tr></table></figure>
+
+<p>8.设置oracle用户环境变量</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">su -l oracle</span><br><span class="line">vim .bash_profile</span><br></pre></td></tr></table></figure>
+
+<p>在末尾添加如下内容：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># oracle</span></span><br><span class="line">ORACLE_BASE=/data/oracle</span><br><span class="line">ORACLE_HOME=<span class="variable">$ORACLE_BASE</span>/product/11.2.0</span><br><span class="line">ORACLE_SID=orcl</span><br><span class="line">PATH=<span class="variable">$PATH</span>:<span class="variable">$ORACLE_HOME</span>/bin</span><br><span class="line"><span class="built_in">export</span> ORACLE_BASE ORACLE_HOME ORACLE_SID PATH</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意，标红处必须与创建的数据库实例名称一致，否则数据库启动后无法访问。第一次配置完记得source一下。</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> .bash_profile</span><br></pre></td></tr></table></figure>
+
+<h2 id="三-安装Oracle"><a href="#三-安装Oracle" class="headerlink" title="三.安装Oracle"></a>三.安装Oracle</h2><p>1.根据响应文件静默安装Oracle11g</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /software/database/</span><br><span class="line">./runInstaller -silent -responseFile /home/oracle/response/db_install.rsp -ignorePrereq</span><br></pre></td></tr></table></figure>
+
+<p>如果执行以上命令出错，会提示有参数格式，按照提示参数格式修改修改即可，一般是由于word中的字体、符号格式复制到客户端命令行后不一致引起，修改即可。</p>
+<p>开始Oracle在后台静默安装。安装过程中，如果提示[WARNING]不必理会，此时安装程序仍在后台进行，如果出现Successfully Setup Software，则安装程序已经停止了。</p>
+<p>可以在以下位置找到本次安装会话的日志:&#x2F;data&#x2F;oracle&#x2F;inventory&#x2F;logs&#x2F;installActions2022-09-22_02-14-55PM.log</p>
+<p>切换终端执行top命令查看后台进程一直是在安装的，&#x2F;data目录也在不断增大，当出现以下提示时，代表安装成功：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Successfully Setup Software.</span><br></pre></td></tr></table></figure>
+
+<p>2.切换root身份登录，执行脚本</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sh /data/oracle/inventory/orainstRoot.sh</span><br><span class="line"><span class="comment"># Changing permissions of /data/oracle/inventory.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Adding read,write permissions for group.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Removing read,write,execute permissions for world.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Changing groupname of /data/oracle/inventory to oinstall.</span></span><br><span class="line"><span class="comment"># The execution of the script is complete.</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sh /data/oracle/product/11.2.0/root.sh</span><br><span class="line">Check /data/oracle/product/11.2.0/install/root_iZ2f570bi1k56uZ_2022-09-22_03-25-04.<span class="built_in">log</span> <span class="keyword">for</span> the output of root script</span><br></pre></td></tr></table></figure>
+
+<h2 id="四-以静默方式配置监听"><a href="#四-以静默方式配置监听" class="headerlink" title="四.以静默方式配置监听"></a>四.以静默方式配置监听</h2><p>使用oracle用户登录</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">su -l oracle</span><br><span class="line">netca /silent /responseFile /home/oracle/response/netca.rsp </span><br></pre></td></tr></table></figure>
+
+<p><strong>注意此处，必须使用&#x2F;silent &#x2F;responseFile格式，而不是-silent -responseFile，因为是静默安装。</strong></p>
+<p>成功运行后，在&#x2F;data&#x2F;oracle&#x2F;product&#x2F;11.2.0&#x2F;network&#x2F;admin中生成listener.ora和sqlnet.ora</p>
+<p>通过netstat命令可以查看1521端口正在监听。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install -y net-tools</span><br><span class="line">netstat tunlp | grep 1521</span><br></pre></td></tr></table></figure>
+
+<h2 id="五-静默方式建立新库，同时也建立一个对应的实例"><a href="#五-静默方式建立新库，同时也建立一个对应的实例" class="headerlink" title="五.静默方式建立新库，同时也建立一个对应的实例"></a>五.静默方式建立新库，同时也建立一个对应的实例</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /home/oracle/response/dbca.rsp</span><br></pre></td></tr></table></figure>
+
+<p>修改文件中以下参数：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">[GENERAL]</span><br><span class="line"></span><br><span class="line"><span class="comment"># oracle版本，不能更改</span></span><br><span class="line">RESPONSEFILE_VERSION = <span class="string">&quot;11.2.0&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : Type of operation</span></span><br><span class="line">OPERATION_TYPE = <span class="string">&quot;createDatabase&quot;</span></span><br><span class="line"></span><br><span class="line">[CREATEDATABASE]</span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : Global database name of the database</span></span><br><span class="line"><span class="comment"># 全局数据库的名字=SID+主机域名# 第三方工具链接数据库的时候使用的service名称</span></span><br><span class="line">GDBNAME = <span class="string">&quot;orcl.test&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : System identifier (SID) of the database</span></span><br><span class="line"><span class="comment"># 对应的实例名字</span></span><br><span class="line">SID = <span class="string">&quot;orcl&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : Name of the template</span></span><br><span class="line"><span class="comment"># 建库用的模板文件</span></span><br><span class="line">TEMPLATENAME = <span class="string">&quot;General_Purpose.dbc&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : Password for SYS user</span></span><br><span class="line"><span class="comment"># SYS管理员密码</span></span><br><span class="line">SYSPASSWORD = <span class="string">&quot;123456&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : Password for SYSTEM user</span></span><br><span class="line"><span class="comment"># SYSTEM管理员密码</span></span><br><span class="line">SYSTEMPASSWORD = <span class="string">&quot;123456&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : Password for SYSMAN user</span></span><br><span class="line"><span class="comment"># SYSMAN管理员密码</span></span><br><span class="line">SYSMANPASSWORD = <span class="string">&quot;123456&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : Password for DBSNMP user</span></span><br><span class="line"><span class="comment"># DBSNMP管理员密码</span></span><br><span class="line">DBSNMPPASSWORD = <span class="string">&quot;123456&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : Location of the data file&#x27;s</span></span><br><span class="line"><span class="comment"># 数据文件存放目录</span></span><br><span class="line">DATAFILEDESTINATION =/data/oracle/oradata</span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : Location of the data file&#x27;s</span></span><br><span class="line"><span class="comment"># 恢复数据存放目录</span></span><br><span class="line">RECOVERYAREADESTINATION=/data/oracle/fast_recovery_area</span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : Character set of the database</span></span><br><span class="line"><span class="comment"># 字符集，重要!!! 建库后一般不能更改，所以建库前要确定清楚。</span></span><br><span class="line"><span class="comment"># (CHARACTERSET = &quot;AL32UTF8&quot; NATIONALCHARACTERSET= &quot;UTF8&quot;)</span></span><br><span class="line">CHARACTERSET = <span class="string">&quot;ZHS16GBK&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Description   : total memory in MB to allocate to Oracle</span></span><br><span class="line"><span class="comment"># oracle内存1638MB,物理内存2G*80%</span></span><br><span class="line">TOTALMEMORY = <span class="string">&quot;1638&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>进行静默配置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbca -silent -responseFile /home/oracle/response/dbca.rsp</span><br></pre></td></tr></table></figure>
+
+<p>建库后进行实例进程检查：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep ora_ | grep -v grep</span><br></pre></td></tr></table></figure>
+
+<p>查看监听状态：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsnrctl status</span><br></pre></td></tr></table></figure>
+
+<p>数据库创建完成。</p>
+<p>有关详细信息, 请查看以下位置的日志文件: &#x2F;data&#x2F;oracle&#x2F;cfgtoollogs&#x2F;dbca&#x2F;orcl&#x2F;orcl.log。</p>
+<p>数据库信息:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">全局数据库名:orcl.test</span><br><span class="line"></span><br><span class="line">系统标识符 (SID):orcl</span><br></pre></td></tr></table></figure>
+
+<p>登录查看实例状态：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sqlplus / as sysdba</span><br><span class="line">SQL&gt; <span class="keyword">select</span> status from v<span class="variable">$instance</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>如果报错：【ORA-12162: TNS:net service name is incorrectly specified】</p>
+<p>错误原因：【这个错误是因为ORACLE_SID变量没有传进去造成的。】</p>
+<p>解决方法：</p>
+<p>1．查看当前ORACLE_SID</p>
+<p>[oracle@iZ2f570bi1k56uZ ~]$ echo $ORACLE_SID</p>
+<p>orcl         </p>
+<p>2．修改ORACLE_SID和&#x2F;home&#x2F;oracle&#x2F;response&#x2F;dbca.rsp中的一样                                                                                  </p>
+<p>[oracle@iZ2f570bi1k56uZ ~]$ export ORACLE_SID&#x3D;orcl</p>
+<p>3．如果遇到ORA-12162: TNS:net service name is incorrectly specified.错误</p>
+<p>参考文章：【<a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/mmzs/p/11162231.html" >ORA-12162: TNS:net service name is incorrectly specified.<i class="fas fa-external-link-alt"></i></a>】</p>
+<p>4．如果依然不能登陆，尝试修改orcle文件夹的权限</p>
+<p>【如果本地连接时，出现监听错误，参考<a class="link"   target="_blank" rel="noopener" href="http://www.cnblogs.com/mmzs/p/9043767.html" >Linux中安装Oracle11g后出现监听的问题及解决办法<i class="fas fa-external-link-alt"></i></a>】</p>
+<h2 id="六-命令行模式静默删除"><a href="#六-命令行模式静默删除" class="headerlink" title="六.命令行模式静默删除"></a>六.命令行模式静默删除</h2><p>1、首先查看dbca的帮助信息</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbca -<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+
+<p>修改&#x2F;home&#x2F;oracle&#x2F;response&#x2F;dbca.rsp文件里以下几个参数，下面三个参数根据建库实际情况进行修改：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">OPERATION_TYPE = <span class="string">&quot;deleteDatabase&quot;</span></span><br><span class="line"></span><br><span class="line">SOURCEDB = <span class="string">&quot;orcl&quot;</span></span><br><span class="line"></span><br><span class="line">SYSDBAUSERNAME = <span class="string">&quot;sys&quot;</span></span><br><span class="line"></span><br><span class="line">SYSDBAPASSWORD = <span class="string">&quot;123456&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后运行：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbca -silent -responseFile /home/oracle/response/dbca.rsp</span><br></pre></td></tr></table></figure>
+
+<p>各参数含义如下:</p>
+<ul>
+<li><p>silent 表示以静默方式删除</p>
+</li>
+<li><p>-responseFile 表示使用哪个响应文件,必需使用绝对路径</p>
+</li>
+<li><p>RESPONSEFILE_VERSION 响应文件模板的版本,该参数不要更改</p>
+</li>
+<li><p>OPERATION_TYPE 安装类型,该参数不要更改</p>
+</li>
+<li><p>SOURCEDB 数据库名,不是全局数据库名,即不包含db_domain</p>
+</li>
+</ul>
+<p>很简单数据库卸载完成了，请注意，只是数据库卸载完了，数据库软件还是在的。</p>
+<p>2、使用DBCA卸载数据库</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dbca -silent -delete Database -responseFile dbca.rsp</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>-silent表示静默安装，免安装交互，大部分安装信息也不输出</p>
+</li>
+<li><p>-responseFile指定应答文件，要求用绝对路径</p>
+</li>
+</ul>
+<p>本文来自<a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/mmzs/p/9033112.html" >linux安装Oracle11G - 淼淼之森 - 博客园 (cnblogs.com)<i class="fas fa-external-link-alt"></i></a></p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/Hadoop/1ca0264eaaf9/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">CDH集群相关命令</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/KVM/b3cecd553fa2/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">KVM虚拟化搭建</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CentOS%E5%AE%89%E8%A3%85Oracle11G"><span class="nav-text">CentOS安装Oracle11G</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E4%B8%8B%E8%BD%BD%E4%B8%8A%E4%BC%A0Oracle11G"><span class="nav-text">一.下载上传Oracle11G</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C-%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE"><span class="nav-text">二.基础配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89-%E5%AE%89%E8%A3%85Oracle"><span class="nav-text">三.安装Oracle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B-%E4%BB%A5%E9%9D%99%E9%BB%98%E6%96%B9%E5%BC%8F%E9%85%8D%E7%BD%AE%E7%9B%91%E5%90%AC"><span class="nav-text">四.以静默方式配置监听</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94-%E9%9D%99%E9%BB%98%E6%96%B9%E5%BC%8F%E5%BB%BA%E7%AB%8B%E6%96%B0%E5%BA%93%EF%BC%8C%E5%90%8C%E6%97%B6%E4%B9%9F%E5%BB%BA%E7%AB%8B%E4%B8%80%E4%B8%AA%E5%AF%B9%E5%BA%94%E7%9A%84%E5%AE%9E%E4%BE%8B"><span class="nav-text">五.静默方式建立新库，同时也建立一个对应的实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD-%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%A8%A1%E5%BC%8F%E9%9D%99%E9%BB%98%E5%88%A0%E9%99%A4"><span class="nav-text">六.命令行模式静默删除</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>
