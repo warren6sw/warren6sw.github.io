@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            Kafka配置SASL/PLAIN认证 |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Kafka配置SASL/PLAIN认证</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Kafka/">Kafka</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Kafka/">Kafka</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>1.7k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>8 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="Kafka-配置-SASL-x2F-PLAIN-认证"><a href="#Kafka-配置-SASL-x2F-PLAIN-认证" class="headerlink" title="Kafka 配置 SASL&#x2F;PLAIN 认证"></a>Kafka 配置 SASL&#x2F;PLAIN 认证</h1><h3 id="下载安装zk与kafka"><a href="#下载安装zk与kafka" class="headerlink" title="下载安装zk与kafka"></a>下载安装zk与kafka</h3><p><code>略过</code></p>
+<p>安装目录为<code>/data/kafka</code></p>
+<p>安装目录为<code>/data/zookeeper</code></p>
+<h3 id="配置-Kafka"><a href="#配置-Kafka" class="headerlink" title="配置 Kafka"></a>配置 Kafka</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim config/server.properties</span><br></pre></td></tr></table></figure>
+
+<p>更改kafka配置文件,增加以下配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">delete.topic.enable=true  </span><br><span class="line">listeners=SASL_PLAINTEXT://192.168.11.14:9092</span><br><span class="line">advertised.listeners=SASL_PLAINTEXT://192.168.11.14:9092</span><br><span class="line"># 启用ACL</span><br><span class="line">authorizer.class.name=kafka.security.auth.SimpleAclAuthorizer</span><br><span class="line"># 设置admin为超级用户</span><br><span class="line">super.users=User:admin</span><br><span class="line"># 启用SCRAM机制，采用SCRAM-SHA-512/PLAIN算法</span><br><span class="line">sasl.enabled.mechanisms=PLAIN</span><br><span class="line"># 为broker间通讯开启SCRAM机制，采用SCRAM-SHA-512/PLAIN算法</span><br><span class="line">sasl.mechanism.inter.broker.protocol=PLAIN</span><br><span class="line"># broker间通讯使用PLAINTEXT，本例中不演示SSL配置</span><br><span class="line">security.inter.broker.protocol=SASL_PLAINTEXT</span><br><span class="line">zookeeper.set.acl=true</span><br><span class="line"># 禁止自动创建topic</span><br><span class="line">auto.create.topics.enable=true</span><br><span class="line"></span><br><span class="line">allow.everyone.if.no.acl.found=false</span><br><span class="line"># 参数 allow.everyone.if.no.acl.found</span><br><span class="line"># 设置为 true，ACL 机制改为黑名单机制，只有黑名单中的用户无法访问</span><br><span class="line"># 设置为 false，ACL 机制改为白名单机制，只有白名单中的用户可以访问，默认值为 false</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>首先创建配置文件 <code>kafka/config/kafka_server_jaas.conf</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> kafka_2.12-2.8.0/config</span><br><span class="line">vim kafka_server_jaas.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">KafkaServer &#123;</span><br><span class="line">  org.apache.kafka.common.security.plain.PlainLoginModule required</span><br><span class="line">    username=&quot;admin&quot;</span><br><span class="line">    password=&quot;adminpass&quot;</span><br><span class="line">    user_admin=&quot;adminpass&quot;</span><br><span class="line">    user_producer=&quot;producer&quot;</span><br><span class="line">    user_consumer=&quot;consumer&quot;;</span><br><span class="line">&#125;;</span><br><span class="line">KafkaClient &#123;</span><br><span class="line">  org.apache.kafka.common.security.plain.PlainLoginModule required</span><br><span class="line">    username=&quot;admin&quot;</span><br><span class="line">    password=&quot;adminpass&quot;</span><br><span class="line">    user_admin=&quot;adminpass&quot;</span><br><span class="line">    user_producer=&quot;producer&quot;</span><br><span class="line">    user_consumer=&quot;consumer&quot;;</span><br><span class="line">&#125;;</span><br><span class="line">Client &#123;</span><br><span class="line">  org.apache.kafka.common.security.plain.PlainLoginModule required</span><br><span class="line">    username=&quot;admin&quot;</span><br><span class="line">    password=&quot;adminpass&quot;</span><br><span class="line">    user_admin=&quot;adminpass&quot;;</span><br><span class="line">&#125;;</span><br><span class="line">Server &#123;</span><br><span class="line">  org.apache.kafka.common.security.plain.PlainLoginModule required</span><br><span class="line">    username=&quot;admin&quot;</span><br><span class="line">    password=&quot;adminpass&quot;</span><br><span class="line">    user_admin=&quot;adminpass&quot;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>user_用户名</code> 配置的是 client 连接 broker 时用的用户、密码。据我尝试，必须定义一个 username 用户对应的 user_ 字段，否则连不上。就像上面，有个 username&#x3D;”testuser” ，所以必须再定义一次 user_testuser 且密码保持一致。</p>
+<p>KafkaServer 和 KafkaClient 是 Kafka Brokers 之间，以及 Kafka 客户端通讯的配置，Server 和 Client 是 Kafka 与 Zookeeper 之间的配置。注意这里和 Zookeeper 配置的 jaas 有点不一样，Kafka 这里是 org.apache.kafka.common.security.plain.PlainLoginModule ，Zookeeper 是 org.apache.zookeeper.server.auth.DigestLoginModule 。</p>
+<p>然后编辑启动脚本 <code>bin/kafka-server-start.sh</code> ，在后最添加一行 export 语句</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> KAFKA_OPTS=<span class="string">&quot; -Djava.security.auth.login.config=/data/kafka/config/kafka_server_jaas.conf&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">exec</span> <span class="variable">$base_dir</span>/kafka-run-class.sh <span class="variable">$EXTRA_ARGS</span> kafka.Kafka <span class="string">&quot;<span class="variable">$@</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>最后再重新启动 kafka 就可以了。我们在 jaas 文件中配置了两用户，admin ,consumer和producer，其中我们设置了 admin 为超级用户，consumer和producer分别为生产者和消费者 。</p>
+<h3 id="配置-Zookeeper"><a href="#配置-Zookeeper" class="headerlink" title="配置 Zookeeper"></a>配置 Zookeeper</h3><p>由于 Kafka 的 metadata 数据是保存在 zookeeper 中的，所以需要设置 zookeeper 支持 SASL 验证，然后配置权限，禁止未登录用户随便删除 Topic 等。</p>
+<p>编辑配置文件 zookeeper&#x2F;conf&#x2F;zoo.cfg</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">authProvider.1=org.apache.zookeeper.server.auth.SASLAuthenticationProvider</span><br><span class="line">requireClientAuthScheme=sasl</span><br><span class="line">jaasLoginRenew=3600000</span><br></pre></td></tr></table></figure>
+
+<p>其中 authProvider.1 这里的 .1 是 server_id ，多个 zookeeper 节点每个都要配置，例如你有 3 台 zk，那么需要再加上 authProvider.2 和 authProvider.3 等。</p>
+<p>添加 jaas 配置文件 zookeeper&#x2F;conf&#x2F;zookeeper_jaas.conf</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Client &#123;</span><br><span class="line">  org.apache.zookeeper.server.auth.DigestLoginModule required</span><br><span class="line">    user_admin=&quot;adminpass&quot;;</span><br><span class="line">&#125;;</span><br><span class="line">Server &#123;</span><br><span class="line">  org.apache.zookeeper.server.auth.DigestLoginModule required</span><br><span class="line">    user_admin=&quot;adminpass&quot;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>修改 zookeeper&#x2F;bin&#x2F;zkEnv.sh ，添加一行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> SERVER_JVMFLAGS=<span class="string">&quot;-Djava.security.auth.login.config=<span class="variable">$&#123;ZOOBINDIR&#125;</span>/../conf/zookeeper_jaas.conf <span class="variable">$SERVER_JVMFLAGS</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>这里因为我是用的单独的 Zookeeper 程序包，如果你用的是 Kafka 自带的 Zookeeper，那 SERVER_JVMFLAGS 要改成 KAFKA_OPTS 。滚动重启 Zookeeper 。</p>
+<p>配置 zkCli.sh 使用上鉴权。创建配置文件 zookeeper&#x2F;conf&#x2F;adminclient_jaas.conf</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Client &#123;</span><br><span class="line">  org.apache.zookeeper.server.auth.DigestLoginModule required</span><br><span class="line">    username=<span class="string">&quot;admin&quot;</span></span><br><span class="line">    password=<span class="string">&quot;adminpass&quot;</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后修改 zookeeper&#x2F;bin&#x2F;zkCli.sh ，在 java 后面添加，</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;<span class="variable">$JAVA</span>&quot;</span> <span class="string">&quot;-Djava.security.auth.login.config=/data/zookeeper/conf/adminclient_jaas.conf&quot;</span> <span class="string">&quot;-Dzookeeper.log.dir=<span class="variable">$&#123;ZOO_LOG_DIR&#125;</span>&quot;</span> <span class="string">&quot;-Dzookeeper.root.logger=<span class="variable">$&#123;ZOO_LOG4J_PROP&#125;</span>&quot;</span> \</span><br><span class="line">     -<span class="built_in">cp</span> <span class="string">&quot;<span class="variable">$CLASSPATH</span>&quot;</span> <span class="variable">$CLIENT_JVMFLAGS</span> <span class="variable">$JVMFLAGS</span> \</span><br><span class="line">     org.apache.zookeeper.ZooKeeperMain <span class="string">&quot;<span class="variable">$@</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-Kafka-ACL-权限"><a href="#配置-Kafka-ACL-权限" class="headerlink" title="配置 Kafka ACL 权限"></a>配置 Kafka ACL 权限</h3><p>先修改 Kafka 里的 kafka&#x2F;bin&#x2F;zookeeper-security-migration.sh 文件，添加</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export KAFKA_OPTS=&quot;-Djava.security.auth.login.config=/data/release/dp_kafka/config/kafka_server_jaas.conf&quot;</span><br></pre></td></tr></table></figure>
+
+<p>然后运行命令 ，<a class="link"   target="_blank" rel="noopener" href="https://docs.cloudera.com/runtime/7.2.10/kafka-securing/topics/kafka-secure-deltokens-restrict-metadata.html" >参考这里的文档<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kafka/bin/zookeeper-security-migration.sh --zookeeper.connect 127.0.0.1:2181 --zookeeper.acl secure</span><br></pre></td></tr></table></figure>
+
+<p>这样 Zookeeper 里面的 metadata 都加上权限了。可以上 Zookeeper 验证下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">zookeeper/bin/zkCli.sh</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">登录进 shell 后，执行 getAcl 指令</span></span><br><span class="line">getAcl /brokers/topics</span><br><span class="line">&#x27;sasl,&#x27;admin</span><br><span class="line">: cdrwa</span><br><span class="line">&#x27;world,&#x27;anyone</span><br><span class="line">: r</span><br></pre></td></tr></table></figure>
+
+<p>为了用上 Kafka 自带的 shell 工具，我们要配置 jaas 认证，新建一个 kafka&#x2F;config&#x2F;adminclient-configs.conf</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">sasl.jaas.config</span>=org.apache.kafka.common.security.plain.PlainLoginModule \</span><br><span class="line">    required <span class="attr">username</span>=<span class="string">&quot;admin&quot;</span> password=<span class="string">&quot;adminpass&quot;</span><span class="comment">;</span></span><br><span class="line"><span class="attr">security.protocol</span>=SASL_PLAINTEXT</span><br><span class="line"><span class="attr">sasl.mechanism</span>=PLAIN</span><br></pre></td></tr></table></figure>
+
+<p>使用</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kafka/bin/kafka-topics.sh --bootstrap-server 127.0.0.1:9092 --command-config kafka/config/adminclient-configs.conf --list</span><br></pre></td></tr></table></figure>
+
+<p>一些 ACL 命令使用，<a class="link"   target="_blank" rel="noopener" href="https://docs.confluent.io/platform/current/kafka/authorization.html" >参考文档<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">列出 temp 这个 topic 的 ACL 列表</span></span><br><span class="line">kafka/bin/kafka-acls.sh --bootstrap-server 127.0.0.1:9092 --command-config kafka/config/adminclient-configs.conf --list --topic &quot;temp&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">对 temp 这个 topic 对用户 <span class="built_in">test</span> 授权</span></span><br><span class="line">kafka/bin/kafka-acls.sh --bootstrap-server 127.0.0.1:9092 --command-config kafka/config/adminclient-configs.conf --add --allow-principal User:test --operation Read --operation Write --operation AlterConfigs --operation Describe --operation DescribeConfigs --operation Alter --topic &quot;temp&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">去掉 delete 权限</span></span><br><span class="line">kafka/bin/kafka-acls.sh --bootstrap-server 127.0.0.1:9092 --command-config kafka/config/adminclient-configs.conf --remove --allow-principal User:test --operation Delete --topic &quot;temp&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置-Consumer-和-Producer"><a href="#配置-Consumer-和-Producer" class="headerlink" title="配置 Consumer 和 Producer"></a>配置 Consumer 和 Producer</h3><p>如果 Kafka 配置了认证，再用脚本消费数据就会报错</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">kafka/bin/kafka-console-consumer.sh  --bootstrap-server localhost:9092 --topic  test --from-beginning </span><br><span class="line"></span><br><span class="line">WARN [Consumer clientId=consumer-console-consumer-93884-1, groupId=console-consumer-93884] Bootstrap broker localhost:9092 (id: -1 rack: null) disconnected (org.apache.kafka.clients.NetworkClient)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">以下是 Kafka Server 端报错日志</span></span><br><span class="line"></span><br><span class="line">INFO [SocketServer listenerType=ZK_BROKER, nodeId=0] Failed authentication with /127.0.0.1 (Unexpected Kafka request of type METADATA during SASL handshake.) (org.apache.kafka.common.network.Selector)</span><br></pre></td></tr></table></figure>
+
+<p>修改 <code>config/consumer.properties</code> ，添加以下配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">security.protocol=SASL_PLAINTEXT</span><br><span class="line">sasl.mechanism=PLAIN</span><br><span class="line">sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required \</span><br><span class="line">    username=&quot;admin&quot; \</span><br><span class="line">    password=&quot;adminpass&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>修改 <code>config/producer.properties</code> ，添加以下配置</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">security.protocol=SASL_PLAINTEXT</span><br><span class="line">sasl.mechanism=PLAIN</span><br><span class="line">sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required \</span><br><span class="line">    username=<span class="string">&quot;admin&quot;</span> \</span><br><span class="line">    password=<span class="string">&quot;adminpass&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>最后再尝试运行上面的命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \</span><br><span class="line">  --consumer.config config/consumer.properties --topic  test --from-beginning </span><br><span class="line"></span><br><span class="line">kafka/bin/kafka-console-producer.sh  --broker-list localhost:9092 --topic test \</span><br><span class="line">  --producer.config=config/producer.properties</span><br><span class="line"></span><br><span class="line">kafka/bin/kafka-topics.sh --list --bootstrap-server=localhost:9092 \</span><br><span class="line">  --command-config config/consumer.properties </span><br></pre></td></tr></table></figure>
+
+<h3 id="已经加上鉴权的-zookeeper-去掉鉴权"><a href="#已经加上鉴权的-zookeeper-去掉鉴权" class="headerlink" title="已经加上鉴权的 zookeeper 去掉鉴权"></a>已经加上鉴权的 zookeeper 去掉鉴权</h3><p>如果对已经加上鉴权的 zookeeper、kafka 集群，现在不想要鉴权了，要回退回去，操作如下。</p>
+<p>首先运行命令，把 kafka 在 zookeeper 里面的 metadata 数据去掉认证：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kafka/bin/zookeeper-security-migration.sh --zookeeper.connect 127.0.0.1:2181 --zookeeper.acl unsecure</span><br></pre></td></tr></table></figure>
+
+<p>去掉后，可以上 zookeeper 使用 getAcl 命令确认。</p>
+<p>然后，修改 zookeeper 文件 zookeeper&#x2F;bin&#x2F;zkEnv.sh ，去掉之前加的</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 把这一行注释掉</span></span><br><span class="line"><span class="comment"># export SERVER_JVMFLAGS=&quot;-Djava.security.auth.login.config=$&#123;ZOOBINDIR&#125;/../conf/zookeeper_jaas.conf $SERVER_JVMFLAGS&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>滚动重启 zookeeper。</p>
+<p>再来修改 kafka 配置，修改 kafka&#x2F;config&#x2F;kafka_server_jaas.conf ，删除连接 zookeeper 的配置 Client 和 Server 。再修改 kafka&#x2F;config&#x2F;server.properties ，删除配置项 zookeeper.set.acl&#x3D;true 。</p>
+<p>再滚动重启 kafka 。</p>
+<p><code>完</code></p>
+<p>参考 [<a class="link"   target="_blank" rel="noopener" href="https://m.fx361.com/news/2020/1106/7751229.html" >给 Kafka 配置 SASL&#x2F;PLAIN 认证 )<i class="fas fa-external-link-alt"></i></a></p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/CentOS/356d71c9acc9/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">CentOS更改IP后ssh无法连接</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/Kubernetes/9772db72d7d7/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Kubernetes之为Namespace配置CPU和内存配额</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kafka-%E9%85%8D%E7%BD%AE-SASL-x2F-PLAIN-%E8%AE%A4%E8%AF%81"><span class="nav-text">Kafka 配置 SASL&#x2F;PLAIN 认证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85zk%E4%B8%8Ekafka"><span class="nav-text">下载安装zk与kafka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Kafka"><span class="nav-text">配置 Kafka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Zookeeper"><span class="nav-text">配置 Zookeeper</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Kafka-ACL-%E6%9D%83%E9%99%90"><span class="nav-text">配置 Kafka ACL 权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Consumer-%E5%92%8C-Producer"><span class="nav-text">配置 Consumer 和 Producer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%B2%E7%BB%8F%E5%8A%A0%E4%B8%8A%E9%89%B4%E6%9D%83%E7%9A%84-zookeeper-%E5%8E%BB%E6%8E%89%E9%89%B4%E6%9D%83"><span class="nav-text">已经加上鉴权的 zookeeper 去掉鉴权</span></a></li></ol></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>

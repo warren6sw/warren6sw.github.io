@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            Kafka故障模拟及故障恢复 |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Kafka故障模拟及故障恢复</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Kafka/">Kafka</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Kafka/">Kafka</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>2.3k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>8 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="Kafka故障模拟及故障恢复"><a href="#Kafka故障模拟及故障恢复" class="headerlink" title="Kafka故障模拟及故障恢复"></a>Kafka故障模拟及故障恢复</h1><p>来自<a class="link"   target="_blank" rel="noopener" href="https://m.fx361.com/news/2020/1106/7751229.html" >Kafka中Broker节点磁盘问题的故障处理方法_参考网 (fx361.com)<i class="fas fa-external-link-alt"></i></a></p>
+<p>摘  要：Apache Kafka作为一种分布式的消息队列中间件，由于其具有高可靠性、高吞吐量、可持久化、可扩展性好等特点。在大数据项目中，如日志聚合、流数据处理等应用场景中被广泛使用。由于Kafka的消息需要持久化到磁盘中，磁盘故障会影响Kafka的使用，严重时会造成数据丢失。所以基于Kafka的存储特性，通过复盘和分析由于磁盘问题导致的Kafka集群故障，提出了一系列的磁盘故障处理方法，从而缩短Kafka集群故障的恢复时间。</p>
+<h2 id="0-引-言"><a href="#0-引-言" class="headerlink" title="0  引  言"></a>0  引  言</h2><p>Apache Kafka[1]，最初由LinkedIn公司開发，并于2011年开源[2]。2012年被孵化成为Apache软件基金会顶级项目。如今，Kafka应用于众多大数据项目中，很多互联网公司也在自己的生产环境中将Kafka作为消息中间件使用。</p>
+<h2 id="1-Kafka组件及架构"><a href="#1-Kafka组件及架构" class="headerlink" title="1  Kafka组件及架构"></a>1  Kafka组件及架构</h2><p>Kafka作为一种分布式的消息队列中间件，部署多采用若干节点构成集群的方式。在这个Kafka集群中，每个节点被称作Broker，可以理解为Kafka提供服务的一个实例。在消息（message）队列系统中，通常都会有生产者（Producer）发送消息，消费者（Consumer）消费消息，这样就构成了一个消息“流水线”的上下游，如图1所示。每条被Producer发布到Kafka集群的消息都属于一个Topic。</p>
+<h2 id="2-Kafka中的文件存储介绍"><a href="#2-Kafka中的文件存储介绍" class="headerlink" title="2  Kafka中的文件存储介绍"></a>2  Kafka中的文件存储介绍</h2><p>Topic经过Producer发布到Kafka集群中，这条Topic会根据配置被划分为多个分区（Partition），这些分区又会被均匀地分布到Kafka集群所有的Broker节点上。这样做可以通过增加分区的数量来横向增加Topic的存储数据量，并且均匀分布也可以起到负载均衡的作用。</p>
+<p>在存储层面，任何发布到此分区的消息都会被追加（append）到数据文件的尾部，文件以“.log”为后缀。消息被追加到分区中因为是顺序写入（write）磁盘的，因此效率非常高。如图2所示，图中不同颜色的数据文件对应的是不同的分区数据，append操作正在写入对应虚线数据文件。</p>
+<p>除了log文件，分区中还有一个以“.index”为后缀的索引文件，它们共同组成段（Segment）文件。在分区中会存在多个段文件，它们大小相等，但其中包含的消息数不一定相等。这种特性方便旧的段文件可以被快速删除，这样可以清理空间供新的消息进行存储，提高磁盘利用率。</p>
+<p>作为分布式系统，Kafka在设计上也充分考虑了高可用，从Broker的多节点到Topic的多副本。Topic的副本机制则是通过分区的副本实现的，被称为Replica，即在另一个或多个Broker节点上存在这个分区的副本。</p>
+<h2 id="3-故障复盘与分析"><a href="#3-故障复盘与分析" class="headerlink" title="3  故障复盘与分析"></a>3  故障复盘与分析</h2><p>在公司某生产环境里的Kafka集群中，一个Broker节点的磁盘发生故障，导致这个Broker节点的进程退出[3]，进而影响了Kafka中的某一个Topic的正常使用。</p>
+<p>如果启用副本，Kafka至少不会因为单个节点不能对外服务而发生Topic不能正常使用的情况，这就是Topic的高可用性。本次故障影响使用的主要原因就是Topic没有设置副本，采用系统默认值1。在Broker节点发生磁盘故障停止服务时，由于这个Topic在故障Broker的分区没有可以使用的副本，导致了此Topic不能正常写入和消费数据的问题。</p>
+<p>当发生磁盘故障，通常快速恢复Kafka服务的方法就是修改Kafka的server.properties配置中log.dirs参数，将故障磁盘从配置中删除，Broker就可以启动了。Broker启动之后，节点上故障磁盘的分区会在此Broker的其他磁盘中创建。但对于这次的Kafka故障还遇到了下文提到的两种意外情况。</p>
+<h3 id="3-1-启动时触发了特定版本Kafka的bug"><a href="#3-1-启动时触发了特定版本Kafka的bug" class="headerlink" title="3.1  启动时触发了特定版本Kafka的bug"></a>3.1  启动时触发了特定版本Kafka的bug</h3><p>启动Broker时，日志出现异常报错，显示读取index文件损坏，不能启动，如图3所示。遇到这种问题时一般是删除抛出异常的index文件。</p>
+<p>index文件存放的元数据指向对应的log文件中消息的物理偏移地址，如图4所示。</p>
+<p>那为什么index会发生损坏呢？这是因为index文件是一个索引文件映射，它不会对每条消息都建立索引，而是间隔indexIntervalBytes大小之后才写入一条索引条目，所以是一个稀疏文件。Kafka运行时会创建一个log.index.size.max.bytes大小的index文件，向其中写入稀疏索引，内容达到阈值后会进行滚动覆盖。根据社区jira的内容[4]，在Kafka非正常退出后会出现index损坏的情况，而在0.8及以前版本，Kafka在读取这个损坏的index文件后会出现报错退出无法启动的问题，在0.9版本中对此问题进行了修复[5]，处理的逻辑是自动清理这个文件后重建，不抛出异常。</p>
+<h3 id="3-2-转移的分区将磁盘空间写满"><a href="#3-2-转移的分区将磁盘空间写满" class="headerlink" title="3.2  转移的分区将磁盘空间写满"></a>3.2  转移的分区将磁盘空间写满</h3><p>将故障磁盘从配置文件中删除后重新启动Broker，故障磁盘中所有Topic的分区副本会在剩余磁盘中重新创建，并同步消息数据，此时出现了多个大数据量的分区副本被放入同一个磁盘中，导致磁盘空间被迅速写满。这种情况下，就不能再使用剔除磁盘的方法了。紧急处理时可以采取缩短Topic的保存时间，从物理上减小Topic数据大小，然后分阶段删除磁盘中过期数据，最后重启Broker节点恢复。</p>
+<h2 id="4-实验验证"><a href="#4-实验验证" class="headerlink" title="4  实验验证"></a>4  实验验证</h2><p>对于磁盘故障这类服务器常见问题，如何能将故障对Kafka集群的影响减少至最低是研究的重点。对此总结了如下的恢复步骤，并通过实验进行了验证，可供参考使用。</p>
+<h3 id="4-1-紧急恢复故障时可以剔除故障磁盘后重启"><a href="#4-1-紧急恢复故障时可以剔除故障磁盘后重启" class="headerlink" title="4.1  紧急恢复故障时可以剔除故障磁盘后重启"></a>4.1  紧急恢复故障时可以剔除故障磁盘后重启</h3><p>Step1：删除Kafka配置文件config&#x2F;server.properties中损坏的磁盘（例如data2为故障磁盘，原配置为：“log.dirs&#x3D;&#x2F;data0&#x2F;Kafka-logs，&#x2F;data1&#x2F;Kafka-logs，&#x2F;data2&#x2F;Kafka-logs，&#x2F;data3&#x2F;Kafka-logs…”，更改后配置为：“log.dirs&#x3D;&#x2F;data0&#x2F;Kafka-logs，&#x2F; data1&#x2F;Kafka-logs，&#x2F;data3&#x2F;Kafka-logs…”）。</p>
+<p>Step2：重启Kafka进程。</p>
+<p>结果：原“&#x2F;data2&#x2F;Kafka-logs，”目录下的分区会被重新分配到当前Broker的其他磁盘上。</p>
+<p>影响：会产生数据倾斜的情况，大数据量的分区叠加到同一个磁盘，可能造成个别磁盘被写满。</p>
+<h3 id="4-2-最小化影响恢复故障"><a href="#4-2-最小化影响恢复故障" class="headerlink" title="4.2  最小化影响恢复故障"></a>4.2  最小化影响恢复故障</h3><p>集群可允许一个Broker下线时，可暂不重启Kafka进程，待磁盘更换完成后直接重启Kafka进程。</p>
+<p>如果当前Broker有多余的一块磁盘作备盘。当Kafka进程下线时，修改配置文件config&#x2F;server.properties（例如data2为故障磁盘，data9为备盘，原配置为：“log.dirs&#x3D;&#x2F;data0&#x2F;Kafka-logs，&#x2F;data1&#x2F;Kafka-logs，&#x2F;data2&#x2F;Kafka-logs，&#x2F;data3&#x2F;Kafka-logs…”，替换后配置为：“log.dirs&#x3D;&#x2F;data0&#x2F;Kafka-logs，&#x2F;data1&#x2F;Kafka-logs，&#x2F;data9&#x2F;Kafka-logs，&#x2F;data3&#x2F;Kafka-logs…”，用data9替换data2），直接启动Kafka进程。之后在最近的系统维护周期时间点更换坏盘。</p>
+<h3 id="4-3-具体实验验证过程"><a href="#4-3-具体实验验证过程" class="headerlink" title="4.3  具体实验验证过程"></a>4.3  具体实验验证过程</h3><p>环境：测试集群共3个Broker（Broker1至Broker3），每个主机上挂载5块磁盘（data0至data4）。Kafka配置文件config&#x2F;server.properties配置了4块磁盘，即data0、data1、data2、data3，data4作为备盘。</p>
+<p>Step1：新建测试Topic为testKafka，配置分区为12，副本数为2。此时分区均匀分布，每个Broker中8个分区。</p>
+<p>Step2：测试Topic testKafka，进行正常的信息生产和消费，此时查看Broker3中data3目录下面文件，存在2个分区，如图5所示。</p>
+<p>Step3：直接删除data3目录，模拟磁盘故障，Kafka进程退出。此时，修改Kafka配置文件config&#x2F;server.properties，将data3换成data4，即四块磁盘变成了data0、data1、data2、data4。</p>
+<p>Step4：上述步骤完成后，重启Broker3服务，此时会发现消费Topic数据时会有短暂告警打印，后续恢复正常。</p>
+<p>结果：磁盘data3中的2个分区转移到备用磁盘data4中，如图6所示。</p>
+<h2 id="5-结-论"><a href="#5-结-论" class="headerlink" title="5  结  论"></a>5  结  论</h2><p>本文描述了在磁盘损坏后导致Kafka集群出现的几种异常情况，提出了在这些情况下的几种故障处理方法，并通过实验进行模拟验证。这些方法可以应用于日常运维Kafka集群的工作中，有效提高了Kafka集群可用性，为避免数据丢失提供了参考方案。</p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/Hadoop/de5a3e920104/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Hadoop集群相关命令</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/Kafka/ab0b4106805a/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Kafka数据迁移</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kafka%E6%95%85%E9%9A%9C%E6%A8%A1%E6%8B%9F%E5%8F%8A%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D"><span class="nav-text">Kafka故障模拟及故障恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E5%BC%95-%E8%A8%80"><span class="nav-text">0  引  言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Kafka%E7%BB%84%E4%BB%B6%E5%8F%8A%E6%9E%B6%E6%9E%84"><span class="nav-text">1  Kafka组件及架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Kafka%E4%B8%AD%E7%9A%84%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8%E4%BB%8B%E7%BB%8D"><span class="nav-text">2  Kafka中的文件存储介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%95%85%E9%9A%9C%E5%A4%8D%E7%9B%98%E4%B8%8E%E5%88%86%E6%9E%90"><span class="nav-text">3  故障复盘与分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%90%AF%E5%8A%A8%E6%97%B6%E8%A7%A6%E5%8F%91%E4%BA%86%E7%89%B9%E5%AE%9A%E7%89%88%E6%9C%ACKafka%E7%9A%84bug"><span class="nav-text">3.1  启动时触发了特定版本Kafka的bug</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%BD%AC%E7%A7%BB%E7%9A%84%E5%88%86%E5%8C%BA%E5%B0%86%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4%E5%86%99%E6%BB%A1"><span class="nav-text">3.2  转移的分区将磁盘空间写满</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AE%9E%E9%AA%8C%E9%AA%8C%E8%AF%81"><span class="nav-text">4  实验验证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E7%B4%A7%E6%80%A5%E6%81%A2%E5%A4%8D%E6%95%85%E9%9A%9C%E6%97%B6%E5%8F%AF%E4%BB%A5%E5%89%94%E9%99%A4%E6%95%85%E9%9A%9C%E7%A3%81%E7%9B%98%E5%90%8E%E9%87%8D%E5%90%AF"><span class="nav-text">4.1  紧急恢复故障时可以剔除故障磁盘后重启</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%9C%80%E5%B0%8F%E5%8C%96%E5%BD%B1%E5%93%8D%E6%81%A2%E5%A4%8D%E6%95%85%E9%9A%9C"><span class="nav-text">4.2  最小化影响恢复故障</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E5%85%B7%E4%BD%93%E5%AE%9E%E9%AA%8C%E9%AA%8C%E8%AF%81%E8%BF%87%E7%A8%8B"><span class="nav-text">4.3  具体实验验证过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E7%BB%93-%E8%AE%BA"><span class="nav-text">5  结  论</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>

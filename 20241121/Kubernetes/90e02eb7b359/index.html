@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            Kubernetes之Taints污点与Tolerations容忍详解 |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Kubernetes之Taints污点与Tolerations容忍详解</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Kubernetes/">Kubernetes</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Kubernetes/">Kubernetes</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>2k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>7 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="Kubernetes之Taints污点与Tolerations容忍详解"><a href="#Kubernetes之Taints污点与Tolerations容忍详解" class="headerlink" title="Kubernetes之Taints污点与Tolerations容忍详解"></a>Kubernetes之Taints污点与Tolerations容忍详解</h1><h2 id="1-Taints污点和Tolerations容忍概述"><a href="#1-Taints污点和Tolerations容忍概述" class="headerlink" title="1.Taints污点和Tolerations容忍概述"></a>1.Taints污点和Tolerations容忍概述</h2><p>节点和Pod亲和力，是将Pod吸引到一组节点【根据拓扑域】（作为优选或硬性要求）。污点（Taints）则相反，它们允许一个节点排斥一组Pod。</p>
+<p>容忍（Tolerations）应用于pod，允许（但不强制要求）pod调度到具有匹配污点的节点上。</p>
+<p>污点（Taints）和容忍（Tolerations）共同作用，确保pods不会被调度到不适当的节点。一个或多个污点应用于节点；这标志着该节点不应该接受任何不容忍污点的Pod。</p>
+<p>说明：我们在平常使用中发现pod不会调度到k8s的master节点，就是因为master节点存在污点</p>
+<h2 id="2-Taints污点"><a href="#2-Taints污点" class="headerlink" title="2.Taints污点"></a>2.Taints污点</h2><h3 id="Taints污点的组成"><a href="#Taints污点的组成" class="headerlink" title="Taints污点的组成"></a>Taints污点的组成</h3><p>使用kubectl taint命令可以给某个Node节点设置污点，Node被设置污点之后就和Pod之间存在一种相斥的关系，可以让Node拒绝Pod的调度执行，甚至将Node上已经存在的Pod驱逐出去。</p>
+<p>每个污点的组成如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># key值=value值:影响(NoSchedule,PreferNoSchedule,NoExecute)</span></span><br><span class="line">key=value:effect</span><br></pre></td></tr></table></figure>
+
+<p>每个污点有一个key和value作为污点的标签，effect描述污点的作用。当前taint effect支持如下选项：</p>
+<ul>
+<li>NoSchedule：表示K8S将不会把Pod调度到具有该污点的Node节点上</li>
+<li>PreferNoSchedule：表示K8S将尽量避免把Pod调度到具有该污点的Node节点上</li>
+<li>NoExecute：表示K8S将不会把Pod调度到具有该污点的Node节点上，同时会将Node上已经存在的Pod驱逐出去</li>
+</ul>
+<blockquote>
+<p>污点taint的NoExecute详解</p>
+</blockquote>
+<p>taint 的 effect 值 NoExecute，它会影响已经在节点上运行的 pod：</p>
+<ul>
+<li>如果 pod 不能容忍 effect 值为 NoExecute 的 taint，那么 pod 将马上被驱逐</li>
+<li>如果 pod 能够容忍 effect 值为 NoExecute 的 taint，且在 toleration 定义中没有指定 tolerationSeconds，则 pod 会一直在这个节点上运行。</li>
+<li>如果 pod 能够容忍 effect 值为 NoExecute 的 taint，但是在toleration定义中指定了 tolerationSeconds，则表示 pod 还能在这个节点上继续运行的时间长度。</li>
+</ul>
+<h3 id="Taints污点设置"><a href="#Taints污点设置" class="headerlink" title="Taints污点设置"></a>Taints污点设置</h3><blockquote>
+<p>污点（Taints）查看</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl describe node 节点名称(node,master)</span></span><br><span class="line">kubectl describe node k8s-master</span><br><span class="line"></span><br><span class="line"><span class="comment"># Name:               k8s-master1</span></span><br><span class="line"><span class="comment"># Roles:              master</span></span><br><span class="line"><span class="comment"># Labels:             beta.kubernetes.io/arch=amd64</span></span><br><span class="line"><span class="comment">#                     beta.kubernetes.io/os=linux</span></span><br><span class="line"><span class="comment">#                     kubernetes.io/arch=amd64</span></span><br><span class="line"><span class="comment">#                     kubernetes.io/hostname=k8s-master1</span></span><br><span class="line"><span class="comment">#                     kubernetes.io/os=linux</span></span><br><span class="line"><span class="comment">#                     node-role.kubernetes.io/master=</span></span><br><span class="line"><span class="comment"># Annotations:        kubeadm.alpha.kubernetes.io/cri-socket: /var/run/dockershim.sock</span></span><br><span class="line"><span class="comment">#                     node.alpha.kubernetes.io/ttl: 0</span></span><br><span class="line"><span class="comment">#                     projectcalico.org/IPv4Address: 192.168.2.30/24</span></span><br><span class="line"><span class="comment">#                     projectcalico.org/IPv4IPIPTunnelAddr: 100.105.225.0</span></span><br><span class="line"><span class="comment">#                     volumes.kubernetes.io/controller-managed-attach-detach: true</span></span><br><span class="line"><span class="comment"># CreationTimestamp:  Sun, 18 Apr 2021 13:49:56 -0400</span></span><br><span class="line"><span class="comment"># Taints:             node-role.kubernetes.io/master:NoSchedule</span></span><br><span class="line"><span class="comment"># *******</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="污点（Taints）添加"><a href="#污点（Taints）添加" class="headerlink" title="污点（Taints）添加"></a>污点（Taints）添加</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl taint nodes 节点名称 key=value:effect</span></span><br><span class="line">kubectl taint nodes k8s-node01 check=zhang:NoSchedule</span><br></pre></td></tr></table></figure>
+
+<h3 id="污点（Taints）删除"><a href="#污点（Taints）删除" class="headerlink" title="污点（Taints）删除"></a>污点（Taints）删除</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl taint nodes 节点名称 key=value:effect-</span></span><br><span class="line">kubectl taint nodes k8s-node01 check=zhang:NoSchedule-</span><br><span class="line"><span class="comment"># 或者kubectl taint nodes 节点名称 key:effect-</span></span><br><span class="line">kubectl taint nodes k8s-node01 check:NoExecute-</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>实例</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps/v1Beta1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">  name: nginx-deploy</span><br><span class="line">spec:</span><br><span class="line">  replicas: 1</span><br><span class="line">    selector:</span><br><span class="line">      matchLabels:</span><br><span class="line">        app: nginx</span><br><span class="line">  template:</span><br><span class="line">    metadata:</span><br><span class="line">      labels:</span><br><span class="line">        app: nginx</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - name: nginx</span><br><span class="line">        images: nginx:laste</span><br><span class="line">        ports:</span><br><span class="line">        - containerPort: 80       </span><br><span class="line">    tolerations:               <span class="comment">#containers同级</span></span><br><span class="line">    - key: <span class="string">&quot;key1&quot;</span>              <span class="comment">#能容忍的污点key</span></span><br><span class="line">      operator: <span class="string">&quot;Equal&quot;</span>        <span class="comment">#Equal等于表示key=value ， Exists不等于，表示当值不等于下面value正常</span></span><br><span class="line">      value: <span class="string">&quot;value1&quot;</span>          <span class="comment">#值</span></span><br><span class="line">      effect: <span class="string">&quot;NoExecute&quot;</span>      <span class="comment">#effect策略，见上面</span></span><br><span class="line">      tolerationSeconds: 3600  <span class="comment">#原始的pod多久驱逐，注意只有effect: &quot;NoExecute&quot;才能设置，不然报错</span></span><br></pre></td></tr></table></figure>
+<h2 id="3-Tolerations容忍"><a href="#3-Tolerations容忍" class="headerlink" title="3.Tolerations容忍"></a>3.Tolerations容忍</h2><p>设置了污点的Node将根据taint的effect：NoSchedule、PreferNoSchedule、NoExecute和Pod之间产生互斥的关系，Pod将在一定程度上不会被调度到Node上。</p>
+<p>但我们可以在Pod上设置容忍（Tolerations），意思是设置了容忍的Pod将可以容忍污点的存在，可以被调度到存在污点的Node上。</p>
+<p><em>重要说明：</em></p>
+<ul>
+<li>其中key、value、effect要与Node上设置的taint保持一致</li>
+<li>operator的值为Exists时，将会忽略value；只要有key和effect就行</li>
+<li>tolerationSeconds：表示pod 能够容忍 effect 值为 NoExecute 的 taint；当指定了 tolerationSeconds【容忍时间】，则表示 pod 还能在这个节点上继续运行的时间长度。</li>
+</ul>
+<h3 id="当不指定key值时"><a href="#当不指定key值时" class="headerlink" title="当不指定key值时"></a>当不指定key值时</h3><p>当不指定key值和effect值时，且operator为Exists，表示容忍所有的污点【能匹配污点所有的keys，values和effects】</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tolerations:</span><br><span class="line">- operator: <span class="string">&quot;Exists&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+<h3 id="当不指定effect值时"><a href="#当不指定effect值时" class="headerlink" title="当不指定effect值时"></a>当不指定effect值时</h3><p>当不指定effect值时，则能匹配污点key对应的所有effects情况</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tolerations:</span><br><span class="line">- key: <span class="string">&quot;key&quot;</span></span><br><span class="line">  operator: <span class="string">&quot;Exists&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="当有多个Master存在时"><a href="#当有多个Master存在时" class="headerlink" title="当有多个Master存在时"></a>当有多个Master存在时</h3><p>当有多个Master存在时，为了防止资源浪费，可以进行如下设置：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl taint nodes Node-name node-role.kubernetes.io/master=:PreferNoSchedule</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">字段名              字段类型            描述</span><br><span class="line">key                 string	        此容忍针对的污点的 key。如果为空，则匹配所有的污点，此时operator 必须为 Exists。当 key 为空，operator 为 Exists 时，表示容忍匹配所有 key / value 的污点</span><br><span class="line">operator	        string	        operator （操作符）表示 key 与 value 的关系。可选值为 Exists 和 Equal，默认为 Equal。 Exists 相当于 value 的通配符，此时 Pod 可以容忍包含该 key 的所有污点</span><br><span class="line">value	            string	        此容忍针对的污点的 value。如果 operator 为 Exists，value 应该为空，否则，value 为一个常规字符串</span><br><span class="line">effect	            string	        此容忍针对的污点的 effect。如果为空，则表示该容忍匹配污点的所有 effect。可选值为 NoSchedule、PreferNoSchedule、NoExecute</span><br><span class="line">tolerationSeconds	integer	        TolerationSeconds 代表了容忍的持续时间，当该字段被填写时，effect 必须为 NoExecute。默认情况下，该字段为空，代表 Pod 可以一直容忍该污点（不会被驱逐）。0 以及负数将被认为是 0 （立刻驱逐）。</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-多个Taints污点和多个Tolerations容忍怎么判断"><a href="#4-多个Taints污点和多个Tolerations容忍怎么判断" class="headerlink" title="4.多个Taints污点和多个Tolerations容忍怎么判断"></a>4.多个Taints污点和多个Tolerations容忍怎么判断</h2><p>可以在同一个node节点上设置多个污点（Taints），在同一个pod上设置多个容忍（Tolerations）。Kubernetes处理多个污点和容忍的方式就像一个过滤器：从节点的所有污点开始，然后忽略可以被Pod容忍匹配的污点；保留其余不可忽略的污点，污点的effect对Pod具有显示效果：特别是：</p>
+<ul>
+<li>如果有至少一个不可忽略污点，effect为NoSchedule，那么Kubernetes将不调度Pod到该节点</li>
+<li>如果没有effect为NoSchedule的不可忽视污点，但有至少一个不可忽视污点，effect为PreferNoSchedule，那么Kubernetes将尽量不调度Pod到该节点</li>
+<li>如果有至少一个不可忽视污点，effect为NoExecute，那么Pod将被从该节点驱逐（如果Pod已经在该节点运行），并且不会被调度到该节点（如果Pod还未在该节点运行）</li>
+</ul>
+<h2 id="5-污点和容忍的使用场景"><a href="#5-污点和容忍的使用场景" class="headerlink" title="5.污点和容忍的使用场景"></a>5.污点和容忍的使用场景</h2><p>污点和容忍使用起来非常灵活，可以用于：</p>
+<ul>
+<li>避免 Pod 被调度到某些特定的节点</li>
+<li>从节点上驱逐本不应该在该节点运行的 Pod</li>
+</ul>
+<p>具体使用场景可能有:</p>
+<ul>
+<li>专属的节点： 如果想将一组节点专门用于特定的场景，可以为这些节点添加污点（例如 kubectl taint nodes nodename dedicated&#x3D;groupName:NoSchedule）然后向对应的 Pod 添加容忍。带有这些容忍的 Pod 将可以使用这一组专属节点，同时也可以使用集群中的其他节点。如果想进一步限制这些 Pod 只能使用这一组节点，那么应该为这一组节点添加一个标签（例如 dedicated&#x3D;groupName），并为这一组 Pod 添加 node affinity（或 node selector）以限制这些 Pod 只能调度到这一组节点上。</li>
+<li>带有特殊硬件的节点：集群中，如果某一组节点具备特殊的硬件（例如 GPU），此时非常有必要将那些不需要这类硬件的 Pod 从这组节点上排除掉，以便需要这类硬件的 Pod 可以得到资源。此时可以为这类节点添加污点（例如：kubectl taint nodes nodename special&#x3D;true:NoSchedule 或者 kubectl taint nodes nodename special&#x3D;true:PreferNoSchedule）并为需要这类硬件的 Pod 添加匹配的容忍。</li>
+<li>基于污点的驱逐 当节点出现问题时，可以使用污点以 Pod 为单位从节点上驱逐 Pod。</li>
+</ul>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/CentOS/fda32bb546ee/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">CentOS设置服务守护进程</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/Kubernetes/8d25ac14ec4e/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Kubernetes之更换集群IP地址</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kubernetes%E4%B9%8BTaints%E6%B1%A1%E7%82%B9%E4%B8%8ETolerations%E5%AE%B9%E5%BF%8D%E8%AF%A6%E8%A7%A3"><span class="nav-text">Kubernetes之Taints污点与Tolerations容忍详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Taints%E6%B1%A1%E7%82%B9%E5%92%8CTolerations%E5%AE%B9%E5%BF%8D%E6%A6%82%E8%BF%B0"><span class="nav-text">1.Taints污点和Tolerations容忍概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Taints%E6%B1%A1%E7%82%B9"><span class="nav-text">2.Taints污点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Taints%E6%B1%A1%E7%82%B9%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-text">Taints污点的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Taints%E6%B1%A1%E7%82%B9%E8%AE%BE%E7%BD%AE"><span class="nav-text">Taints污点设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%A1%E7%82%B9%EF%BC%88Taints%EF%BC%89%E6%B7%BB%E5%8A%A0"><span class="nav-text">污点（Taints）添加</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%A1%E7%82%B9%EF%BC%88Taints%EF%BC%89%E5%88%A0%E9%99%A4"><span class="nav-text">污点（Taints）删除</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Tolerations%E5%AE%B9%E5%BF%8D"><span class="nav-text">3.Tolerations容忍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%93%E4%B8%8D%E6%8C%87%E5%AE%9Akey%E5%80%BC%E6%97%B6"><span class="nav-text">当不指定key值时</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%93%E4%B8%8D%E6%8C%87%E5%AE%9Aeffect%E5%80%BC%E6%97%B6"><span class="nav-text">当不指定effect值时</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%93%E6%9C%89%E5%A4%9A%E4%B8%AAMaster%E5%AD%98%E5%9C%A8%E6%97%B6"><span class="nav-text">当有多个Master存在时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%A4%9A%E4%B8%AATaints%E6%B1%A1%E7%82%B9%E5%92%8C%E5%A4%9A%E4%B8%AATolerations%E5%AE%B9%E5%BF%8D%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD"><span class="nav-text">4.多个Taints污点和多个Tolerations容忍怎么判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%B1%A1%E7%82%B9%E5%92%8C%E5%AE%B9%E5%BF%8D%E7%9A%84%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-text">5.污点和容忍的使用场景</span></a></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>
