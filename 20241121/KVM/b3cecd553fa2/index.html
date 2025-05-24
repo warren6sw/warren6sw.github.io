@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            KVM虚拟化搭建 |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">KVM虚拟化搭建</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/KVM/">KVM</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/KVM/">KVM</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>2.3k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>10 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="KVM虚拟化搭建"><a href="#KVM虚拟化搭建" class="headerlink" title="KVM虚拟化搭建"></a>KVM虚拟化搭建</h1><h3 id="1-关闭防火墙"><a href="#1-关闭防火墙" class="headerlink" title="1.关闭防火墙"></a>1.关闭防火墙</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 停止firewall</span></span><br><span class="line">systemctl stop firewalld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 禁止firewall开机启动</span></span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-关闭enforce"><a href="#2-关闭enforce" class="headerlink" title="2.关闭enforce"></a>2.关闭enforce</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setenforce 0</span><br><span class="line"><span class="comment"># 将/etc/selinux/config中SELINUX=enforcing改为SELINUX=disabled</span></span><br><span class="line">vi /etc/selinux/config </span><br></pre></td></tr></table></figure>
+
+<h3 id="3-查cpu是否支持VT"><a href="#3-查cpu是否支持VT" class="headerlink" title="3.查cpu是否支持VT"></a>3.查cpu是否支持VT</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">egrep <span class="string">&#x27;(vmx|svm)&#x27;</span> --color=always /proc/cpuinfo</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-检查内核模块是否加载"><a href="#4-检查内核模块是否加载" class="headerlink" title="4.检查内核模块是否加载"></a>4.检查内核模块是否加载</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsmod | grep kvm</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-安装kvm及依赖"><a href="#5-安装kvm及依赖" class="headerlink" title="5.安装kvm及依赖"></a>5.安装kvm及依赖</h3><p>若离线安装请先部署本地yum源,在线安装直接安装即可</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y  virt-*  libvirt  bridge-utils qemu-img qemu-kvm virt-install libguestfs-tools</span><br></pre></td></tr></table></figure>
+
+<p><code>设置开机启动</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> libvirtd</span><br><span class="line">systemctl start libvirtd</span><br></pre></td></tr></table></figure>
+
+<p><code>查看状态是否正常</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status libvirtd</span><br></pre></td></tr></table></figure>
+
+<p><code>配置软连接</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ln</span> -s /usr/libexec/qemu-kvm /usr/bin/qemu-kvm </span><br></pre></td></tr></table></figure>
+
+<h3 id="6-为虚拟机创建网桥"><a href="#6-为虚拟机创建网桥" class="headerlink" title="6.为虚拟机创建网桥"></a>6.为虚拟机创建网桥</h3><p><code>首先备份一下网卡设置</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> /etc/sysconfig/network-scripts/ifcfg-ens160  /etc/sysconfig/network-scripts/ifcfg-ens160.bak</span><br></pre></td></tr></table></figure>
+
+<p><code>配置虚拟网桥</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 清空ifcfg-ens160内容</span></span><br><span class="line"><span class="built_in">cat</span> &gt;/etc/sysconfig/network-scripts/ifcfg-ens160 &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">DEVICE=ens160</span></span><br><span class="line"><span class="string">TYPE=Ethernet</span></span><br><span class="line"><span class="string">BOOTPROTO=none</span></span><br><span class="line"><span class="string">ONBOOT=yes</span></span><br><span class="line"><span class="string">BRIDGE=br0</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<p><code>新建br0</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;/etc/sysconfig/network-scripts/ifcfg-br0 &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">TYPE=&quot;Bridge&quot;</span></span><br><span class="line"><span class="string">BOOTPROTO=static</span></span><br><span class="line"><span class="string">DEVICE=&quot;br0&quot;</span></span><br><span class="line"><span class="string">ONBOOT=&quot;yes&quot;</span></span><br><span class="line"><span class="string">IPADDR=192.168.1.10</span></span><br><span class="line"><span class="string">NETMASK=255.255.255.0</span></span><br><span class="line"><span class="string">GATEWAY=192.168.1.1</span></span><br><span class="line"><span class="string">DNS1=114.114.114.114</span></span><br><span class="line"><span class="string">DNS2=8.8.8.8</span></span><br><span class="line"><span class="string">DELAY=&quot;0&quot;</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p><code>自动化搭建kvm简易脚本</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 网卡名称</span></span><br><span class="line">etlName=<span class="variable">$1</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># IP地址</span></span><br><span class="line">IP=<span class="variable">$2</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 网关地址</span></span><br><span class="line">GWay=<span class="variable">$3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 子网掩码</span></span><br><span class="line">NMask=<span class="variable">$4</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$&#123;etlName&#125;</span><span class="string">&quot;x&quot;</span> == <span class="string">&quot;x&quot;</span> ]||[ <span class="variable">$&#123;IP&#125;</span><span class="string">&quot;x&quot;</span> == <span class="string">&quot;x&quot;</span> ]||[ <span class="variable">$&#123;GWay&#125;</span><span class="string">&quot;x&quot;</span> == <span class="string">&quot;x&quot;</span> ];<span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;参数错误,请检查参数设置是否正确!!!&quot;</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;参数1: 桥接网卡名称&quot;</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;参数2: 桥接ip的地址&quot;</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;参数3: 桥接网关地址&quot;</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;参数4: 桥接子网掩码&quot;</span></span><br><span class="line">  <span class="built_in">exit</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$&#123;NMask&#125;</span><span class="string">&quot;x&quot;</span> == <span class="string">&quot;x&quot;</span> ];<span class="keyword">then</span></span><br><span class="line">  NMask=<span class="string">&quot;255.255.255.0&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;参数1: 桥接网卡名称-&gt; <span class="variable">$etlName</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;参数2: 桥接ip的地址-&gt; <span class="variable">$IP</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;参数3: 桥接网关地址-&gt; <span class="variable">$GWay</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;参数4: 桥接子网掩码-&gt; <span class="variable">$NMask</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止firewall</span></span><br><span class="line">systemctl stop firewalld</span><br><span class="line"><span class="comment"># 禁止firewall开机启动</span></span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭selinux</span></span><br><span class="line">setenforce 0</span><br><span class="line">sed -i <span class="string">&#x27;s/SELINUX=enforcing/SELINUX=disabled/&#x27;</span> /etc/selinux/config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装kvm</span></span><br><span class="line">yum install -y  virt-* libvirt bridge-utils qemu-img qemu-kvm virt-install libguestfs-tools</span><br><span class="line"></span><br><span class="line">systemctl <span class="built_in">enable</span> libvirtd</span><br><span class="line">systemctl start libvirtd</span><br><span class="line">systemctl status libvirtd</span><br><span class="line"></span><br><span class="line"><span class="built_in">ln</span> -s /usr/libexec/qemu-kvm /usr/bin/qemu-kvm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 备份网卡</span></span><br><span class="line"><span class="built_in">cp</span> -a /etc/sysconfig/network-scripts/ifcfg-<span class="variable">$&#123;etlName&#125;</span>  /etc/sysconfig/network-scripts/ifcfg-<span class="variable">$&#123;etlName&#125;</span>$(<span class="built_in">date</span> +<span class="string">&quot;%Y%m%d&quot;</span>).bak</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &gt;/etc/sysconfig/network-scripts/ifcfg-<span class="variable">$&#123;etlName&#125;</span> &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">DEVICE=$&#123;etlName&#125;</span></span><br><span class="line"><span class="string">TYPE=Ethernet</span></span><br><span class="line"><span class="string">BOOTPROTO=none</span></span><br><span class="line"><span class="string">ONBOOT=yes</span></span><br><span class="line"><span class="string">BRIDGE=br0</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建桥接网卡</span></span><br><span class="line"><span class="built_in">cat</span> &gt;/etc/sysconfig/network-scripts/ifcfg-br0 &lt;&lt;<span class="string">EOF</span></span><br><span class="line"><span class="string">TYPE=&quot;Bridge&quot;</span></span><br><span class="line"><span class="string">BOOTPROTO=static</span></span><br><span class="line"><span class="string">DEVICE=&quot;br0&quot;</span></span><br><span class="line"><span class="string">ONBOOT=&quot;yes&quot;</span></span><br><span class="line"><span class="string">IPADDR=$&#123;IP&#125;</span></span><br><span class="line"><span class="string">NETMASK=$&#123;NMask&#125;</span></span><br><span class="line"><span class="string">GATEWAY=$&#123;GWay&#125;</span></span><br><span class="line"><span class="string">DNS1=114.114.114.114</span></span><br><span class="line"><span class="string">DNS2=8.8.8.8</span></span><br><span class="line"><span class="string">DELAY=&quot;0&quot;</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-重启网络"><a href="#7-重启网络" class="headerlink" title="7.重启网络"></a>7.重启网络</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart network</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-查看网桥"><a href="#8-查看网桥" class="headerlink" title="8.查看网桥"></a>8.查看网桥</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brctl show</span><br><span class="line">brctl stp br0 on</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-创建虚拟机"><a href="#9-创建虚拟机" class="headerlink" title="9.创建虚拟机"></a>9.创建虚拟机</h3><p><code>方式1</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建虚拟机文件系统</span></span><br><span class="line">qemu-img create -f qcow2 centos1.qcow2 500G</span><br><span class="line">qemu-img create -f qcow2 centos2.qcow2 500G</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建虚拟机</span></span><br><span class="line">qemu-kvm -name c1 -cpu host -smp 2 -m 64 -drive file=/data/imgs/centos1.qcow2,<span class="keyword">if</span>=virtio,media=disk,format=qcow2 -drive file=/opt/CentOS-5.5-i386-bin-DVD.iso,index=1,media=cdrom -vnc :0 -net nic,model=e1000,macaddr=52:54:00:00:01:01 -net tap,script=/etc/qemu-ifup-pn1 -daemonize</span><br><span class="line"></span><br><span class="line">qemu-kvm -name c2 -cpu host -smp 2 -m 64 -drive file=/data/imgs/centos2.qcow2,<span class="keyword">if</span>=virtio,media=disk,format=qcow2 -drive file=/opt/CentOS-5.5-i386-bin-DVD.iso,index=1,media=cdrom -vnc :1 -net nic,model=e1000,macaddr=52:54:00:00:00:01 -net tap,script=/etc/qemu-ifup-pn1 -daemonize</span><br></pre></td></tr></table></figure>
+<p>注意：-vnc :0&#x2F;1 是窗口号；MAC 地址52:54:00 不能改，后边随意</p>
+<p>开2个终端，vnc 连接虚拟机</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vncviewer 192.168.30.107:0</span><br><span class="line"></span><br><span class="line">vncviewer 192.168.30.107:1</span><br></pre></td></tr></table></figure>
+<p><code>方式2</code><br>推荐此方式</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建虚拟机文件系统</span></span><br><span class="line">qemu-img create -f qcow2 centos1.qcow2 500G</span><br><span class="line"></span><br><span class="line"><span class="comment"># 用virt-manager图形化安装：略</span></span><br><span class="line">virt-manager</span><br></pre></td></tr></table></figure>
+<p>virt-manager若无法打开尝试执行export DISPLAY&#x3D;Windows的IP:0.0</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> DISPLAY=192.168.11.13:0.0</span><br></pre></td></tr></table></figure>
+
+<p><code>方式3</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建虚拟机文件系统</span></span><br><span class="line">qemu-img create -f qcow2 centos1.qcow2 500G</span><br><span class="line"></span><br><span class="line"><span class="comment"># virt-install安装</span></span><br><span class="line">virt-install --name=master1 --memory 8192 --vcpus=2 --disk path=/data/qemu/centos1/centos1.qcow2,size=500,format=qcow2,bus=virtio --accelerate --cdrom=/data/CentOS-7-x86_64-DVD-1810.iso --vnc --vncport=6004 --vnclisten=0.0.0.0 --network bridge=br0,model=virtio --noautoconsole</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="10-KVM虚拟机日常操作命令"><a href="#10-KVM虚拟机日常操作命令" class="headerlink" title="10.KVM虚拟机日常操作命令"></a>10.KVM虚拟机日常操作命令</h3><p>KVM虚拟机的管理主要是通过virsh命令对虚拟机进行管理。</p>
+<p>下面列出kvm日常管理中的命令:</p>
+<p>查看KVM虚拟机配置文件及运行状态KVM虚拟机默认配置文件位置: &#x2F;etc&#x2F;libvirt&#x2F;qemu&#x2F;autostart目录是配置kvm虚拟机开机自启动目录。</p>
+<p>virsh命令帮助:</p>
+<p>virsh -help</p>
+<p>或直接virsh命令和，再执行子命令。如下所示。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">virsh</span><br><span class="line"></span><br><span class="line">欢迎使用 virsh，虚拟化的交互式终端。</span><br><span class="line">输入：<span class="string">&#x27;help&#x27;</span> 来获得命令的帮助信息</span><br><span class="line"><span class="string">&#x27;quit&#x27;</span> 退出</span><br><span class="line">virsh <span class="comment"># help</span></span><br><span class="line"><span class="comment"># ..</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="1-查看kvm虚拟机状态"><a href="#1-查看kvm虚拟机状态" class="headerlink" title="(1)查看kvm虚拟机状态"></a>(1)查看kvm虚拟机状态</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh list --all</span><br></pre></td></tr></table></figure>
+
+<h5 id="2-KVM虚拟机开机"><a href="#2-KVM虚拟机开机" class="headerlink" title="(2)KVM虚拟机开机"></a>(2)KVM虚拟机开机</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh start oeltest01</span><br></pre></td></tr></table></figure>
+
+<p>KVM虚拟机关机或断电<br>默认情况下virsh工具不能对linux虚拟机进行关机操作，linux操作系统需要开启与启动acpid服务。在安装KVM linux虚拟机必须配置此服务。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chkconfig acpid on</span><br><span class="line">service acpid restart</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-virsh关机"><a href="#3-virsh关机" class="headerlink" title="(3)virsh关机"></a>(3)virsh关机</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh shutdown oeltest01</span><br></pre></td></tr></table></figure>
+
+<h5 id="4-强制关闭电源"><a href="#4-强制关闭电源" class="headerlink" title="(4)强制关闭电源"></a>(4)强制关闭电源</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh destroy wintest01</span><br></pre></td></tr></table></figure>
+
+<h5 id="5-通过配置文件启动虚拟机"><a href="#5-通过配置文件启动虚拟机" class="headerlink" title="(5)通过配置文件启动虚拟机"></a>(5)通过配置文件启动虚拟机</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh create /etc/libvirt/qemu/wintest01.xml</span><br></pre></td></tr></table></figure>
+
+<h5 id="6-配置开机自启动虚拟机"><a href="#6-配置开机自启动虚拟机" class="headerlink" title="(6)配置开机自启动虚拟机"></a>(6)配置开机自启动虚拟机</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh autostart oeltest01</span><br></pre></td></tr></table></figure>
+
+<p>autostart目录是kvm虚拟机开机自启动目录，可以看到该目录中有KVM配置文件链接。</p>
+<h5 id="7-导出KVM虚拟机配置文件"><a href="#7-导出KVM虚拟机配置文件" class="headerlink" title="(7)导出KVM虚拟机配置文件"></a>(7)导出KVM虚拟机配置文件</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh dumpxml wintest01 &gt; /etc/libvirt/qemu/wintest02.xml</span><br></pre></td></tr></table></figure>
+
+<p>KVM虚拟机配置文件可以通过这种方式进行备份。</p>
+<h5 id="8-删除kvm虚拟机"><a href="#8-删除kvm虚拟机" class="headerlink" title="(8)删除kvm虚拟机"></a>(8)删除kvm虚拟机</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh undefine wintest01</span><br></pre></td></tr></table></figure>
+
+<p>说明：该命令只是删除wintest01的配置文件，并不删除虚拟磁盘文件。</p>
+<h5 id="9-重新定义虚拟机配置文件"><a href="#9-重新定义虚拟机配置文件" class="headerlink" title="(9)重新定义虚拟机配置文件"></a>(9)重新定义虚拟机配置文件</h5><p>通过导出备份的配置文件恢复原KVM虚拟机的定义，并重新定义虚拟机。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/libvirt/qemu/wintest02.xml /etc/libvirt/qemu/wintest01.xml</span><br><span class="line">virsh define /etc/libvirt/qemu/wintest01.xml</span><br></pre></td></tr></table></figure>
+
+<h5 id="10-编辑KVM虚拟机配置文件"><a href="#10-编辑KVM虚拟机配置文件" class="headerlink" title="(10)编辑KVM虚拟机配置文件"></a>(10)编辑KVM虚拟机配置文件</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh edit wintest01</span><br></pre></td></tr></table></figure>
+
+<p>virsh edit将调用vi命令编辑&#x2F;etc&#x2F;libvirt&#x2F;qemu&#x2F;wintest01.xml配置文件。也可以直接通过vi命令进行编辑，修改，保存。<br>可以但不建议直接通过vi编辑。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/libvirt/qemu/wintest01.xml</span><br></pre></td></tr></table></figure>
+
+<h5 id="11-kvm虚拟机console控制台登录配置"><a href="#11-kvm虚拟机console控制台登录配置" class="headerlink" title="(11)kvm虚拟机console控制台登录配置"></a>(11)kvm虚拟机console控制台登录配置</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh console oeltest01</span><br></pre></td></tr></table></figure>
+
+<h5 id="12-挂起服务器"><a href="#12-挂起服务器" class="headerlink" title="(12)挂起服务器"></a>(12)挂起服务器</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh <span class="built_in">suspend</span> oeltest01</span><br></pre></td></tr></table></figure>
+
+<h5 id="13-恢复服务器"><a href="#13-恢复服务器" class="headerlink" title="(13)恢复服务器"></a>(13)恢复服务器</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh resume oeltest01</span><br></pre></td></tr></table></figure>
+
+<h5 id="14-创建虚拟机"><a href="#14-创建虚拟机" class="headerlink" title="(14)创建虚拟机"></a>(14)创建虚拟机</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 参数样例</span></span><br><span class="line">virt-install --name=centos1 \</span><br><span class="line">--ram 1024 --vcpus=1 \</span><br><span class="line">--disk path=/root/centos1.img,size=10 \</span><br><span class="line">--accelerate --cdrom /root/CentOS-6.5-x86_64-bin-DVD1.iso \</span><br><span class="line">--graphics vnc,port=5921 --network bridge=br0</span><br></pre></td></tr></table></figure>
+
+<h5 id="15-如果有图形界面的话，可以进入虚拟机的界面"><a href="#15-如果有图形界面的话，可以进入虚拟机的界面" class="headerlink" title="(15)如果有图形界面的话，可以进入虚拟机的界面"></a>(15)如果有图形界面的话，可以进入虚拟机的界面</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virt-viewer centos1</span><br></pre></td></tr></table></figure>
+
+<h5 id="16-重启虚拟机"><a href="#16-重启虚拟机" class="headerlink" title="(16)重启虚拟机"></a>(16)重启虚拟机</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh reboot centos1</span><br></pre></td></tr></table></figure>
+
+<h5 id="17-暂停虚拟机"><a href="#17-暂停虚拟机" class="headerlink" title="(17)暂停虚拟机"></a>(17)暂停虚拟机</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh <span class="built_in">suspend</span> centos1</span><br></pre></td></tr></table></figure>
+
+<h5 id="18-恢复虚拟机"><a href="#18-恢复虚拟机" class="headerlink" title="(18)恢复虚拟机"></a>(18)恢复虚拟机</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh resume centos1</span><br></pre></td></tr></table></figure>
+
+<p>(19)克隆centos1</p>
+<p>如果我们要建几个一样的虚拟机，这个命令，非常有用。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virt-clone --connect=qemu:#/system -o centos1 -n centos3 -f /root/centos3.img</span><br></pre></td></tr></table></figure>
+
+<h5 id="20-未登录的情况下，查看镜像目录"><a href="#20-未登录的情况下，查看镜像目录" class="headerlink" title="(20)未登录的情况下，查看镜像目录"></a>(20)未登录的情况下，查看镜像目录</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看centos.img镜像文件中/home目录</span></span><br><span class="line">virt-ls centos.img /home</span><br><span class="line"><span class="comment"># tank </span></span><br><span class="line"><span class="comment"># mysql</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="21-查看虚拟机的分区情况"><a href="#21-查看虚拟机的分区情况" class="headerlink" title="(21)查看虚拟机的分区情况"></a>(21)查看虚拟机的分区情况</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">virt-filesystems -d centos1</span><br><span class="line"><span class="comment"># /dev/sda1</span></span><br><span class="line"><span class="comment"># /dev/VolGroup/lv_root</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">virt-df centos.img</span><br><span class="line"><span class="comment"># Filesystem 1K-blocks Used Available Use%</span></span><br><span class="line"><span class="comment"># centos.img:/dev/sda1 495844 34510 435734 7%</span></span><br><span class="line"><span class="comment"># centos.img:/dev/VolGroup/lv_root 8780808 2842056 5492700 33%</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="22-将centos1中的文件copy到tmp下面"><a href="#22-将centos1中的文件copy到tmp下面" class="headerlink" title="(22) 将centos1中的文件copy到tmp下面"></a>(22) 将centos1中的文件copy到tmp下面</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virt-copy-out -d centos1 /etc/passwd /tmp</span><br></pre></td></tr></table></figure>
+
+<h5 id="23-mount虚拟机"><a href="#23-mount虚拟机" class="headerlink" title="(23)mount虚拟机"></a>(23)mount虚拟机</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">guestmount -a /root/centos.img -m /dev/VolGroup/lv_root --rw /mnt/usb</span><br><span class="line"><span class="built_in">cd</span> /mnt/usb/</span><br><span class="line"><span class="built_in">ls</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># bin dev home lib64 media mnt opt root selinux sys usr</span></span><br><span class="line"><span class="comment"># boot etc lib lost+found misc net proc sbin srv tmp var</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="24-修改kvm中虚拟机的内存大小"><a href="#24-修改kvm中虚拟机的内存大小" class="headerlink" title="(24)修改kvm中虚拟机的内存大小"></a>(24)修改kvm中虚拟机的内存大小</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改配置文件后需要重新启动下虚拟机，先关闭它</span></span><br><span class="line">virsh shutdown vm01</span><br><span class="line"><span class="comment"># Domain vm01 is being shutdown</span></span><br><span class="line"><span class="comment"># 确认已经被关闭</span></span><br><span class="line">virsh list</span><br><span class="line"><span class="comment"># Id Name State</span></span><br><span class="line"><span class="comment"># ----------------------------------</span></span><br><span class="line"><span class="comment"># 1 vm02 running</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意vi直接编辑不生效</span></span><br><span class="line">virsh edit vm01 </span><br><span class="line"><span class="comment"># vm01</span></span><br><span class="line"><span class="comment"># df8604c1-dcf3-fa98-420f-6eea7b39c395</span></span><br><span class="line"><span class="comment"># 1048576 ###本来开始设置为1G，现在这个单位是k</span></span><br><span class="line"><span class="comment"># 1048576</span></span><br><span class="line"><span class="comment"># 修改为1.5G</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动</span></span><br><span class="line">virsh start vm01</span><br><span class="line"><span class="comment"># Domain vm01 started</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="25-删除一个虚拟机"><a href="#25-删除一个虚拟机" class="headerlink" title="(25)删除一个虚拟机"></a>(25)删除一个虚拟机</h5><p>可以删除一个状态为“shut off”的虚拟机。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">virsh undefine vm01</span><br><span class="line"><span class="built_in">rm</span> -f /home/data/vm01.img</span><br></pre></td></tr></table></figure>
+
+<h5 id="26-网络设置"><a href="#26-网络设置" class="headerlink" title="(26)网络设置"></a>(26)网络设置</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看网络</span></span><br><span class="line">virsh net-list</span><br><span class="line"><span class="comment"># 名称               状态     自动开始  Persistent</span></span><br><span class="line"><span class="comment"># --------------------------------------------------</span></span><br><span class="line"><span class="comment"># default              活动     yes           yes</span></span><br><span class="line"></span><br><span class="line">brctl show</span><br><span class="line"><span class="comment"># bridge name   bridge id       STP enabled interfaces</span></span><br><span class="line"><span class="comment"># br0       8000.0cc47acaec9a   no      eth0</span></span><br><span class="line"><span class="comment">#                           vnet0</span></span><br><span class="line"><span class="comment">#                           vnet1</span></span><br><span class="line"><span class="comment"># docker0       8000.000000000000   no      </span></span><br><span class="line"><span class="comment"># virbr0        8000.525400b7157f   yes     virbr0-nic</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除网络</span></span><br><span class="line">brctl delif bro vnet1</span><br><span class="line"><span class="comment"># 添加网络</span></span><br><span class="line">brctl addif bro vnet1</span><br></pre></td></tr></table></figure>
+
+<h5 id="27-virtsh参数如下"><a href="#27-virtsh参数如下" class="headerlink" title="(27)virtsh参数如下:"></a>(27)virtsh参数如下:</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">autostart      #自动加载指定的一个虚拟机</span><br><span class="line">connect        #重新连接到hypervisor</span><br><span class="line">console        #连接到客户会话</span><br><span class="line">create         #从一个SML文件创建一个虚拟机</span><br><span class="line">start          #开始一个非活跃的虚拟机</span><br><span class="line">destroy        #删除一个虚拟机</span><br><span class="line">define         #从一个XML文件定义一个虚拟机</span><br><span class="line">domid          #把一个虚拟机名或UUID转换为ID</span><br><span class="line">domuuid        #把一个郁闷或ID转换为UUID</span><br><span class="line">dominfo        #查看虚拟机信息</span><br><span class="line">domstate       #查看虚拟机状态</span><br><span class="line">domblkstat     #获取虚拟机设备快状态</span><br><span class="line">domifstat      #获取虚拟机网络接口状态</span><br><span class="line">dumpxml        #XML中的虚拟机信息</span><br><span class="line">edit           #编辑某个虚拟机的XML文件</span><br><span class="line">list           #列出虚拟机</span><br><span class="line">migrate        #将虚拟机迁移到另一台主机</span><br><span class="line">quit           #退出非交互式终端</span><br><span class="line">reboot         #重新启动一个虚拟机</span><br><span class="line">resume         #重新恢复一个虚拟机</span><br><span class="line">save           #把一个虚拟机的状态保存到一个文件</span><br><span class="line">dump           #把一个虚拟机的内核dump到一个文件中以方便分析</span><br><span class="line">shutdown       #关闭一个虚拟机</span><br><span class="line">setmem         #改变内存的分配</span><br><span class="line">setmaxmem      #改变最大内存限制值</span><br><span class="line">suspend        #挂起一个虚拟机</span><br><span class="line">vcpuinfo       #虚拟机的cpu信息</span><br><span class="line">version        #显示virsh版本</span><br></pre></td></tr></table></figure>
+
+
+
+<p>来源<a class="link"   target="_blank" rel="noopener" href="https://blog.csdn.net/wq962464/article/details/1052383780" >简书<i class="fas fa-external-link-alt"></i></a></p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/Oracle/231d1d6a5934/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">CentOS安装Oracle11G</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/Kubernetes/cfcdca5a076b/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Kubernetes之kubelet和docker的Cgroups驱动配置</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#KVM%E8%99%9A%E6%8B%9F%E5%8C%96%E6%90%AD%E5%BB%BA"><span class="nav-text">KVM虚拟化搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%85%B3%E9%97%AD%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-text">1.关闭防火墙</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%85%B3%E9%97%ADenforce"><span class="nav-text">2.关闭enforce</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%9F%A5cpu%E6%98%AF%E5%90%A6%E6%94%AF%E6%8C%81VT"><span class="nav-text">3.查cpu是否支持VT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%A3%80%E6%9F%A5%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97%E6%98%AF%E5%90%A6%E5%8A%A0%E8%BD%BD"><span class="nav-text">4.检查内核模块是否加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%AE%89%E8%A3%85kvm%E5%8F%8A%E4%BE%9D%E8%B5%96"><span class="nav-text">5.安装kvm及依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E4%B8%BA%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%88%9B%E5%BB%BA%E7%BD%91%E6%A1%A5"><span class="nav-text">6.为虚拟机创建网桥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E9%87%8D%E5%90%AF%E7%BD%91%E7%BB%9C"><span class="nav-text">7.重启网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E6%9F%A5%E7%9C%8B%E7%BD%91%E6%A1%A5"><span class="nav-text">8.查看网桥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">9.创建虚拟机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%97%A5%E5%B8%B8%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="nav-text">10.KVM虚拟机日常操作命令</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-%E6%9F%A5%E7%9C%8Bkvm%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%8A%B6%E6%80%81"><span class="nav-text">(1)查看kvm虚拟机状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%BC%80%E6%9C%BA"><span class="nav-text">(2)KVM虚拟机开机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-virsh%E5%85%B3%E6%9C%BA"><span class="nav-text">(3)virsh关机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-%E5%BC%BA%E5%88%B6%E5%85%B3%E9%97%AD%E7%94%B5%E6%BA%90"><span class="nav-text">(4)强制关闭电源</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-%E9%80%9A%E8%BF%87%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%90%AF%E5%8A%A8%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">(5)通过配置文件启动虚拟机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-%E9%85%8D%E7%BD%AE%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">(6)配置开机自启动虚拟机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-%E5%AF%BC%E5%87%BAKVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">(7)导出KVM虚拟机配置文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8-%E5%88%A0%E9%99%A4kvm%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">(8)删除kvm虚拟机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#9-%E9%87%8D%E6%96%B0%E5%AE%9A%E4%B9%89%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">(9)重新定义虚拟机配置文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#10-%E7%BC%96%E8%BE%91KVM%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">(10)编辑KVM虚拟机配置文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#11-kvm%E8%99%9A%E6%8B%9F%E6%9C%BAconsole%E6%8E%A7%E5%88%B6%E5%8F%B0%E7%99%BB%E5%BD%95%E9%85%8D%E7%BD%AE"><span class="nav-text">(11)kvm虚拟机console控制台登录配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#12-%E6%8C%82%E8%B5%B7%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">(12)挂起服务器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#13-%E6%81%A2%E5%A4%8D%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-text">(13)恢复服务器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#14-%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">(14)创建虚拟机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#15-%E5%A6%82%E6%9E%9C%E6%9C%89%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E7%9A%84%E8%AF%9D%EF%BC%8C%E5%8F%AF%E4%BB%A5%E8%BF%9B%E5%85%A5%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%95%8C%E9%9D%A2"><span class="nav-text">(15)如果有图形界面的话，可以进入虚拟机的界面</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#16-%E9%87%8D%E5%90%AF%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">(16)重启虚拟机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#17-%E6%9A%82%E5%81%9C%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">(17)暂停虚拟机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#18-%E6%81%A2%E5%A4%8D%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">(18)恢复虚拟机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#20-%E6%9C%AA%E7%99%BB%E5%BD%95%E7%9A%84%E6%83%85%E5%86%B5%E4%B8%8B%EF%BC%8C%E6%9F%A5%E7%9C%8B%E9%95%9C%E5%83%8F%E7%9B%AE%E5%BD%95"><span class="nav-text">(20)未登录的情况下，查看镜像目录</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#21-%E6%9F%A5%E7%9C%8B%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E5%88%86%E5%8C%BA%E6%83%85%E5%86%B5"><span class="nav-text">(21)查看虚拟机的分区情况</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#22-%E5%B0%86centos1%E4%B8%AD%E7%9A%84%E6%96%87%E4%BB%B6copy%E5%88%B0tmp%E4%B8%8B%E9%9D%A2"><span class="nav-text">(22) 将centos1中的文件copy到tmp下面</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#23-mount%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">(23)mount虚拟机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#24-%E4%BF%AE%E6%94%B9kvm%E4%B8%AD%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E5%86%85%E5%AD%98%E5%A4%A7%E5%B0%8F"><span class="nav-text">(24)修改kvm中虚拟机的内存大小</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#25-%E5%88%A0%E9%99%A4%E4%B8%80%E4%B8%AA%E8%99%9A%E6%8B%9F%E6%9C%BA"><span class="nav-text">(25)删除一个虚拟机</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#26-%E7%BD%91%E7%BB%9C%E8%AE%BE%E7%BD%AE"><span class="nav-text">(26)网络设置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#27-virtsh%E5%8F%82%E6%95%B0%E5%A6%82%E4%B8%8B"><span class="nav-text">(27)virtsh参数如下:</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            Mysql之常用引擎对比与参数调优 |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Mysql之常用引擎对比与参数调优</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Mysql/">Mysql</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Mysql/">Mysql</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>1.8k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>6 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h3 id="MySQL常用存储引擎之MyISAM"><a href="#MySQL常用存储引擎之MyISAM" class="headerlink" title="MySQL常用存储引擎之MyISAM"></a>MySQL常用存储引擎之MyISAM</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">特性：</span><br><span class="line">    1、并发性与锁级别</span><br><span class="line">    2、表损坏修复</span><br><span class="line">        check table tablename</span><br><span class="line">        repair table tablename</span><br><span class="line">    3、MyISAM表支持的索引类型</span><br><span class="line">        ①、全文索引</span><br><span class="line">        ②、前缀索引</span><br><span class="line">    4、MyISAM表支持数据压缩</span><br><span class="line">        myisampack</span><br><span class="line">限制：</span><br><span class="line">    版本 &lt; MySQL5.0时默认表大小为4G</span><br><span class="line">    如存储达标则要修改MAX_Rows和AVG_ROW_LENGTH</span><br><span class="line">    版本 &gt; MySQL5.0时默认支持为256TB</span><br><span class="line"></span><br><span class="line">适用场景：</span><br><span class="line">    1、非事务形应用</span><br><span class="line">    2、只读类应用</span><br><span class="line">    3、空间类应用</span><br></pre></td></tr></table></figure>
+
+<h3 id="MySQL常用存储引擎之Innodb"><a href="#MySQL常用存储引擎之Innodb" class="headerlink" title="MySQL常用存储引擎之Innodb"></a>MySQL常用存储引擎之Innodb</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Innodb存储引擎的特征</span><br><span class="line">    1、Innodb是一种事务性存储引擎</span><br><span class="line">    2、完全支持事务的ACID特性</span><br><span class="line">    3、Redo Log 和 Undo Log</span><br><span class="line">    4、Innodb支持行级锁</span><br><span class="line"></span><br><span class="line">Innodb使用表空间进行 数据存储</span><br><span class="line">    为每个表独立创建一个表空间存储</span><br><span class="line">        innodb_file_per_table</span><br><span class="line">            ON:独立表空间:tablename.ibd</span><br><span class="line">            OFF:系统表空间:ibdataX（X是个数字，从1开始的数字）</span><br><span class="line">    </span><br><span class="line">系统表空间和独立表空间要如何选择</span><br><span class="line">    比较：</span><br><span class="line">        系统表空间无法捡的收缩文件大小</span><br><span class="line">        独立表空格键可以通过optimize table命令收缩系统文件</span><br><span class="line">        系统表空间会产生IO瓶颈</span><br><span class="line">        独立表空间可以同时向多个文件刷新数据</span><br><span class="line">    </span><br><span class="line">表转移的步骤</span><br><span class="line">    步骤：</span><br><span class="line">        1、使用mysqldump到处所有数据库表数据</span><br><span class="line">        2、停止MySQL服务，修改参数，并删除Innodb相关文件</span><br><span class="line">        3、重启MySQL服务，重建Innodb系统表空间</span><br><span class="line">        4、重新导入数据</span><br></pre></td></tr></table></figure>
+
+<h3 id="MySQL常见的存储引擎之CSV"><a href="#MySQL常见的存储引擎之CSV" class="headerlink" title="MySQL常见的存储引擎之CSV"></a>MySQL常见的存储引擎之CSV</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">文件系统存储特点</span><br><span class="line">    1、数据以文本方式存储在文本中</span><br><span class="line">    2、.csv文件存储表内容</span><br><span class="line">    3、.csm文件存储表的元数据如表状态和数据量</span><br><span class="line">    4、.frm文件存储表结构信息</span><br><span class="line">    5、以csv格式进行存储</span><br><span class="line">    6、所有列必须都是不能为Null的</span><br><span class="line">    7、不支持索引</span><br><span class="line"></span><br><span class="line">    适用场景：</span><br><span class="line">        适用作为数据交换的中间表(电子表格-&gt;csv文件-&gt;MySQL数据库目录)</span><br></pre></td></tr></table></figure>
+
+<h3 id="MySQL常用存储引擎之Archive"><a href="#MySQL常用存储引擎之Archive" class="headerlink" title="MySQL常用存储引擎之Archive"></a>MySQL常用存储引擎之Archive</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">文件系统存储特点</span><br><span class="line">    1、以zlib对表数据进行压缩,磁盘I/O更少</span><br><span class="line">    2、数据存储在ARZ为后缀的文件中</span><br><span class="line"></span><br><span class="line">Archive存储引擎的特点</span><br><span class="line">    1、只支持insert和select操作</span><br><span class="line">    2、只允许在自增的ID列上加索引</span><br><span class="line">    </span><br><span class="line">    适用场景：</span><br><span class="line">        日志和数据采集类应用</span><br></pre></td></tr></table></figure>
+
+<h3 id="MySQL常用存储引擎之Memory"><a href="#MySQL常用存储引擎之Memory" class="headerlink" title="MySQL常用存储引擎之Memory"></a>MySQL常用存储引擎之Memory</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">文件系统存储特点</span><br><span class="line">    1、也成HEAP存储引擎，所以数据保存在内存中</span><br><span class="line"></span><br><span class="line">功能特点：</span><br><span class="line">    1、支持HASH索引和Btree索引</span><br><span class="line">    2、所有字段都有固定长度varchar(10)=char(10)</span><br><span class="line">    3、不支持BLOG和TEXT等大字段</span><br><span class="line">    4、Memory存储引擎使用表级锁</span><br><span class="line">    5、最大大小由max_heap_table_size参数决定</span><br><span class="line"></span><br><span class="line">    适用场景：</span><br><span class="line">        1、用于查找或者是映射表，例如邮编和地区的对应表</span><br><span class="line">        2、用于保存数据分心中产生的中间表</span><br><span class="line">        3、用于缓存周期性聚合数据的结果表</span><br></pre></td></tr></table></figure>
+
+<h3 id="MySQL常用存储引擎之Federated"><a href="#MySQL常用存储引擎之Federated" class="headerlink" title="MySQL常用存储引擎之Federated"></a>MySQL常用存储引擎之Federated</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">特点：</span><br><span class="line">    1、提供了访问远程MySQL服务器上表的方法</span><br><span class="line">    2、本地不存储数据，数据全部放到远程服务器上</span><br><span class="line">    3、本地需要保存表结构和远程服务器的连接信息</span><br><span class="line"></span><br><span class="line">如何使用</span><br><span class="line">    默认静止，启用需要在启动时增加federated参数</span><br><span class="line">    mysql://user_name[:password]@host_name[:port]/db_name/table_name</span><br><span class="line"></span><br><span class="line">    适用场景：</span><br><span class="line">        偶尔的统计分析及手工查询</span><br></pre></td></tr></table></figure>
+
+<h3 id="如何选择正确的存储引擎"><a href="#如何选择正确的存储引擎" class="headerlink" title="如何选择正确的存储引擎"></a>如何选择正确的存储引擎</h3><p>常用引擎MyISAM与InnoDb对比</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/MyISAM%E4%B8%8EInnoDb%E5%AF%B9%E6%AF%94.png"
+                      alt="MyISAM与InnoDb对比"
+                ></p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">参考条件</span><br><span class="line">    1、是否要支持事务</span><br><span class="line">    2、定期备份</span><br><span class="line">    3、崩溃恢复</span><br><span class="line">    4、存储引擎的特有特性</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="什么影响了性能"><a href="#什么影响了性能" class="headerlink" title="什么影响了性能"></a>什么影响了性能</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">数据库设计对性能的影响</span><br><span class="line">    1、过分的反范式化为表建立太多的列</span><br><span class="line">    2、过分的范式化造成太多的表关联（关联的表尽可能的控制在10个之内）</span><br><span class="line">    3、在OLTP环境中使用不恰当的分区表</span><br><span class="line">    4、使用外键保证数据的完整性</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">性能优化的顺序</span><br><span class="line">    1、数据库结构设计和SQL语句</span><br><span class="line">    2、数据库存储引擎的选择参数配置</span><br><span class="line">    3、系统选择及优化</span><br><span class="line">    4、硬件升级</span><br></pre></td></tr></table></figure>
+
+<h3 id="Mysql配置参数介绍"><a href="#Mysql配置参数介绍" class="headerlink" title="Mysql配置参数介绍"></a>Mysql配置参数介绍</h3><figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">MySQL获取配置信息路径</span><br><span class="line">    1、命令行参数</span><br><span class="line">        mysqld_safe --datadir=/data/sql_data</span><br><span class="line">    2、配置文件</span><br><span class="line">        查看配置文件的命令：</span><br><span class="line">        [root@localhost ~]# mysqld --help --verbose | egrep -A 1 &#x27;Default options&#x27;</span><br><span class="line">        配置文件的有效路径</span><br><span class="line">            /etc/my.cnf /etc/mysql/my.cnf /usr/etc/my.cnf ~/.my.cnf</span><br><span class="line"></span><br><span class="line">MySQL配置参数的作用域</span><br><span class="line">    1、全局参数</span><br><span class="line">        set global 参数名=参数值;</span><br><span class="line">        set @@global.参数名:=参数值;</span><br><span class="line">    2、会话参数 </span><br><span class="line">        set [session] 参数名=参数值;</span><br><span class="line">        set @@session.参数名:=参数值;</span><br><span class="line"></span><br><span class="line">内存配置相关参数</span><br><span class="line">    1、确定可以使用的内存的上限</span><br><span class="line">    2、确定MySQL的每个连接使用的内存</span><br><span class="line">        sort_buffer_size</span><br><span class="line">        join_buffer_size</span><br><span class="line">        read_buffer_size</span><br><span class="line">        read_rnd_buffer_size</span><br><span class="line">    3、确定需要为操作系统保留多少内存</span><br><span class="line">    4、如何为缓存池分配内存</span><br><span class="line">        Innodb_buffer_pool_size</span><br><span class="line">            注：设置缓存池的大小的考量标准为:总内存-(每个编程所以需要的内存*连接数)-系统保留内存</span><br><span class="line">        key_buffer_size</span><br><span class="line">        select sum(index_length) from information_schema.tables where engines=&#x27;myisam&#x27;</span><br><span class="line">    </span><br><span class="line">I/O相关配置参数</span><br><span class="line">    Innodo I/O相关配置</span><br><span class="line">    Innodb_log_file_size 单个事务日志的大小</span><br><span class="line">    Innodb_log_files_in_group 控制文件日子的个数</span><br><span class="line">    事务日志总大小 = Innodb_log_files_in_group * Innodb_log_file_size</span><br><span class="line">    Innodb_log_buffer_size = (32M or 128M)</span><br><span class="line">    Innodb_flush_log_at_trx_commint</span><br><span class="line">        0:每秒进行一次log写入cache,并flush log到磁盘</span><br><span class="line">        1[默认]:在每次事务提交执行log写入cache，并flush log到磁盘</span><br><span class="line">        2[建议]:每次事务提交，执行log数据写入到cache中，每秒执行一次flush log到磁盘</span><br><span class="line">    Innodb_flush_method=O_DIRECT</span><br><span class="line">    Innodb_file_per_table = 1</span><br><span class="line">    Innodb_doublewrite = 1</span><br><span class="line"></span><br><span class="line">MyISAM I/O相关配置</span><br><span class="line">    delay_key_write</span><br><span class="line">        OFF:每次写操作后刷新键缓冲中的脏块到磁盘</span><br><span class="line">        ON:只对在键表时指定了delay_key_write选项的表使用延迟刷新</span><br><span class="line">        ALL:对所有的MyISAM表都使用延迟建写入</span><br><span class="line">        </span><br><span class="line">安全相关配置参数</span><br><span class="line">    expire_logs_days 指定自动清理binlog的天数</span><br><span class="line">    max_allowed_packet 控制MySQL可以连接的包大小，建议设置为32M，如果使用了主从复制，参数应该设置成一致的</span><br><span class="line">    skip_name_resolve 禁用DNS查找</span><br><span class="line">    sysdate_is_now 确保sysdate()返回确保性日期</span><br><span class="line">    read_only 禁止非super权限的用户写操作  注：建议在主从复制中的从库开启此功能。以确保不能修改从库中的操作，只能从主库同步过来</span><br><span class="line">    skip_slave_start 禁用Salve自动恢复(从库中的设置使用)</span><br><span class="line">    sql_mode 设置MySQL所使用的SQL模式 （谨慎操作，可能会造成MySQL无法执行）</span><br><span class="line">        ① strict_trans_tables 给定的数据如果不能插入到数据库中，对事务引擎会终端操作，对非事务引擎是没有影响的</span><br><span class="line">        ② no_engine_subitiution 在create table中指定engines的时候，如果引擎不可用，不会使用默认引擎建立表</span><br><span class="line">        ③ no_zero_date 不能再表中插入0年0月0日的日期</span><br><span class="line">        ④ no_zero_in_date 不接受一部分的为0的日期</span><br><span class="line">        ⑤ noly_full_group_by </span><br><span class="line">    </span><br><span class="line">其他常用的配置参数</span><br><span class="line">    sync_binlog 控制MySQL如何向磁盘刷新binlog</span><br><span class="line">    tmp_table_size 和 max_heap_table_size 控制内存临时表大小(不宜设置的太大，以避免内存的溢出)</span><br><span class="line">    max_connections 控制允许的最大连接数(默认为100，有点小，根据自己的业务适当的调整大小)</span><br></pre></td></tr></table></figure>
+
+
+<p><code>End</code></p>
+<p>来自<a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/huiy/p/10006787.html" >huiy_小溪<i class="fas fa-external-link-alt"></i></a></p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/Kubernetes/5050d2913ad6/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Kubernetes之更改副本数</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/Nginx/d09dafa1d928/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Nginx实现网站https</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL%E5%B8%B8%E7%94%A8%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E4%B9%8BMyISAM"><span class="nav-text">MySQL常用存储引擎之MyISAM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL%E5%B8%B8%E7%94%A8%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E4%B9%8BInnodb"><span class="nav-text">MySQL常用存储引擎之Innodb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL%E5%B8%B8%E8%A7%81%E7%9A%84%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E4%B9%8BCSV"><span class="nav-text">MySQL常见的存储引擎之CSV</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL%E5%B8%B8%E7%94%A8%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E4%B9%8BArchive"><span class="nav-text">MySQL常用存储引擎之Archive</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL%E5%B8%B8%E7%94%A8%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E4%B9%8BMemory"><span class="nav-text">MySQL常用存储引擎之Memory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL%E5%B8%B8%E7%94%A8%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E4%B9%8BFederated"><span class="nav-text">MySQL常用存储引擎之Federated</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%E6%AD%A3%E7%A1%AE%E7%9A%84%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-text">如何选择正确的存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E5%BD%B1%E5%93%8D%E4%BA%86%E6%80%A7%E8%83%BD"><span class="nav-text">什么影响了性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mysql%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E4%BB%8B%E7%BB%8D"><span class="nav-text">Mysql配置参数介绍</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>

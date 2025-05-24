@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            CentOS7.6制作升级内核后ISO镜像文件 |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">CentOS7.6制作升级内核后ISO镜像文件</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/CentOS/">CentOS</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/CentOS/">CentOS</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>2.6k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>13 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="CentOS7-6制作升级内核后ISO镜像文件"><a href="#CentOS7-6制作升级内核后ISO镜像文件" class="headerlink" title="CentOS7.6制作升级内核后ISO镜像文件"></a>CentOS7.6制作升级内核后ISO镜像文件</h1><h3 id="1-安装官方OS"><a href="#1-安装官方OS" class="headerlink" title="1.安装官方OS"></a>1.安装官方OS</h3><p>下载Centos官方包，我这里下载的是CentOS-7.4-x86_64-DVD-1810.iso<br>然后安装在服务器上（用来定制ISO的服务器）<br>根据自己的需求选择安装，我这里选择的是minimal安装 。</p>
+<p> <strong>注：制作出来的ISO会沿用现在的选择，也就是说制作出来的ISO只要没问题，就会在选择”install centos”后自动检查软件依赖并安装和设置用户（是的，账户&amp;密码也会和现在安装所选择&#x2F;设置的一样）。</strong> </p>
+<h3 id="2-安装制作ISO的工具"><a href="#2-安装制作ISO的工具" class="headerlink" title="2.安装制作ISO的工具"></a>2.安装制作ISO的工具</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum  -y install createrepo mkisofs isomd5sum rsync</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-建立-image-making-directory"><a href="#3-建立-image-making-directory" class="headerlink" title="3.建立 image-making-directory"></a>3.建立 image-making-directory</h3><h4 id="（1）创建-ISO制作目录"><a href="#（1）创建-ISO制作目录" class="headerlink" title="（1）创建 ISO制作目录"></a>（1）创建 ISO制作目录</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /root/iso/CentOS7.6-5.16</span><br></pre></td></tr></table></figure>
+
+<h4 id="（2）挂载官方ISO启动盘"><a href="#（2）挂载官方ISO启动盘" class="headerlink" title="（2）挂载官方ISO启动盘"></a>（2）挂载官方ISO启动盘</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方式1 软盘挂载(假设是/dev.sr1)</span></span><br><span class="line"><span class="built_in">mkdir</span> /mnt/usb</span><br><span class="line">mount /dev/sr1 /mnt/usb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式2 上传iso后挂载</span></span><br><span class="line"><span class="built_in">mkdir</span> /mnt/usb</span><br><span class="line">mount -o loop /mnt/CentOS-7-x86_64-DVD-1810.iso /mnt/usb</span><br></pre></td></tr></table></figure>
+
+<h4 id="（3）把官方镜像里的文件同步到image-making-directory"><a href="#（3）把官方镜像里的文件同步到image-making-directory" class="headerlink" title="（3）把官方镜像里的文件同步到image-making-directory"></a>（3）把官方镜像里的文件同步到image-making-directory</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rsync -a /mnt/usb/ /root/iso/CentOS7.6-5.16/</span><br><span class="line">或</span><br><span class="line">scp -r /mnt/usb/ /root/iso/CentOS7.6-5.16/</span><br></pre></td></tr></table></figure>
+
+<p> 可以使用 ll -a查看目录，其中 </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">total 336</span><br><span class="line">-rw-rw-r--. 1 root root     14 Nov 26  2018 CentOS_BuildTag</span><br><span class="line">drwxr-xr-x. 3 root root     35 Nov 26  2018 EFI</span><br><span class="line">-rw-rw-r--. 1 root root    227 Aug 30  2017 EULA</span><br><span class="line">-rw-rw-r--. 1 root root  18009 Dec 10  2015 GPL</span><br><span class="line">drwxr-xr-x. 3 root root     57 Nov 26  2018 images</span><br><span class="line">drwxr-xr-x. 2 root root    212 Jan 17 19:00 isolinux</span><br><span class="line">drwxr-xr-x. 2 root root     43 Nov 26  2018 LiveOS</span><br><span class="line">drwxrwxr-x. 2 root root 233472 Jan 14 22:56 Packages</span><br><span class="line">drwxr-xr-x. 2 root root   4096 Jan 17 16:43 repodata</span><br><span class="line">-rw-rw-r--. 1 root root   1690 Dec 10  2015 RPM-GPG-KEY-CentOS-7</span><br><span class="line">-rw-rw-r--. 1 root root   1690 Dec 10  2015 RPM-GPG-KEY-CentOS-Testing-7</span><br><span class="line">-r--r--r--. 1 root root   2883 Nov 26  2018 TRANS.TBL</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-内核升级与选择自己想安装的工具包"><a href="#4-内核升级与选择自己想安装的工具包" class="headerlink" title="4.内核升级与选择自己想安装的工具包"></a>4.内核升级与选择自己想安装的工具包</h3><h4 id="（1）配置yum"><a href="#（1）配置yum" class="headerlink" title="（1）配置yum"></a>（1）配置yum</h4><p>主要是为了保存rpm包（要放进我们定制的ISO里面）。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi  /etc/yum.conf</span><br><span class="line"></span><br><span class="line"><span class="comment"># keepcache=0改为keepcache=1</span></span><br></pre></td></tr></table></figure>
+
+<p> 保存缓存的rpm包 </p>
+<h4 id="（2）安装下载工具包"><a href="#（2）安装下载工具包" class="headerlink" title="（2）安装下载工具包"></a>（2）安装下载工具包</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 方式1 yum想要安装的包,例如:</span></span><br><span class="line">yum install -y net-tools.x86_64 vim i2c-tools gcc</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式2 也可以手动安装自己制作下载的rpm离线包,例如:</span></span><br><span class="line">rpm -ivh myPackage-1.0.0-1.x86_64.rpm</span><br><span class="line"><span class="comment"># 或</span></span><br><span class="line">yum install -y myPackage-1.0.0-1.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<h4 id="（3）内核升级"><a href="#（3）内核升级" class="headerlink" title="（3）内核升级"></a>（3）内核升级</h4><p>使用rpm命令添加新的ELRepo存储库。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -Uvh https://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm</span><br></pre></td></tr></table></figure>
+
+<p> (从ELRepo信息库安装一个新的最新内核) </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># --enablerepo是在CentOS系统上启用特定存储库的选项。默认情况下，启 用“ elrepo”存储库，但不启用“ elrepo-kernel”存储库</span></span><br><span class="line">yum --enablerepo=elrepo-kernel install kernel-ml</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-替换Packages-x2F-里的文件"><a href="#5-替换Packages-x2F-里的文件" class="headerlink" title="5.替换Packages&#x2F;里的文件"></a>5.替换Packages&#x2F;里的文件</h3><p> 官方包有4G多大，主要是里面存放了很多rpm包,这里可以选择删除掉也可以不删除。</p>
+<h4 id="（1）生成当前的rpm列表"><a href="#（1）生成当前的rpm列表" class="headerlink" title="（1）生成当前的rpm列表"></a>（1）生成当前的rpm列表</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa &gt;&gt; /root/install.log</span><br></pre></td></tr></table></figure>
+
+<h4 id="（2）选择性删除包-不删除此步骤略过"><a href="#（2）选择性删除包-不删除此步骤略过" class="headerlink" title="（2）选择性删除包(不删除此步骤略过)"></a>（2）选择性删除包(不删除此步骤略过)</h4><p><strong>需要其他rpm包不删除,建议不进行删除,可以用作本地源, 删除后的依赖问题也是比较头疼</strong></p>
+<p><strong>添加的包不要太多，包太多ISO太大DVD可能刻录不下</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -f /root/iso/CentOS7.6-5.16/Packages/*</span><br></pre></td></tr></table></figure>
+
+<p>执行以下会提示一些包没有，这些是我们用yum安装的以及自己本地的rpm包。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /root/install.log|awk <span class="string">&#x27;&#123;print $0&#125;&#x27;</span> |xargs -i <span class="built_in">cp</span> /mnt/usb/Packages/&#123;&#125;.rpm /root/iso/CentOS7.6-5.16/Packages/</span><br></pre></td></tr></table></figure>
+
+<p>原包Packages内可能是其他包的依赖包,所以此次都复制过去,避免依赖问题。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">\<span class="built_in">cp</span> /mnt/usb/Packages/lib* /root/iso/CentOS7.6-5.16/Packages/</span><br><span class="line">\<span class="built_in">cp</span> /mnt/usb/Packages/kernel* /root/iso/CentOS7.6-5.16/Packages/</span><br><span class="line">\<span class="built_in">cp</span> /mnt/usb/Packages/python* /root/iso/CentOS7.6-5.16/Packages/</span><br></pre></td></tr></table></figure>
+
+<h4 id="（3）拷贝安装下载后的包文件到image-making-directory目录下"><a href="#（3）拷贝安装下载后的包文件到image-making-directory目录下" class="headerlink" title="（3）拷贝安装下载后的包文件到image-making-directory目录下"></a>（3）拷贝安装下载后的包文件到image-making-directory目录下</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">\<span class="built_in">cp</span> /var/cache/yum/x86_64/7/base/packages/* /root/iso/CentOS7.6-5.16/Packages/</span><br><span class="line">\<span class="built_in">cp</span> /var/cache/yum/x86_64/7/updates/packages/* /root/iso/CentOS7.6-5.16/Packages/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 升级内核的包不在base目录下,在其他源elrepo-kernel的目录下</span></span><br><span class="line">\<span class="built_in">cp</span> /var/cache/yum/x86_64/7/elrepo-kernel/packages/* /root/iso/CentOS7.6-5.16/Packages/</span><br></pre></td></tr></table></figure>
+
+<p> 当然不是所有yum的包都在这里，比如centos-release-gcc和devtoolset-7-gcc*这些包是在其他目录的,使用find命令查找，别忘了把自己制作的rpm也放进去（如果有的话）。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -name devtoolset-7*.rpm</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-重新生成依赖文件（非常重要）"><a href="#6-重新生成依赖文件（非常重要）" class="headerlink" title="6.重新生成依赖文件（非常重要）"></a>6.重新生成依赖文件（非常重要）</h3><p> *comps.xml文件包含所有与RPM相关的内容。 它检查“软件包”下的RPM软件包依赖性。 安装时如果依赖包丢失，它将提示哪个RPM包需要哪个依赖。 </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ISO_DIR=/root/iso/CentOS7.6-5.16</span><br><span class="line">createrepo -g <span class="variable">$&#123;ISO_DIR&#125;</span>/repodata/*-comps.xml  <span class="variable">$&#123;ISO_DIR&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>*-coms.xml只有一个 </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aced7d22b338fdf7c0a71ffcf32614e058f4422c42476d1f4b9e9364d567702f-c7-x86_64-comps.xml</span><br></pre></td></tr></table></figure>
+
+<p> <strong>注：如果后面加了RPM包一定要重新生成</strong></p>
+<h3 id="7-编辑-ks-cfg文件"><a href="#7-编辑-ks-cfg文件" class="headerlink" title="7.编辑 ks.cfg文件"></a>7.编辑 ks.cfg文件</h3><p> 通常，安装系统后，&#x2F; root目录中将存在anaconda-ks.cfg文件，<br>记录系统安装过程中的配置。 将其复制到镜像下的isolinux目录中 。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> /root/anaconda-ks.cfg /root/iso/CentOS7.6-5.16/isolinux/ks.cfg</span><br></pre></td></tr></table></figure>
+
+<p> 可以根据这个ks.cfg来定制安装需求，与rpmbuild配置类似。</p>
+<p>%pre表示系统安装前运行的内容</p>
+<p>%post表示系统安装后执行的脚本<br>%packages表示要安装的包，我们主要是在这里加上需要安装的rpm </p>
+<p>ks.cfg文件内容:</p>
+<p><strong>(此文件root密码默认为Root@123)</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#version=DEVEL</span></span><br><span class="line"><span class="comment"># System authorization information</span></span><br><span class="line">auth --enableshadow --passalgo=sha512</span><br><span class="line"><span class="comment"># Use CDROM installation media</span></span><br><span class="line">cdrom</span><br><span class="line"><span class="comment"># Use graphical install</span></span><br><span class="line">graphical</span><br><span class="line"><span class="comment"># Run the Setup Agent on first boot</span></span><br><span class="line">firstboot --<span class="built_in">enable</span></span><br><span class="line">ignoredisk --only-use=sda</span><br><span class="line"><span class="comment"># Keyboard layouts</span></span><br><span class="line">keyboard --vckeymap=us --xlayouts=<span class="string">&#x27;us&#x27;</span></span><br><span class="line"><span class="comment"># System language</span></span><br><span class="line">lang en_US.UTF-8</span><br><span class="line"></span><br><span class="line"><span class="comment"># Network information</span></span><br><span class="line">network  --bootproto=dhcp --device=enp1s0 --onboot=off --ipv6=auto --no-activate</span><br><span class="line">network  --hostname=localhost.localdomain</span><br><span class="line"></span><br><span class="line"><span class="comment"># Root password</span></span><br><span class="line">rootpw --iscrypted $6$/cak3hUuBmFNqaMn<span class="variable">$0Ug37Q5q5l8Jx</span>/aegQ7G/Ksz6pe8jrSyBthtmuD5xBA1X7G4kjqVh0ABYilcteihLt4x3HVGFHIPVUkPyv34W.</span><br><span class="line"><span class="comment"># System services</span></span><br><span class="line">services --disabled=<span class="string">&quot;chronyd&quot;</span></span><br><span class="line"><span class="comment"># System timezone</span></span><br><span class="line">timezone Asia/Shanghai --isUtc --nontp</span><br><span class="line"><span class="comment"># System bootloader configuration</span></span><br><span class="line">bootloader --append=<span class="string">&quot; crashkernel=auto&quot;</span> --location=mbr --boot-drive=sda</span><br><span class="line"><span class="comment"># Partition clearing information</span></span><br><span class="line">clearpart --all --initlabel --list=sda</span><br><span class="line"></span><br><span class="line">%packages</span><br><span class="line">@^minimal</span><br><span class="line">@core</span><br><span class="line">kexec-tools</span><br><span class="line">wget</span><br><span class="line">net-tools</span><br><span class="line">curl</span><br><span class="line">telnet</span><br><span class="line">expect</span><br><span class="line">unzip</span><br><span class="line">bash-completion</span><br><span class="line">vim-enhanced</span><br><span class="line">vim</span><br><span class="line">gcc</span><br><span class="line">kernel-ml</span><br><span class="line"></span><br><span class="line">%end</span><br><span class="line"></span><br><span class="line">%addon com_redhat_kdump --<span class="built_in">enable</span> --reserve-mb=<span class="string">&#x27;auto&#x27;</span></span><br><span class="line"></span><br><span class="line">%end</span><br><span class="line"></span><br><span class="line">%anaconda</span><br><span class="line">pwpolicy root --minlen=6 --minquality=1 --notstrict --nochanges --notempty</span><br><span class="line">pwpolicy user --minlen=6 --minquality=1 --notstrict --nochanges --emptyok</span><br><span class="line">pwpolicy luks --minlen=6 --minquality=1 --notstrict --nochanges --notempty</span><br><span class="line">%end</span><br></pre></td></tr></table></figure>
+
+<p><strong>注1：加上的是RPM的NAME而不是rpm文件的名字，如我定制的rpm包，文件名叫evglow-1.0.0-1.x86_64.rpm，但是RPM的NAME是evglow-tool，所以%packages下面写的是evglow-tool，</strong></p>
+<p><strong>即yum包时你写什么文件内就写什么</strong>。</p>
+<h3 id="8-编辑启动文件"><a href="#8-编辑启动文件" class="headerlink" title="8.编辑启动文件"></a>8.编辑启动文件</h3><h4 id="1-修改isolinux-cfg文件"><a href="#1-修改isolinux-cfg文件" class="headerlink" title="(1)修改isolinux.cfg文件"></a>(1)修改isolinux.cfg文件</h4><p> 修改在<code>label linux</code>这个item下的配置 </p>
+<ol>
+<li>如果有“menu default”这一行，删掉。</li>
+<li>把” append initrd&#x3D;initrd.img inst.stage2&#x3D;hd:LABEL&#x3D;CentOS\x207\x20x86_64 quiet”这一行改为<br>”append initrd&#x3D;initrd.img inst.stage2&#x3D;hd:LABEL&#x3D;CentOS7 inst.ks&#x3D;hd:LABEL&#x3D;CentOS7:&#x2F;isolinux&#x2F;ks.cfg“<br>这个“CentOS7”可以任意命名，记得保持一致就好（后面刻盘时候，USB启动盘的名字要改成这个。不然找不到U盘的话需要先在install centos那里按”E”,然后使用linux dd 查看U盘设备名，假如是&#x2F;dev&#x2F;sda4，确认设备名后重启，再次按E编辑，把”LABEL&#x3D;CentOS7”改为&#x2F;dev&#x2F;sda4,两边都要改,然后ctrl+X进入安装界面）。</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim isolinux/isolinux.cfg </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line">default vesamenu.c32</span><br><span class="line"><span class="built_in">timeout</span> 600</span><br><span class="line"></span><br><span class="line">display boot.msg</span><br><span class="line"></span><br><span class="line"><span class="comment"># Clear the screen when exiting the menu, instead of leaving the menu displayed.</span></span><br><span class="line"><span class="comment"># For vesamenu, this means the graphical background is still displayed without</span></span><br><span class="line"><span class="comment"># the menu itself for as long as the screen remains in graphics mode.</span></span><br><span class="line">menu clear</span><br><span class="line">menu background splash.png</span><br><span class="line">menu title CentOS 7</span><br><span class="line">menu vshift 8</span><br><span class="line">menu rows 18</span><br><span class="line">menu margin 8</span><br><span class="line"><span class="comment">#menu hidden</span></span><br><span class="line">menu helpmsgrow 15</span><br><span class="line">menu tabmsgrow 13</span><br><span class="line"></span><br><span class="line"><span class="comment"># Border Area</span></span><br><span class="line">menu color border * <span class="comment">#00000000 #00000000 none</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Selected item</span></span><br><span class="line">menu color sel 0 <span class="comment">#ffffffff #00000000 none</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Title bar</span></span><br><span class="line">menu color title 0 <span class="comment">#ff7ba3d0 #00000000 none</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Press [Tab] message</span></span><br><span class="line">menu color tabmsg 0 <span class="comment">#ff3a6496 #00000000 none</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Unselected menu item</span></span><br><span class="line">menu color unsel 0 <span class="comment">#84b8ffff #00000000 none</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Selected hotkey</span></span><br><span class="line">menu color hotsel 0 <span class="comment">#84b8ffff #00000000 none</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Unselected hotkey</span></span><br><span class="line">menu color hotkey 0 <span class="comment">#ffffffff #00000000 none</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Help text</span></span><br><span class="line">menu color <span class="built_in">help</span> 0 <span class="comment">#ffffffff #00000000 none</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># A scrollbar of some type? Not sure.</span></span><br><span class="line">menu color scrollbar 0 <span class="comment">#ffffffff #ff355594 none</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Timeout msg</span></span><br><span class="line">menu color <span class="built_in">timeout</span> 0 <span class="comment">#ffffffff #00000000 none</span></span><br><span class="line">menu color timeout_msg 0 <span class="comment">#ffffffff #00000000 none</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Command prompt text</span></span><br><span class="line">menu color cmdmark 0 <span class="comment">#84b8ffff #00000000 none</span></span><br><span class="line">menu color cmdline 0 <span class="comment">#ffffffff #00000000 none</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Do not display the actual menu unless the user presses a key. All that is displayed is a timeout message.</span></span><br><span class="line"></span><br><span class="line">menu tabmsg Press Tab <span class="keyword">for</span> full configuration options on menu items.</span><br><span class="line"></span><br><span class="line">menu separator <span class="comment"># insert an empty line</span></span><br><span class="line">menu separator <span class="comment"># insert an empty line</span></span><br><span class="line"></span><br><span class="line">label linux</span><br><span class="line">  menu label ^Install CentOS 7</span><br><span class="line">  kernel vmlinuz</span><br><span class="line">  append initrd=initrd.img inst.stage2=hd:LABEL=CentOS7 inst.ks=hd:LABEL=CentOS7:/isolinux/ks.cfg quiet</span><br><span class="line"></span><br><span class="line">label check</span><br><span class="line">  menu label Test this ^media &amp; install CentOS 7</span><br><span class="line">  kernel vmlinuz</span><br><span class="line">  append initrd=initrd.img inst.stage2=hd:LABEL=CentOS7 inst.ks=hd:LABEL=CentOS7:/isolinux/ks.cfg rd.live.check quiet</span><br><span class="line"></span><br><span class="line">menu separator <span class="comment"># insert an empty line</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># utilities submenu</span></span><br><span class="line">menu begin ^Troubleshooting</span><br><span class="line">  menu title Troubleshooting</span><br><span class="line"></span><br><span class="line">label vesa</span><br><span class="line">  menu indent count 5</span><br><span class="line">  menu label Install CentOS 7 <span class="keyword">in</span> ^basic graphics mode</span><br><span class="line">  text <span class="built_in">help</span></span><br><span class="line">	Try this option out <span class="keyword">if</span> you<span class="string">&#x27;re having trouble installing</span></span><br><span class="line"><span class="string">	CentOS 7.</span></span><br><span class="line"><span class="string">  endtext</span></span><br><span class="line"><span class="string">  kernel vmlinuz</span></span><br><span class="line"><span class="string">  append initrd=initrd.img inst.stage2=hd:LABEL=CentOS\x207\x20x86_64 xdriver=vesa nomodeset quiet</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">label rescue</span></span><br><span class="line"><span class="string">  menu indent count 5</span></span><br><span class="line"><span class="string">  menu label ^Rescue a CentOS system</span></span><br><span class="line"><span class="string">  text help</span></span><br><span class="line"><span class="string">	If the system will not boot, this lets you access files</span></span><br><span class="line"><span class="string">	and edit config files to try to get it booting again.</span></span><br><span class="line"><span class="string">  endtext</span></span><br><span class="line"><span class="string">  kernel vmlinuz</span></span><br><span class="line"><span class="string">  append initrd=initrd.img inst.stage2=hd:LABEL=CentOS\x207\x20x86_64 rescue quiet</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">label memtest</span></span><br><span class="line"><span class="string">  menu label Run a ^memory test</span></span><br><span class="line"><span class="string">  text help</span></span><br><span class="line"><span class="string">	If your system is having issues, a problem with your</span></span><br><span class="line"><span class="string">	system&#x27;</span>s memory may be the cause. Use this utility to</span><br><span class="line">	see <span class="keyword">if</span> the memory is working correctly.</span><br><span class="line">  endtext</span><br><span class="line">  kernel memtest</span><br><span class="line"></span><br><span class="line">menu separator <span class="comment"># insert an empty line</span></span><br><span class="line"></span><br><span class="line">label <span class="built_in">local</span></span><br><span class="line">  menu label Boot from ^<span class="built_in">local</span> drive</span><br><span class="line">  localboot 0xffff</span><br><span class="line"></span><br><span class="line">menu separator <span class="comment"># insert an empty line</span></span><br><span class="line">menu separator <span class="comment"># insert an empty line</span></span><br><span class="line"></span><br><span class="line">label returntomain</span><br><span class="line">  menu label Return to ^main menu</span><br><span class="line">  menu <span class="built_in">exit</span></span><br><span class="line"></span><br><span class="line">menu end</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-修改-grub-cfg"><a href="#2-修改-grub-cfg" class="headerlink" title="(2)修改 grub.cfg"></a>(2)修改 grub.cfg</h4><p> 把menuentry ‘Install CentOS 7’ –class fedora –class gnu-linux –class gnu –class os {undefined<br>下面那行的后半部分也改为:</p>
+<p><code>inst.stage2=hd:LABEL=CentOS7 inst.ks=hd:LABEL=CentOS7:/isolinux/ks.cfg</code><br>效果如下 :</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /root/iso/CentOS7.6-5.16/EFI/BOOT/grub.cfg</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> default=<span class="string">&quot;1&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> load_video &#123;</span><br><span class="line">  insmod efi_gop</span><br><span class="line">  insmod efi_uga</span><br><span class="line">  insmod video_bochs</span><br><span class="line">  insmod video_cirrus</span><br><span class="line">  insmod all_video</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">load_video</span><br><span class="line"><span class="built_in">set</span> gfxpayload=keep</span><br><span class="line">insmod gzio</span><br><span class="line">insmod part_gpt</span><br><span class="line">insmod ext2</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span> <span class="built_in">timeout</span>=60</span><br><span class="line"><span class="comment">### END /etc/grub.d/00_header ###</span></span><br><span class="line"></span><br><span class="line">search --no-floppy --<span class="built_in">set</span>=root -l <span class="string">&#x27;CentOS 7 x86_64&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">### BEGIN /etc/grub.d/10_linux ###</span></span><br><span class="line">menuentry <span class="string">&#x27;Install CentOS 7&#x27;</span> --class fedora --class gnu-linux --class gnu --class os &#123;</span><br><span class="line">	linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=CentOS7 inst.stage2=hd:LABEL=CentOS7:/isolinux/ks.cfg quiet</span><br><span class="line">	initrdefi /images/pxeboot/initrd.img</span><br><span class="line">&#125;</span><br><span class="line">menuentry <span class="string">&#x27;Test this media &amp; install CentOS 7&#x27;</span> --class fedora --class gnu-linux --class gnu --class os &#123;</span><br><span class="line">	linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=CentOS7 inst.stage2=hd:LABEL=CentOS7:/isolinux/ks.cfg rd.live.check quiet</span><br><span class="line">	initrdefi /images/pxeboot/initrd.img</span><br><span class="line">&#125;</span><br><span class="line">submenu <span class="string">&#x27;Troubleshooting --&gt;&#x27;</span> &#123;</span><br><span class="line">	menuentry <span class="string">&#x27;Install CentOS 7 in basic graphics mode&#x27;</span> --class fedora --class gnu-linux --class gnu --class os &#123;</span><br><span class="line">		linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=CentOS\x207\x20x86_64 xdriver=vesa nomodeset quiet</span><br><span class="line">		initrdefi /images/pxeboot/initrd.img</span><br><span class="line">	&#125;</span><br><span class="line">	menuentry <span class="string">&#x27;Rescue a CentOS system&#x27;</span> --class fedora --class gnu-linux --class gnu --class os &#123;</span><br><span class="line">		linuxefi /images/pxeboot/vmlinuz inst.stage2=hd:LABEL=CentOS\x207\x20x86_64 rescue quiet</span><br><span class="line">		initrdefi /images/pxeboot/initrd.img</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="9-制作ISO"><a href="#9-制作ISO" class="headerlink" title="9.制作ISO"></a>9.制作ISO</h3><h4 id="（1）制作镜像"><a href="#（1）制作镜像" class="headerlink" title="（1）制作镜像"></a>（1）制作镜像</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkisofs -o CentOS7.6-5.16-V1.2.iso -input-charset utf-8 -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -R -J -v -T -joliet-long -V CentOS7 /root/iso/CentOS7.6-5.16/</span><br></pre></td></tr></table></figure>
+
+<p> 此时会生成CentOS7.6-5.16-V1.2.iso文件</p>
+<h4 id="（2）-生产Md5-可以略过"><a href="#（2）-生产Md5-可以略过" class="headerlink" title="（2） 生产Md5(可以略过)"></a>（2） 生产Md5(可以略过)</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">implantisomd5 CentOS7.4-wedge400.iso</span><br></pre></td></tr></table></figure>
+
+<h3 id="10-目录展示"><a href="#10-目录展示" class="headerlink" title="10.目录展示"></a>10.目录展示</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# ll /root</span><br><span class="line">total 4639200</span><br><span class="line">-rw-------. 1 root root       1592 Jan 14 23:30 anaconda-ks.cfg</span><br><span class="line">-rw-r--r--. 1 root root 4750512128 Jan 17 17:46 CentOS7.6-boer-v1.2.iso</span><br><span class="line">-rw-r--r--. 1 root root      21153 Jan 14 22:31 install.log</span><br><span class="line">drwxr-xr-x. 3 root root         28 Jan 17 22:09 iso</span><br></pre></td></tr></table></figure>
+
+
+
+<p><a class="link"   target="_blank" rel="noopener" href="https://blog.csdn.net/evglow/article/details/104040243" >本文借鉴 evglow<i class="fas fa-external-link-alt"></i></a></p>
+<p>完</p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/Kubernetes/9d9e1c2ee3de/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">脚本-k8s加入集群节点</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/CentOS/ff18412a14df/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">CentOS配置本地yum源</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CentOS7-6%E5%88%B6%E4%BD%9C%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8%E5%90%8EISO%E9%95%9C%E5%83%8F%E6%96%87%E4%BB%B6"><span class="nav-text">CentOS7.6制作升级内核后ISO镜像文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85%E5%AE%98%E6%96%B9OS"><span class="nav-text">1.安装官方OS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%89%E8%A3%85%E5%88%B6%E4%BD%9CISO%E7%9A%84%E5%B7%A5%E5%85%B7"><span class="nav-text">2.安装制作ISO的工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%BB%BA%E7%AB%8B-image-making-directory"><span class="nav-text">3.建立 image-making-directory</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%88%9B%E5%BB%BA-ISO%E5%88%B6%E4%BD%9C%E7%9B%AE%E5%BD%95"><span class="nav-text">（1）创建 ISO制作目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E6%8C%82%E8%BD%BD%E5%AE%98%E6%96%B9ISO%E5%90%AF%E5%8A%A8%E7%9B%98"><span class="nav-text">（2）挂载官方ISO启动盘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E6%8A%8A%E5%AE%98%E6%96%B9%E9%95%9C%E5%83%8F%E9%87%8C%E7%9A%84%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5%E5%88%B0image-making-directory"><span class="nav-text">（3）把官方镜像里的文件同步到image-making-directory</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7%E4%B8%8E%E9%80%89%E6%8B%A9%E8%87%AA%E5%B7%B1%E6%83%B3%E5%AE%89%E8%A3%85%E7%9A%84%E5%B7%A5%E5%85%B7%E5%8C%85"><span class="nav-text">4.内核升级与选择自己想安装的工具包</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E9%85%8D%E7%BD%AEyum"><span class="nav-text">（1）配置yum</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E5%AE%89%E8%A3%85%E4%B8%8B%E8%BD%BD%E5%B7%A5%E5%85%B7%E5%8C%85"><span class="nav-text">（2）安装下载工具包</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E5%86%85%E6%A0%B8%E5%8D%87%E7%BA%A7"><span class="nav-text">（3）内核升级</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%9B%BF%E6%8D%A2Packages-x2F-%E9%87%8C%E7%9A%84%E6%96%87%E4%BB%B6"><span class="nav-text">5.替换Packages&#x2F;里的文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E7%94%9F%E6%88%90%E5%BD%93%E5%89%8D%E7%9A%84rpm%E5%88%97%E8%A1%A8"><span class="nav-text">（1）生成当前的rpm列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89%E9%80%89%E6%8B%A9%E6%80%A7%E5%88%A0%E9%99%A4%E5%8C%85-%E4%B8%8D%E5%88%A0%E9%99%A4%E6%AD%A4%E6%AD%A5%E9%AA%A4%E7%95%A5%E8%BF%87"><span class="nav-text">（2）选择性删除包(不删除此步骤略过)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%883%EF%BC%89%E6%8B%B7%E8%B4%9D%E5%AE%89%E8%A3%85%E4%B8%8B%E8%BD%BD%E5%90%8E%E7%9A%84%E5%8C%85%E6%96%87%E4%BB%B6%E5%88%B0image-making-directory%E7%9B%AE%E5%BD%95%E4%B8%8B"><span class="nav-text">（3）拷贝安装下载后的包文件到image-making-directory目录下</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E9%87%8D%E6%96%B0%E7%94%9F%E6%88%90%E4%BE%9D%E8%B5%96%E6%96%87%E4%BB%B6%EF%BC%88%E9%9D%9E%E5%B8%B8%E9%87%8D%E8%A6%81%EF%BC%89"><span class="nav-text">6.重新生成依赖文件（非常重要）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E7%BC%96%E8%BE%91-ks-cfg%E6%96%87%E4%BB%B6"><span class="nav-text">7.编辑 ks.cfg文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E7%BC%96%E8%BE%91%E5%90%AF%E5%8A%A8%E6%96%87%E4%BB%B6"><span class="nav-text">8.编辑启动文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E4%BF%AE%E6%94%B9isolinux-cfg%E6%96%87%E4%BB%B6"><span class="nav-text">(1)修改isolinux.cfg文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9-grub-cfg"><span class="nav-text">(2)修改 grub.cfg</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-%E5%88%B6%E4%BD%9CISO"><span class="nav-text">9.制作ISO</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%881%EF%BC%89%E5%88%B6%E4%BD%9C%E9%95%9C%E5%83%8F"><span class="nav-text">（1）制作镜像</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%EF%BC%882%EF%BC%89-%E7%94%9F%E4%BA%A7Md5-%E5%8F%AF%E4%BB%A5%E7%95%A5%E8%BF%87"><span class="nav-text">（2） 生产Md5(可以略过)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-%E7%9B%AE%E5%BD%95%E5%B1%95%E7%A4%BA"><span class="nav-text">10.目录展示</span></a></li></ol></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>

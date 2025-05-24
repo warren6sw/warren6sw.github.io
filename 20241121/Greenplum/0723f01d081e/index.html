@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            CentOS安装Greenplum教程-由单机master到集群 |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">CentOS安装Greenplum教程-由单机master到集群</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/CentOS/">CentOS</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        &gt; <a href="/categories/Greenplum/">Greenplum</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/CentOS/">CentOS</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Greenplum/">Greenplum</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>5.2k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>25 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="CentOS安装Greenplum教程-由单机master到集群"><a href="#CentOS安装Greenplum教程-由单机master到集群" class="headerlink" title="CentOS安装Greenplum教程-由单机master到集群"></a>CentOS安装Greenplum教程-由单机master到集群</h1><blockquote>
+<p>Greenplum的数据库是一个大规模并行处理(MPP)数据库服务器架构，该架构是专为管理大规模的数据仓库和商业智能设计的。Greenplum数据存储和处理大数据量，是通过跨多个服务器和主机分配数据和负载。Greenplum数据库是基于PostgreSQL8.2单个数据库的阵列，这些数据库像单个数据库一样共同工作。master主机是Greenplum数据库系统的入口点，它是客户端连接并提交SQL语句的接口数据库实例。Master协调系统中其他数据库实例（称为Segment）的工作负载，处理数据和存储。分段通过互连，Greenplum数据库的网络层互相通信和主控</p>
+</blockquote>
+<h2 id="greenplum组件"><a href="#greenplum组件" class="headerlink" title="greenplum组件"></a>greenplum组件</h2><p>Greenplum数据库系统的主要组件以及与每个组件关联的硬件注意事项和概念：Greenplum Master，Segments和Interconnect。此外，系统可能具有用于数据加载的可选ETL主机和用于监视查询工作负载和性能的Greenplum性能监视器。</p>
+<p><strong>1、基于postgresql</strong></p>
+<p>greenplum的数据库基于postgresql的开源技术，它本质上是几个postgresql数据库实例一起协作当做一个有凝聚力数据库管理系统（dbms）使用。postgresql的内部一杯修改和补充，以支持Greenplum数据库的并行架构。例如，该系统目录，优化器，查询执行器，和事务管理器组件以被修改和改进，以支持能够在所有并行的postgresql数据库实例同事执行查询。</p>
+<p><strong>2、Interconnnect</strong></p>
+<p>Greenplum Interconnect可使不同的Postgresql实例之间进行通信，并且是系统表现为一个逻辑数据库</p>
+<p><strong>3、greenplum master</strong></p>
+<p>3.1. master功能作用</p>
+<ul>
+<li>master是greenplu数据库系统的入口，数据库服务器进程接收客户端连接并处理系统用户发出的sql命令。</li>
+<li>master维护系统目录(一组包含有关greenplum数据库系统本身的元数据的系统表，但是master不包含任何用户数据。数据只保存在segment主机上。</li>
+<li>master验证客户端连接，处理传入的sql命令，在每个segment主机之间分配工作负载，协调每个segment返回的结果。并将结果返回客户端。</li>
+</ul>
+<p>3.2. standby</p>
+<ul>
+<li>standby通过事务日志复制进程保持最新状态，该进程在standby上运行，并同步master和standby主机之间的数据。如果master主机失败，日志复制关闭；当standby处于活动状态时，日志复制重建上次成功提交事务时的master的状态。</li>
+<li>由于Master不包含任何用户数据，因此只需要在Master和Standby之间同步系统目录表。当这些表被更新时，更改会自动复制到Standby，以便始终与主站同步</li>
+</ul>
+<p><strong>4、greenplum segment</strong></p>
+<p>4.1、segment主要作用</p>
+<ul>
+<li>segment主要是存储数据及数据查询处理。</li>
+<li>用户自定义的表(非系统表，master存储系统表)及索引分布在可用的segment；每个segment包含数据的不同。用户不能直接与grenplum数据系统的segment交互，而是通过master进行交互。</li>
+<li>在参考Greenplum数据库硬件配置中，每个segment主机的segment实例数由有效的CPU或CPU内核的数量决定。 例如，如果你的segment主机有两个双核处理器，则每个主机可能有两个或四个主要segment。 如果你的segment主机有三个四核处理器，则每个主机可能有三个，六个或十二个segment。性能测试将有助于确定所选硬件平台的最佳segment。</li>
+</ul>
+<p>4.2、segment冗余 (mirror)镜像</p>
+<ul>
+<li>配置mirror，当你的primary segment不可用时则mirror segment允许数据查询故障切换到镜像segment。</li>
+<li>mirror segment必须始终位于与primary 不同的主机上</li>
+</ul>
+<p>4.3、性能</p>
+<ul>
+<li>Segment主机执行大部分数据库处理，因此配置好Segment主机服务器，以便从你的Greenplum数据库系统获得最佳性能。Greenplum数据库的性能将与数组中最慢的Segment服务器一样快，也就是性能以最慢的Segment为准</li>
+</ul>
+<p>4.4、网络</p>
+<ul>
+<li>网络互连是greenplum 数据系统的网络层，当用户连接到数据库并发查询时，会在每个segment上创建进程处理该查询的工作。网络互连是指的segment 之间的进程通信所依赖的网络基础设施。<br>默认情况下，greenplum数据库互连具有流量控制的UDP（用户数据报协议）协议发送消息。greenplum做了附加分组和检查不由UDP协议执行，性能和可扩展行超过TCP。</li>
+</ul>
+<p><strong>5、 ETL主机加载数据</strong></p>
+<ul>
+<li>greenplum支持使用其外部表功能可以快速并行的数据加载。通过使用外部表与greenplum数据库的并行文件服务器(gpfdist)结合使用，管理员可以从其greenplum数据库系统实现最大的并行度和负载带宽。</li>
+<li>使用gpfdist文件服务器程序的一个优点是，它可以确保在从外部表数据文件读取时，您的Greenplum数据库系统中的所有Segment都被充分利用。</li>
+</ul>
+<p><strong>6、Greenplum性能监视器</strong></p>
+<ul>
+<li>Greenplum还提供可选的监控和管理工具，管理员可以安装并启用Greenplum数据库。 要使用Greenplum性能监视器，您的Greenplum数据库阵列中的每个主机都必须安装并启用数据收集代理。 当你开始Greenplum性能监视器，代理开始收集关于查询和系统利用率的数据，代理定期将数据发送到Greenplum Master（通常每15秒）。用户可以查询Greenplum Performance Monitor数据库，查看有效查询和历史查询和系统性能数据。 Greenplum Performance Monitor还具有图形化的基于Web的用户界面，用于查看这些性能指标并以其他方式管理其Greenplum</li>
+</ul>
+<p><strong>7、postgresql 体系结构</strong></p>
+<p>postgresql数据库主要五大部分组成：连接管理系统(系统控制器)、编译执行系统、存储管理系统、事务系统、系统表。<br>以下模块功能介绍：</p>
+<ul>
+<li>1、 连接管理系统：机构外部操作对系统的请求，对操作请求进行预处理和分发，具有系统逻辑控制作用。</li>
+<li>2、编译执行系统：由查询编译器、查询执行器、DDL编译器组成，完成操作请求在数据库中的分析处理和转化工作，最终实现屋里存储介质数据的操作；</li>
+<li>3、存储管理系统：由索引管理器、内存管理器、外存管理器组成，负责存储和管理物理数据，提供对编译查询系统的支持；</li>
+<li>4、事务系统：包含 事务管理器、日志管理器、并发控制、锁管理器组成，日志管理器和事务管理器完成对操作请求处理的事务一致性支持，锁管理器和并发控制提供对并发访问数据的一致性支持；</li>
+<li>5、系统表：是postgresql数据库的元信息管理中心，包括数据库对象信息和数据库管理控制信息。系统表管理元数据信息，将postgresql数据库的各个模块有机的连接在一起，形成一个高效的数据管理系统。</li>
+</ul>
+<h2 id="安装单机master"><a href="#安装单机master" class="headerlink" title="安装单机master"></a>安装单机master</h2><p>环境：</p>
+<ul>
+<li>Greenplum6</li>
+<li>Centos7</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">ip地址</th>
+<th align="center">hostname</th>
+<th align="center">角色</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">192.168.137.31</td>
+<td align="center">master</td>
+<td align="center">master</td>
+</tr>
+<tr>
+<td align="center">192.168.137.32</td>
+<td align="center">segment1</td>
+<td align="center">segment</td>
+</tr>
+<tr>
+<td align="center">192.168.137.33</td>
+<td align="center">segment2</td>
+<td align="center">segment</td>
+</tr>
+</tbody></table>
+<h3 id="一-Greenplum-6-4-下载"><a href="#一-Greenplum-6-4-下载" class="headerlink" title="一.Greenplum 6.4 下载"></a>一.Greenplum 6.4 下载</h3><p><a class="link"   target="_blank" rel="noopener" href="https://network.pivotal.io/products/vmware-tanzu-greenplum#/releases/872702" >Greenplum下载地址<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="二-安装单机master环境准备"><a href="#二-安装单机master环境准备" class="headerlink" title="二.安装单机master环境准备"></a>二.安装单机master环境准备</h3><p><strong>2.1 关闭防火墙</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br></pre></td></tr></table></figure>
+
+<p> <strong>2.2 关闭SELINUX</strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">setenforce 0</span><br><span class="line">sed -i <span class="string">&#x27;s/SELINUX=enforcing/SELINUX=disabled/&#x27;</span> /etc/selinux/config</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line">vi /etc/selinux/config</span><br><span class="line">SELINUX=disabled</span><br></pre></td></tr></table></figure>
+
+<p> <strong>2.3 改机器名</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hostnamectl set-hostname 主机名</span><br><span class="line">hostnamectl set-hostname master</span><br></pre></td></tr></table></figure>
+
+<p> <strong>2.4 更改hosts文件</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /etc/hosts &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">192.168.137.31 master master</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p> <strong>2.5创建gpaadmin用户和用户组</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">groupadd -g 3030 gpadmin</span><br><span class="line">useradd -u 3030 gpadmin -g gpadmin -d /home/gpadmin</span><br><span class="line"><span class="comment"># 更改gpadmin密码</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;gpadmin&quot;</span> | passwd --stdin gpadmin</span><br></pre></td></tr></table></figure>
+
+<p> <strong>2.6配置内核参数</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /etc/sysctl.conf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">kernel.shmmax = 500000000</span></span><br><span class="line"><span class="string">kernel.shmmni = 4096</span></span><br><span class="line"><span class="string">kernel.shmall = 4000000000</span></span><br><span class="line"><span class="string">kernel.sem = 250 512000 100 2048</span></span><br><span class="line"><span class="string">kernel.sysrq = 1</span></span><br><span class="line"><span class="string">kernel.core_uses_pid = 1</span></span><br><span class="line"><span class="string">kernel.msgmnb = 65536</span></span><br><span class="line"><span class="string">kernel.msgmax = 65536</span></span><br><span class="line"><span class="string">kernel.msgmni = 2048</span></span><br><span class="line"><span class="string">net.ipv4.tcp_syncookies = 1</span></span><br><span class="line"><span class="string">net.ipv4.conf.default.accept_source_route = 0</span></span><br><span class="line"><span class="string">net.ipv4.tcp_tw_recycle = 1</span></span><br><span class="line"><span class="string">net.ipv4.tcp_max_syn_backlog = 4096</span></span><br><span class="line"><span class="string">net.ipv4.conf.all.arp_filter = 1</span></span><br><span class="line"><span class="string">net.ipv4.ip_local_port_range = 10000 65535</span></span><br><span class="line"><span class="string">net.core.netdev_max_backlog = 10000</span></span><br><span class="line"><span class="string">net.core.rmem_max = 2097152</span></span><br><span class="line"><span class="string">net.core.wmem_max = 2097152</span></span><br><span class="line"><span class="string">vm.overcommit_memory = 2</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使配置生效</span></span><br><span class="line">sysctl -p</span><br></pre></td></tr></table></figure>
+
+<p>  <strong>2.7 更改&#x2F;etc&#x2F;security&#x2F;limits.conf</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt;/etc/security/limits.conf &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string">*soft nofile 65536</span></span><br><span class="line"><span class="string">*hard nofile 65536</span></span><br><span class="line"><span class="string">*soft nproc 131072</span></span><br><span class="line"><span class="string">*hard nproc 131072</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p> <strong>2.8 CentOS7需要加入服务logind</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;RemoveIPC=no&quot;</span> &gt;&gt; /etc/systemd/logind.conf</span><br><span class="line">service systemd-logind restart</span><br></pre></td></tr></table></figure>
+
+<p> <strong>2.9 设置network</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/sysconfig/network</span><br><span class="line"><span class="comment"># 添加：</span></span><br><span class="line">networking=<span class="built_in">yes</span></span><br><span class="line">hostname=master  <span class="comment"># 不区分大小写</span></span><br></pre></td></tr></table></figure>
+
+<p> <strong>2.10 重启服务器reboot</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
+
+<h3 id="三-安装GreenPlum"><a href="#三-安装GreenPlum" class="headerlink" title="三.安装GreenPlum"></a>三.安装GreenPlum</h3><p>安装方式:</p>
+<ul>
+<li>rpm包 - 本次用rpm安装</li>
+<li>zip压缩包</li>
+<li>bin二进制包</li>
+</ul>
+<p> <strong>3.1 gp6安装包上传到服务器并安装</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 上传到master服务器上，并安装rpm包</span></span><br><span class="line">yum -y install greenplum-db-6.1.0-rhel6-x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#默认安装到/usr/local下，授权给gpadmin</span></span><br><span class="line"><span class="built_in">chown</span> -R gpadmin /usr/local/greenplum*</span><br><span class="line"><span class="built_in">chgrp</span> -R gpadmin /usr/local/greenplum*</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 加载greenplum环境</span></span><br><span class="line"><span class="built_in">source</span> /usr/local/greenplum-db/greenplum_path.sh</span><br></pre></td></tr></table></figure>
+
+<p> <strong>3.2创建instance需要的目录</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata/master</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata/gp1</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata/gp2</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata/gp3</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata/gp4</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改目录属主</span></span><br><span class="line"><span class="built_in">chown</span> -R gpadmin:gpadmin /data/gpdata</span><br><span class="line"><span class="built_in">chown</span> -R gpadmin:gpadmin /data/gpdata/master</span><br><span class="line"><span class="built_in">chown</span> -R gpadmin:gpadmin /data/gpdata/gp*</span><br></pre></td></tr></table></figure>
+
+<p> <strong>3.3切换用户gpadmin</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到gpadmin</span></span><br><span class="line">su - gpadmin</span><br><span class="line"><span class="built_in">cd</span></span><br></pre></td></tr></table></figure>
+
+<p> <strong>3.4 &#x2F;home&#x2F;gpadmin&#x2F;.bash_profile文件添加以下内容：</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /home/gpadmin/.bash_profile &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string"># 确认安装路径是否相同，脚本是否同名</span></span><br><span class="line"><span class="string">source /usr/local/greenplum-db/greenplum_path.sh</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">export MASTER_DATA_DIRECTORY=/data/gpdata/master/gpseg-1</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">export PGPORT=2345</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">export PGUSER=gpadmin</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">export PGDATABASE=gpdb</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p> <strong>3.5 &#x2F;home&#x2F;gpadmin&#x2F;.bashrc文件添加同3.4的内容</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &gt;&gt; /home/gpadmin/.bashrc &lt;&lt; <span class="string">EOF</span></span><br><span class="line"><span class="string"># 确认安装路径是否相同，脚本是否同名</span></span><br><span class="line"><span class="string">source /usr/local/greenplum-db/greenplum_path.sh</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">export MASTER_DATA_DIRECTORY=/data/gpdata/master/gpseg-1</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">export PGPORT=2345</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">export PGUSER=gpadmin</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">export PGDATABASE=gpdb</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<p> <strong>3.6设置子节点的host</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加一行master（单机版只有一个host）</span></span><br><span class="line">vi all_hosts_file</span><br><span class="line">master</span><br></pre></td></tr></table></figure>
+
+<p> <strong>3.7 权限互通</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 免密登录</span></span><br><span class="line">gpssh-exkeys -f all_hosts_file</span><br></pre></td></tr></table></figure>
+
+<p> <strong>3.8 编辑gp初始化文件</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">vi initgp_config</span><br><span class="line"><span class="comment"># 写入:</span></span><br><span class="line">SEG_PREFIX=gpseg</span><br><span class="line">PORT_BASE=33000</span><br><span class="line"><span class="built_in">declare</span> -a DATA_DIRECTORY=(/data/gpdata/gp1 /data/gpdata/gp2 /data/gpdata/gp3 /data/gpdata/gp4)</span><br><span class="line">MASTER_HOSTNAME=master</span><br><span class="line">MASTER_PORT=2345</span><br><span class="line">MASTER_DIRECTORY=/data/gpdata/master</span><br><span class="line">DATABASE_NAME=gpdb</span><br></pre></td></tr></table></figure>
+
+<p> <strong>3.9设置节点服务器</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi seg_hosts_file</span><br><span class="line"><span class="comment"># 写入：本例单机，只有master这一台</span></span><br><span class="line">master</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="四-初始化GreenPlum"><a href="#四-初始化GreenPlum" class="headerlink" title="四.初始化GreenPlum"></a><strong>四.初始化GreenPlum</strong></h3><p> <strong>4.1 初始化命令</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpinitsystem -c initgp_config -h seg_hosts_file</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>服务器初始化没有设置分配swap空间，会初始化失败，分配好swap空间即可 </p>
+</blockquote>
+<h3 id="五-连接GP"><a href="#五-连接GP" class="headerlink" title="五.连接GP"></a>五.连接GP</h3><p> <strong>5.1psql登录修改密码</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">su - gpadmin</span><br><span class="line">psql -p 2345</span><br><span class="line"><span class="comment">#  修改数据库密码</span></span><br><span class="line">alter role gpadmin with password <span class="string">&#x27;gpadmin&#x27;</span>;</span><br><span class="line">退出： \q</span><br></pre></td></tr></table></figure>
+
+<p> <strong>5.2远程连接配置</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vi /data/gpdata/master/gpseg-1/postgresql.conf</span><br><span class="line"><span class="comment"># 修改：</span></span><br><span class="line"><span class="comment">#listen_addresses = &#x27;*&#x27;，去#注释</span></span><br><span class="line">vi /data/gpdata/master/gpseg-1/pg_hba.conf</span><br><span class="line"><span class="comment"># 添加：</span></span><br><span class="line">host     all         gpadmin         0.0.0.0/0               md5</span><br></pre></td></tr></table></figure>
+
+<p> <strong>5.3重新加载配置文件</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpstop -u</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>5.4 其他启停命令</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gpstart <span class="comment">#正常启动</span></span><br><span class="line">gpstop <span class="comment">#正常关闭</span></span><br><span class="line">gpstop -M fast <span class="comment">#快速关闭</span></span><br><span class="line">gpstop –r <span class="comment">#重启</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="安装master后添加segment节点"><a href="#安装master后添加segment节点" class="headerlink" title="安装master后添加segment节点"></a>安装master后添加segment节点</h2><h3 id="一-更改segment系统配置"><a href="#一-更改segment系统配置" class="headerlink" title="一.更改segment系统配置"></a>一.更改segment系统配置</h3><p> <strong>1.1更改机器名为segment1</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostnamectl set-hostname segment1</span><br></pre></td></tr></table></figure>
+
+<p> <strong>1.2修改&#x2F;etc&#x2F;hosts文件</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/hosts</span><br><span class="line"><span class="comment"># 新增</span></span><br><span class="line">192.168.137.32 segment1 segment1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从master复制到segment</span></span><br><span class="line">scp /etc/hosts segment1:/etc</span><br></pre></td></tr></table></figure>
+
+<p> <strong>1.3关闭selinux及防火墙</strong> </p>
+<p> 参考前文 </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># selinux文件可用scp命令由master复制到segment节点</span></span><br><span class="line">scp /etc/selinux/config segment1:/etc/selinux</span><br></pre></td></tr></table></figure>
+
+<p> <strong>1.4修改&#x2F;etc&#x2F;sysconfig&#x2F;network文件(进入每台segment中修改)</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/sysconfig/network</span><br><span class="line"><span class="comment"># Created by anaconda</span></span><br><span class="line">networking=<span class="built_in">yes</span></span><br><span class="line">hostname=segment1 <span class="comment"># 主机名</span></span><br></pre></td></tr></table></figure>
+
+<p> <strong>1.5复制master的&#x2F;etc&#x2F;sysctl.conf文件到segment</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scp /etc/sysctl.conf segment1:/etc/</span><br><span class="line">sysctl -p <span class="comment"># segment 执行</span></span><br></pre></td></tr></table></figure>
+
+<p> <strong>1.6修改&#x2F;etc&#x2F;security&#x2F;limits.d&#x2F;20-nproc.conf文件并复制到segment</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/security/limits.d/20-nproc.conf</span><br><span class="line"><span class="comment"># Default limit for number of user&#x27;s processes to prevent</span></span><br><span class="line"><span class="comment"># accidental fork bombs.</span></span><br><span class="line"><span class="comment"># See rhbz #432903 for reasoning.</span></span><br><span class="line"></span><br><span class="line">*          soft    <span class="built_in">nproc</span>     4096</span><br><span class="line">root       soft    <span class="built_in">nproc</span>     unlimited</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 复制到segment</span></span><br><span class="line">scp /etc/security/limits.d/20-nproc.conf segment1:/etc/security/limits.d/</span><br></pre></td></tr></table></figure>
+
+<p> <strong>1.7复制&#x2F;etc&#x2F;security&#x2F;limits.conf到segment节点</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp /etc/security/limits.conf  segment1:/etc/security/</span><br></pre></td></tr></table></figure>
+
+<p> <strong>1.8创建gpadmin组及用户</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">groupadd -g 3030 gpadmin</span><br><span class="line">useradd -u 3030 gpadmin -g gpadmin -d /home/gpadmin</span><br><span class="line"><span class="comment"># 更改gpadmin密码</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;gpadmin&quot;</span> | passwd --stdin gpadmin</span><br></pre></td></tr></table></figure>
+
+<p> <strong>1.9配置扩展segment节点需要的文件</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改master主机gpadmin目录下的all_hosts_file,将所有节点的主机名都加进去</span></span><br><span class="line">vi /home/gpadmin/all_hosts_file</span><br><span class="line">master</span><br><span class="line">segment1</span><br><span class="line">segment2</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改master主机gpadmin目录下的seg_hosts_file,将segment节点的主机名加进去</span></span><br><span class="line">vi /home/gpadmin/seg_hosts_file</span><br><span class="line">segment1</span><br><span class="line">segment2</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 新增hosts_expand文件,此次增加的segment</span></span><br><span class="line"><span class="comment"># 将当前需要新增的节点主机名加入(如此次需要加入segment1,就将segment1写入)</span></span><br><span class="line">vi /home/gpadmin/hosts_expand</span><br><span class="line">segment1</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p><strong>1.10 创建需要的目录</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建目录</span></span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata/master</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata/gp1</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata/gp2</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata/gp3</span><br><span class="line"><span class="built_in">mkdir</span> -p /data/gpdata/gp4</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改目录属主</span></span><br><span class="line"><span class="built_in">chown</span> -R gpadmin:gpadmin /data/gpdata</span><br><span class="line"><span class="built_in">chown</span> -R gpadmin:gpadmin /data/gpdata/master</span><br><span class="line"><span class="built_in">chown</span> -R gpadmin:gpadmin /data/gpdata/gp*</span><br></pre></td></tr></table></figure>
+
+<h3 id="二-配置SSH免密登录"><a href="#二-配置SSH免密登录" class="headerlink" title="二.配置SSH免密登录"></a>二.配置SSH免密登录</h3><p> <strong>2.1master主机生成密钥</strong>  </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意执行用户为gpadmin</span></span><br><span class="line">ssh-keygen -t rsa</span><br><span class="line"><span class="comment"># 一直回车</span></span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/root/.ssh/id_rsa): </span><br><span class="line">/root/.ssh/id_rsa already exists.</span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): </span><br><span class="line">Enter same passphrase again: </span><br><span class="line">Your identification has been saved <span class="keyword">in</span> /root/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /root/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:8Z+R0Truk1NIVC4Tl6w5VTgP2WrjhM3ZtmYu2Ykn8v8 root@master</span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string">+---[RSA 2048]----+</span></span><br><span class="line"><span class="string">|            .oo*.|</span></span><br><span class="line"><span class="string">|            .=O .|</span></span><br><span class="line"><span class="string">|        .  .+BoB |</span></span><br><span class="line"><span class="string">|         o  **O +|</span></span><br><span class="line"><span class="string">|        S ..=* o.|</span></span><br><span class="line"><span class="string">|           o.+o+ |</span></span><br><span class="line"><span class="string">|            +oB .|</span></span><br><span class="line"><span class="string">|           o+= = |</span></span><br><span class="line"><span class="string">|            ++=.E|</span></span><br><span class="line"><span class="string">+----[SHA256]-----+</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>id_rsa为私钥，id_rsa.pub为公钥 </p>
+</blockquote>
+<p> <strong>2.2将公钥复制到segment的 ~&#x2F;.ssh&#x2F;authorized_keys文件(.ssh目录及authorized_keys可能要提前创建)</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注意执行用户为gpadmin</span></span><br><span class="line">scp ~/.ssh/id_rsa.pub segment1:~/.ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p> <strong>2.3设置目录权限</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># gpadmin用户的.ssh目录的权限必须是700(非常重要)</span></span><br><span class="line"><span class="built_in">chmod</span> 700 .ssh</span><br><span class="line"></span><br><span class="line"><span class="comment"># gpadmin用户的.ssh/authorized_keys文件权限必须是600</span></span><br><span class="line"><span class="built_in">chmod</span> 600 .ssh/authorized_keys</span><br></pre></td></tr></table></figure>
+
+<p> <strong>2.4测试节点之间是否连通</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">gpssh-exkeys -f all_hosts_file</span><br><span class="line"></span><br><span class="line">[gpadmin@master ~]$ gpssh-exkeys -f all_hosts_file</span><br><span class="line">[STEP 1 of 5] create <span class="built_in">local</span> ID and authorize on <span class="built_in">local</span> host</span><br><span class="line">  ... /home/gpadmin/.ssh/id_rsa file exists ... key generation skipped</span><br><span class="line"></span><br><span class="line">[STEP 2 of 5] keyscan all hosts and update known_hosts file</span><br><span class="line"></span><br><span class="line">[STEP 3 of 5] retrieving credentials from remote hosts</span><br><span class="line">  ... send to segment1</span><br><span class="line"></span><br><span class="line">[STEP 4 of 5] determine common authentication file content</span><br><span class="line"></span><br><span class="line">[STEP 5 of 5] copy authentication files to all remote hosts</span><br><span class="line">  ... finished key exchange with segment1</span><br><span class="line"></span><br><span class="line">[INFO] completed successfully</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最后出现completed successfully即证明节点之间已连通</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="三-在segment安装GreenPlum"><a href="#三-在segment安装GreenPlum" class="headerlink" title="三.在segment安装GreenPlum"></a><strong>三.在segment安装GreenPlum</strong></h3><p> <strong>3.1在segment安装GreenPlum的rpm包</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 上传到所有segment服务器上，并安装rpm包</span></span><br><span class="line">yum -y install greenplum-db-6.1.0-rhel6-x86_64.rpm</span><br><span class="line"><span class="comment"># 或者用rpm命令安装</span></span><br><span class="line">rpm -ivh greenplum-db-6.1.0-rhel6-x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换gpadmin用户,将segment节点/usr/local的读权限给到gpadmin,否则会报错</span></span><br><span class="line"><span class="built_in">chown</span> -R gpadmin:gpadmin /usr/local/greenplum-db*</span><br></pre></td></tr></table></figure>
+
+<h3 id="四-环境配置"><a href="#四-环境配置" class="headerlink" title="四.环境配置"></a>四.环境配置</h3><p> <strong>4.1复制&#x2F;home&#x2F;gpadmin&#x2F;.bash_profile到segment</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scp /home/gpadmin/.bash_profile segment1:/home/gpadmin/</span><br><span class="line">scp /home/gpadmin/.bash_profile segment2:/home/gpadmin/</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p> <strong>4.2使环境变量生效</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">su - gpadmin</span><br><span class="line"><span class="built_in">source</span> .bash_profile</span><br></pre></td></tr></table></figure>
+
+<p> <strong>4.3复制&#x2F;home&#x2F;gpadmin&#x2F;.bashrc到segment</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scp /home/gpadmin/.bashrc segment1:/home/gpadmin/</span><br><span class="line">scp /home/gpadmin/.bashrc segment2:/home/gpadmin/</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h3 id="五-使用gpexpand函数增加segment节点"><a href="#五-使用gpexpand函数增加segment节点" class="headerlink" title="五.使用gpexpand函数增加segment节点"></a><strong>五.使用gpexpand函数增加segment节点</strong></h3><p> <strong>5.1gpexpand -f hosts_expand</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">[gpadmin@master ~]$ gpexpand -f hosts_expand</span><br><span class="line"></span><br><span class="line">20210514:23:06:59:044510 gpexpand:master:gpadmin-[INFO]:-<span class="built_in">local</span> Greenplum Version: <span class="string">&#x27;postgres (Greenplum Database) 6.16.0 build commit:5650be2b79197fed564dca8d734d10f2a76b876c&#x27;</span></span><br><span class="line">20210514:23:06:59:044510 gpexpand:master:gpadmin-[INFO]:-master Greenplum Version: <span class="string">&#x27;PostgreSQL 9.4.24 (Greenplum Database 6.16.0 build commit:5650be2b79197fed564dca8d734d10f2a76b876c) on x86_64-unknown-linux-gnu, compiled by gcc (GCC) 6.4.0, 64-bit compiled on Apr 21 2021 19:24:38&#x27;</span></span><br><span class="line">20210514:23:06:59:044510 gpexpand:master:gpadmin-[INFO]:-Querying gpexpand schema <span class="keyword">for</span> current expansion state</span><br><span class="line"></span><br><span class="line">System Expansion is used to add segments to an existing GPDB array.</span><br><span class="line">gpexpand did not detect a System Expansion that is <span class="keyword">in</span> progress.</span><br><span class="line"></span><br><span class="line">Before initiating a System Expansion, you need to provision and burn-in</span><br><span class="line">the new hardware.  Please be sure to run gpcheckperf to make sure the</span><br><span class="line">new hardware is working properly.</span><br><span class="line"></span><br><span class="line">Please refer to the Admin Guide <span class="keyword">for</span> more information.</span><br><span class="line"></span><br><span class="line">Would you like to initiate a new System Expansion Yy|Nn (default=N):</span><br><span class="line">&gt; y</span><br><span class="line">20210514:23:07:00:044510 gpexpand:master:gpadmin-[ERROR]:-gpexpand failed: Hosts file hosts_gpexpand not found </span><br><span class="line"></span><br><span class="line">Exiting...</span><br><span class="line">20210514:23:07:00:044510 gpexpand:master:gpadmin-[INFO]:-Shutting down gpexpand...</span><br><span class="line">[gpadmin@master ~]$ gpexpand -f hosts_expand </span><br><span class="line">20210514:23:07:10:044551 gpexpand:master:gpadmin-[INFO]:-<span class="built_in">local</span> Greenplum Version: <span class="string">&#x27;postgres (Greenplum Database) 6.16.0 build commit:5650be2b79197fed564dca8d734d10f2a76b876c&#x27;</span></span><br><span class="line">20210514:23:07:10:044551 gpexpand:master:gpadmin-[INFO]:-master Greenplum Version: <span class="string">&#x27;PostgreSQL 9.4.24 (Greenplum Database 6.16.0 build commit:5650be2b79197fed564dca8d734d10f2a76b876c) on x86_64-unknown-linux-gnu, compiled by gcc (GCC) 6.4.0, 64-bit compiled on Apr 21 2021 19:24:38&#x27;</span></span><br><span class="line">20210514:23:07:10:044551 gpexpand:master:gpadmin-[INFO]:-Querying gpexpand schema <span class="keyword">for</span> current expansion state</span><br><span class="line"></span><br><span class="line">System Expansion is used to add segments to an existing GPDB array.</span><br><span class="line">gpexpand did not detect a System Expansion that is <span class="keyword">in</span> progress.</span><br><span class="line"></span><br><span class="line">Before initiating a System Expansion, you need to provision and burn-in</span><br><span class="line">the new hardware.  Please be sure to run gpcheckperf to make sure the</span><br><span class="line">new hardware is working properly.</span><br><span class="line"></span><br><span class="line">Please refer to the Admin Guide <span class="keyword">for</span> more information.</span><br><span class="line"></span><br><span class="line">Would you like to initiate a new System Expansion Yy|Nn (default=N):</span><br><span class="line">&gt; y</span><br><span class="line"></span><br><span class="line">    By default, new hosts are configured with the same number of primary</span><br><span class="line">    segments as existing hosts.  Optionally, you can increase the number</span><br><span class="line">    of segments per host.</span><br><span class="line"></span><br><span class="line">    For example, <span class="keyword">if</span> existing hosts have two primary segments, entering a value</span><br><span class="line">    of 2 will initialize two additional segments on existing hosts, and four</span><br><span class="line">    segments on new hosts.  In addition, mirror segments will be added <span class="keyword">for</span></span><br><span class="line">    these new primary segments <span class="keyword">if</span> mirroring is enabled.</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">How many new primary segments per host <span class="keyword">do</span> you want to add? (default=0):</span><br><span class="line">&gt; 4</span><br><span class="line">Enter new primary data directory 1:</span><br><span class="line">&gt; /data/gpdata/gp1</span><br><span class="line">Enter new primary data directory 2:</span><br><span class="line">&gt; /data/gpdata/gp2</span><br><span class="line">Enter new primary data directory 3:</span><br><span class="line">&gt; /data/gpdata/gp3  </span><br><span class="line">Enter new primary data directory 4:</span><br><span class="line">&gt; /data/gpdata/gp4</span><br><span class="line"></span><br><span class="line">Generating configuration file...</span><br><span class="line"></span><br><span class="line">20210514:23:08:27:044551 gpexpand:master:gpadmin-[INFO]:-Generating input file...</span><br><span class="line"></span><br><span class="line">Input configuration file was written to <span class="string">&#x27;gpexpand_inputfile_20210514_230827&#x27;</span>.</span><br><span class="line"></span><br><span class="line">Please review the file and make sure that it is correct <span class="keyword">then</span> re-run</span><br><span class="line">with: gpexpand -i gpexpand_inputfile_20210514_230827</span><br><span class="line">                </span><br><span class="line">20210514:23:08:27:044551 gpexpand:master:gpadmin-[INFO]:-Exiting...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> 成功会显示已生成gpexpand_inoutfile开头的文件 </p>
+</blockquote>
+<p> <strong>5.2修改gpexpand_inputfile_20xxx(每个节点保留4行)</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">segment1|segment1|33000|/data/gpdata/gp1/gpseg4|6|4|p</span><br><span class="line">segment1|segment1|33001|/data/gpdata/gp2/gpseg5|7|5|p</span><br><span class="line">segment1|segment1|33002|/data/gpdata/gp3/gpseg6|8|6|p</span><br><span class="line">segment1|segment1|33003|/data/gpdata/gp4/gpseg7|9|7|p</span><br><span class="line"><span class="comment"># 当前只增加一个节点，所以只保留前面4行</span></span><br><span class="line">master|master|33004|/data/gpdata/gp1/gpseg8|10|8|p</span><br><span class="line">master|master|33005|/data/gpdata/gp2/gpseg9|11|9|p</span><br><span class="line">master|master|33006|/data/gpdata/gp3/gpseg10|12|10|p</span><br><span class="line">master|master|33007|/data/gpdata/gp4/gpseg11|13|11|p</span><br><span class="line">segment1|segment1|33004|/data/gpdata/gp1/gpseg12|14|12|p</span><br><span class="line">segment1|segment1|33005|/data/gpdata/gp2/gpseg13|15|13|p</span><br><span class="line">segment1|segment1|33006|/data/gpdata/gp3/gpseg14|16|14|p</span><br><span class="line">segment1|segment1|33007|/data/gpdata/gp4/gpseg15|17|15|p</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> 剩下的都可删掉，否则gpexpand -i 命令会失败,报错 </p>
+</blockquote>
+<p> <strong>5.3gpexpand -i 脚本文件</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[gpadmin@master ~]$ gpexpand -i gpexpand_inputfile_20210514_230827</span><br><span class="line">20210514:23:11:57:044991 gpexpand:master:gpadmin-[INFO]:-<span class="built_in">local</span> Greenplum Version: <span class="string">&#x27;postgres (Greenplum Database) 6.16.0 build commit:5650be2b79197fed564dca8d734d10f2a76b876c&#x27;</span></span><br><span class="line">20210514:23:11:57:044991 gpexpand:master:gpadmin-[INFO]:-master Greenplum Version: <span class="string">&#x27;PostgreSQL 9.4.24 (Greenplum Database 6.16.0 build commit:5650be2b79197fed564dca8d734d10f2a76b876c) on x86_64-unknown-linux-gnu, compiled by gcc (GCC) 6.4.0, 64-bit compiled on Apr 21 2021 19:24:38&#x27;</span></span><br><span class="line">20210514:23:11:57:044991 gpexpand:master:gpadmin-[INFO]:-Querying gpexpand schema <span class="keyword">for</span> current expansion state</span><br><span class="line">20210514:23:11:58:044991 gpexpand:master:gpadmin-[INFO]:-Heap checksum setting consistent across cluster</span><br><span class="line">20210514:23:11:58:044991 gpexpand:master:gpadmin-[INFO]:-Syncing Greenplum Database extensions</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">20210514:23:12:02:044991 gpexpand:master:gpadmin-[INFO]:-&#123;<span class="string">&#x27;segment1&#x27;</span>: <span class="string">&#x27;/data/gpdata/gp1/gpseg4:33000:true:false:6:4::-1:,/data/gpdata/gp2/gpseg5:33001:true:false:7:5::-1:,/data/gpdata/gp3/gpseg6:33002:true:false:8:6::-1:,/data/gpdata/gp4/gpseg7:33003:true:false:9:7::-1:&#x27;</span>&#125;</span><br><span class="line">20210514:23:12:19:044991 gpexpand:master:gpadmin-[INFO]:-Cleaning up temporary template files</span><br><span class="line">20210514:23:12:19:044991 gpexpand:master:gpadmin-[INFO]:-Cleaning up databases <span class="keyword">in</span> new segments.</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-Unlocking catalog</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-Unlocked catalog</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-Creating expansion schema</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-Populating gpexpand.status_detail with data from database template1</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-Populating gpexpand.status_detail with data from database postgres</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-Populating gpexpand.status_detail with data from database gpdb</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-************************************************</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-Initialization of the system expansion complete.</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-To begin table expansion onto the new segments</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-rerun gpexpand</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-************************************************</span><br><span class="line">20210514:23:12:21:044991 gpexpand:master:gpadmin-[INFO]:-Exiting...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> (出现Initialization of the system expansion complete即增加节点成功) </p>
+</blockquote>
+<p><strong>5.4删除增加节点生成的schema</strong></p>
+<blockquote>
+<p> (不删除以后则无法增加节点)</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[gpadmin@master ~]$ gpexpand -c</span><br><span class="line">20210515:00:49:17:051000 gpexpand:master:gpadmin-[INFO]:-<span class="built_in">local</span> Greenplum Version: <span class="string">&#x27;postgres (Greenplum Database) 6.16.0 build commit:5650be2b79197fed564dca8d734d10f2a76b876c&#x27;</span></span><br><span class="line">20210515:00:49:17:051000 gpexpand:master:gpadmin-[INFO]:-master Greenplum Version: <span class="string">&#x27;PostgreSQL 9.4.24 (Greenplum Database 6.16.0 build commit:5650be2b79197fed564dca8d734d10f2a76b876c) on x86_64-unknown-linux-gnu, compiled by gcc (GCC) 6.4.0, 64-bit compiled on Apr 21 2021 19:24:38&#x27;</span></span><br><span class="line">20210515:00:49:17:051000 gpexpand:master:gpadmin-[INFO]:-Querying gpexpand schema <span class="keyword">for</span> current expansion state</span><br><span class="line">20210515:00:49:18:051000 gpexpand:master:gpadmin-[WARNING]:-Expansion has not yet completed.  Removing the expansion</span><br><span class="line">20210515:00:49:18:051000 gpexpand:master:gpadmin-[WARNING]:-schema now will leave the following tables unexpanded:</span><br><span class="line">20210515:00:49:18:051000 gpexpand:master:gpadmin-[WARNING]:-</span><br><span class="line">20210515:00:49:18:051000 gpexpand:master:gpadmin-[WARNING]:-These tables will have to be expanded manually by setting</span><br><span class="line">20210515:00:49:18:051000 gpexpand:master:gpadmin-[WARNING]:-the distribution policy using the ALTER TABLE <span class="built_in">command</span>.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Are you sure you want to drop the expansion schema? Yy|Nn (default=N):</span><br><span class="line">&gt; y</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Do you want to dump the gpexpand.status_detail table to file? Yy|Nn (default=Y):</span><br><span class="line">&gt; y</span><br><span class="line">20210515:00:49:22:051000 gpexpand:master:gpadmin-[INFO]:-Dumping gpexpand.status_detail to /home/gpdata/master/gpseg-1/gpexpand.status_detail</span><br><span class="line">20210515:00:49:22:051000 gpexpand:master:gpadmin-[INFO]:-Removing gpexpand schema</span><br><span class="line">20210515:00:49:22:051000 gpexpand:master:gpadmin-[INFO]:-Cleanup Finished.  exiting...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p> <strong>5.5重分布表</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpexpand -d 60:00:00</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> (出现completed successfully即重分布成功) </p>
+</blockquote>
+<p> <strong>5.6失败回滚</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gpexpand -r</span><br></pre></td></tr></table></figure>
+
+<p> <strong>5.7进入GP查询节点信息</strong> </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">su - gpadmin</span><br><span class="line"><span class="comment"># 登录greenplum,注意端口(前面的初始化配置文件设置的)</span></span><br><span class="line">psql -p 2345</span><br><span class="line"><span class="comment"># 执行sql查询集群状态</span></span><br><span class="line"><span class="keyword">select</span> * from gp_segment_configuration;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">gpdb<span class="operator">=</span># <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> gp_segment_configuration;</span><br><span class="line"> dbid <span class="operator">|</span> content <span class="operator">|</span> role <span class="operator">|</span> preferred_role <span class="operator">|</span> mode <span class="operator">|</span> status <span class="operator">|</span> port  <span class="operator">|</span> hostname <span class="operator">|</span> address  <span class="operator">|</span>           datadir           </span><br><span class="line"><span class="comment">------+---------+------+----------------+------+--------+-------+----------+----------+-----------------------------</span></span><br><span class="line">    <span class="number">1</span> <span class="operator">|</span>      <span class="number">-1</span> <span class="operator">|</span> p    <span class="operator">|</span> p              <span class="operator">|</span> n    <span class="operator">|</span> u      <span class="operator">|</span>  <span class="number">2345</span> <span class="operator">|</span> master   <span class="operator">|</span> master   <span class="operator">|</span> <span class="operator">/</span>data<span class="operator">/</span>gpdata<span class="operator">/</span>master<span class="operator">/</span>gpseg<span class="number">-1</span></span><br><span class="line">    <span class="number">2</span> <span class="operator">|</span>       <span class="number">0</span> <span class="operator">|</span> p    <span class="operator">|</span> p              <span class="operator">|</span> n    <span class="operator">|</span> u      <span class="operator">|</span> <span class="number">33000</span> <span class="operator">|</span> master   <span class="operator">|</span> master   <span class="operator">|</span> <span class="operator">/</span>data<span class="operator">/</span>gpdata<span class="operator">/</span>gp1<span class="operator">/</span>gpseg0</span><br><span class="line">    <span class="number">3</span> <span class="operator">|</span>       <span class="number">1</span> <span class="operator">|</span> p    <span class="operator">|</span> p              <span class="operator">|</span> n    <span class="operator">|</span> u      <span class="operator">|</span> <span class="number">33001</span> <span class="operator">|</span> master   <span class="operator">|</span> master   <span class="operator">|</span> <span class="operator">/</span>data<span class="operator">/</span>gpdata<span class="operator">/</span>gp2<span class="operator">/</span>gpseg1</span><br><span class="line">    <span class="number">4</span> <span class="operator">|</span>       <span class="number">2</span> <span class="operator">|</span> p    <span class="operator">|</span> p              <span class="operator">|</span> n    <span class="operator">|</span> u      <span class="operator">|</span> <span class="number">33002</span> <span class="operator">|</span> master   <span class="operator">|</span> master   <span class="operator">|</span> <span class="operator">/</span>data<span class="operator">/</span>gpdata<span class="operator">/</span>gp3<span class="operator">/</span>gpseg2</span><br><span class="line">    <span class="number">5</span> <span class="operator">|</span>       <span class="number">3</span> <span class="operator">|</span> p    <span class="operator">|</span> p              <span class="operator">|</span> n    <span class="operator">|</span> u      <span class="operator">|</span> <span class="number">33003</span> <span class="operator">|</span> master   <span class="operator">|</span> master   <span class="operator">|</span> <span class="operator">/</span>data<span class="operator">/</span>gpdata<span class="operator">/</span>gp4<span class="operator">/</span>gpseg3</span><br><span class="line">    <span class="number">6</span> <span class="operator">|</span>       <span class="number">4</span> <span class="operator">|</span> p    <span class="operator">|</span> p              <span class="operator">|</span> n    <span class="operator">|</span> u      <span class="operator">|</span> <span class="number">33000</span> <span class="operator">|</span> segment1 <span class="operator">|</span> segment1 <span class="operator">|</span> <span class="operator">/</span>data<span class="operator">/</span>gpdata<span class="operator">/</span>gp1<span class="operator">/</span>gpseg4</span><br><span class="line">    <span class="number">7</span> <span class="operator">|</span>       <span class="number">5</span> <span class="operator">|</span> p    <span class="operator">|</span> p              <span class="operator">|</span> n    <span class="operator">|</span> u      <span class="operator">|</span> <span class="number">33001</span> <span class="operator">|</span> segment1 <span class="operator">|</span> segment1 <span class="operator">|</span> <span class="operator">/</span>data<span class="operator">/</span>gpdata<span class="operator">/</span>gp2<span class="operator">/</span>gpseg5</span><br><span class="line">    <span class="number">8</span> <span class="operator">|</span>       <span class="number">6</span> <span class="operator">|</span> p    <span class="operator">|</span> p              <span class="operator">|</span> n    <span class="operator">|</span> u      <span class="operator">|</span> <span class="number">33002</span> <span class="operator">|</span> segment1 <span class="operator">|</span> segment1 <span class="operator">|</span> <span class="operator">/</span>data<span class="operator">/</span>gpdata<span class="operator">/</span>gp3<span class="operator">/</span>gpseg6</span><br><span class="line">    <span class="number">9</span> <span class="operator">|</span>       <span class="number">7</span> <span class="operator">|</span> p    <span class="operator">|</span> p              <span class="operator">|</span> n    <span class="operator">|</span> u      <span class="operator">|</span> <span class="number">33003</span> <span class="operator">|</span> segment1 <span class="operator">|</span> segment1 <span class="operator">|</span> <span class="operator">/</span>data<span class="operator">/</span>gpdata<span class="operator">/</span>gp4<span class="operator">/</span>gpseg7</span><br><span class="line">(<span class="number">9</span> <span class="keyword">rows</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><code>完</code></p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://blog.csdn.net/qq_36135235/article/details/104615823" >原文链接<i class="fas fa-external-link-alt"></i></a></p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/CentOS/f765416dfd23/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">CentOS中systemctl设置systemd.service服务守护进程</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/Kubernetes/4ffd8977969d/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">KubeSphere部署</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CentOS%E5%AE%89%E8%A3%85Greenplum%E6%95%99%E7%A8%8B-%E7%94%B1%E5%8D%95%E6%9C%BAmaster%E5%88%B0%E9%9B%86%E7%BE%A4"><span class="nav-text">CentOS安装Greenplum教程-由单机master到集群</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#greenplum%E7%BB%84%E4%BB%B6"><span class="nav-text">greenplum组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E5%8D%95%E6%9C%BAmaster"><span class="nav-text">安装单机master</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80-Greenplum-6-4-%E4%B8%8B%E8%BD%BD"><span class="nav-text">一.Greenplum 6.4 下载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C-%E5%AE%89%E8%A3%85%E5%8D%95%E6%9C%BAmaster%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-text">二.安装单机master环境准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89-%E5%AE%89%E8%A3%85GreenPlum"><span class="nav-text">三.安装GreenPlum</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B-%E5%88%9D%E5%A7%8B%E5%8C%96GreenPlum"><span class="nav-text">四.初始化GreenPlum</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94-%E8%BF%9E%E6%8E%A5GP"><span class="nav-text">五.连接GP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85master%E5%90%8E%E6%B7%BB%E5%8A%A0segment%E8%8A%82%E7%82%B9"><span class="nav-text">安装master后添加segment节点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80-%E6%9B%B4%E6%94%B9segment%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE"><span class="nav-text">一.更改segment系统配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C-%E9%85%8D%E7%BD%AESSH%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95"><span class="nav-text">二.配置SSH免密登录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89-%E5%9C%A8segment%E5%AE%89%E8%A3%85GreenPlum"><span class="nav-text">三.在segment安装GreenPlum</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B-%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-text">四.环境配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94-%E4%BD%BF%E7%94%A8gpexpand%E5%87%BD%E6%95%B0%E5%A2%9E%E5%8A%A0segment%E8%8A%82%E7%82%B9"><span class="nav-text">五.使用gpexpand函数增加segment节点</span></a></li></ol></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>

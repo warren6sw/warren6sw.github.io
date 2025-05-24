@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            Kubernetes之Pod的自动水平伸缩(HPA) |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Kubernetes之Pod的自动水平伸缩(HPA)</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Kubernetes/">Kubernetes</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Kubernetes/">Kubernetes</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>1.2k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>6 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="Kubernetes之Pod的自动水平伸缩-HPA"><a href="#Kubernetes之Pod的自动水平伸缩-HPA" class="headerlink" title="Kubernetes之Pod的自动水平伸缩(HPA)"></a>Kubernetes之Pod的自动水平伸缩(HPA)</h1><p>HPA（Horizontal Pod Autoscaler ）</p>
+<p>pod的自动水平伸缩</p>
+<p>有了HPA，我们就不用为上面的问题而烦恼，HPA会帮我们自动完成pod的扩缩容。</p>
+<p>当资源需求过高时，会自动创建出pod副本；当资源需求低时，会自动收缩pod副本数。</p>
+<p><strong>注意：首先必须确保集群中已经安装metrics-server的组件，否则无法获取集群内资源数据，无法进行以下操作。</strong></p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>通过集群内的资源监控系统（metrics-server），来获取集群中资源的使用状态。</p>
+<p>根据CPU、内存、以及用户自定义的资源指标数据的使用量或连接数为参考依据，来制定一个临界点，一旦超出这个点，HPA就会自动创建出pod副本。</p>
+<h3 id="版本"><a href="#版本" class="headerlink" title="版本"></a>版本</h3><p>通过kubectl api-versions可以看到，目前有3个版本：</p>
+<p>autoscaling&#x2F;v1            #(默认)只支持通过cpu为参考依据，来改变pod副本数<br>autoscaling&#x2F;v2beta1       #支持通过cpu、内存、连接数以及用户自定义的资源指标数据为参考依据。<br>autoscaling&#x2F;v2beta2       #同上，小的变动</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl api-versions | grep autoscal</span><br><span class="line"></span><br><span class="line">autoscaling/v1</span><br><span class="line">autoscaling/v2beta1</span><br><span class="line">autoscaling/v2beta2</span><br></pre></td></tr></table></figure>
+
+<p>查看使用的版本：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl explain hpa</span><br><span class="line"></span><br><span class="line">KIND:     HorizontalPodAutoscaler</span><br><span class="line">VERSION:  autoscaling/v1</span><br></pre></td></tr></table></figure>
+
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>使用 Deployment “foo”设定，使用默认的自动伸缩策略，指定目标CPU使用率，使其Pod数量在2到10之间。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl autoscale deployment foo --min=2 --max=10</span><br></pre></td></tr></table></figure>
+
+<p>使用RC“foo”设定，使其Pod的数量介于1和5之间，CPU使用率维持在80％。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl autoscale rc foo --max=5 --cpu-percent=80</span><br></pre></td></tr></table></figure>
+
+<h3 id="示例2"><a href="#示例2" class="headerlink" title="示例2"></a>示例2</h3><p>例如：我有个deployment叫myapp现在只有一个副本数，最多只能8个副本数，当pod的cpu平均利用率超过百分之50或内存平均值超过百分之50时，pod将自动增加副本数以提供服务。<br>SVC、Deployment资源清单：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">svc-hpa</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span>  <span class="comment">##注意这里是NodePort，下面压力测试要用到。</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">myapp-demo</span></span><br><span class="line">      <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">myapp</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">myapp</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">ikubernetes/myapp:v1</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">          <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">        <span class="attr">resources:</span></span><br><span class="line">          <span class="attr">requests:</span></span><br><span class="line">            <span class="attr">cpu:</span> <span class="string">50m</span></span><br><span class="line">            <span class="attr">memory:</span> <span class="string">50Mi</span></span><br><span class="line">          <span class="attr">limits:</span></span><br><span class="line">            <span class="attr">cpu:</span> <span class="string">50m</span></span><br><span class="line">            <span class="attr">memory:</span> <span class="string">50Mi</span></span><br></pre></td></tr></table></figure>
+
+<p>HPA资源清单如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: autoscaling/v2beta1</span><br><span class="line">kind: HorizontalPodAutoscaler</span><br><span class="line">metadata:</span><br><span class="line">  name: myapp-hpa-v2</span><br><span class="line">  namespace: default</span><br><span class="line">spec:</span><br><span class="line">  minReplicas: 1         <span class="comment">##至少1个副本</span></span><br><span class="line">  maxReplicas: 8         <span class="comment">##最多8个副本</span></span><br><span class="line">  scaleTargetRef:</span><br><span class="line">    apiVersion: apps/v1</span><br><span class="line">    kind: Deployment</span><br><span class="line">    name: myapp</span><br><span class="line">  metrics:</span><br><span class="line">  - <span class="built_in">type</span>: Resource</span><br><span class="line">    resource:</span><br><span class="line">      name: cpu</span><br><span class="line">      targetAverageUtilization: 50  <span class="comment">##注意此时是根据使用率，也可以根据使用量：targetAverageValue</span></span><br><span class="line">  - <span class="built_in">type</span>: Resource</span><br><span class="line">    resource:</span><br><span class="line">      name: memory</span><br><span class="line">      targetAverageUtilization: 50  <span class="comment">##注意此时是根据使用率，也可以根据使用量：targetAverageValue</span></span><br></pre></td></tr></table></figure>
+
+<p>使用ab工具模拟压力测试：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ab -c 1000 -n 5000000 http://192.168.1.103:31727/index.html</span><br></pre></td></tr></table></figure>
+
+<p>等待数分钟后，查看hpa及pod数量：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kubectl get hpa</span><br><span class="line"></span><br><span class="line">NAME           REFERENCE          TARGETS           MINPODS   MAXPODS   REPLICAS   AGE</span><br><span class="line">myapp-hpa-v2   Deployment/myapp   5%/50%, 72%/50%   1         8         2          44m</span><br><span class="line"></span><br><span class="line">kubectl get pods</span><br><span class="line">NAME                     READY   STATUS    RESTARTS   AGE</span><br><span class="line">myapp-558db64459-pwzsd   1/1     Running   0          16m</span><br><span class="line">myapp-558db64459-x9c4k   1/1     Running   0          23s</span><br></pre></td></tr></table></figure>
+<p>此示例来自 <a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/Smbands/p/10989261.html" >Smbands<i class="fas fa-external-link-alt"></i></a></p>
+<h3 id="官方参数"><a href="#官方参数" class="headerlink" title="官方参数"></a>官方参数</h3><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Shorthand</th>
+<th>Default</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>allow-missing-template-keys</td>
+<td></td>
+<td>true</td>
+<td>If true, ignore any errors in templates when a field or map key is missing in the template. Only applies to golang and jsonpath output formats.</td>
+</tr>
+<tr>
+<td>cpu-percent</td>
+<td></td>
+<td>-1</td>
+<td>The target average CPU utilization (represented as a percent of requested CPU) over all the pods. If it’s not specified or negative, a default autoscaling policy will be used.</td>
+</tr>
+<tr>
+<td>dry-run</td>
+<td></td>
+<td>false</td>
+<td>If true, only print the object that would be sent, without sending it.</td>
+</tr>
+<tr>
+<td>filename</td>
+<td>f</td>
+<td>[]</td>
+<td>Filename, directory, or URL to files identifying the resource to autoscale.</td>
+</tr>
+<tr>
+<td>generator</td>
+<td></td>
+<td>horizontalpodautoscaler&#x2F;v1</td>
+<td>The name of the API generator to use. Currently there is only 1 generator.</td>
+</tr>
+<tr>
+<td>include-extended-apis</td>
+<td></td>
+<td>true</td>
+<td>If true, include definitions of new APIs via calls to the API server. [default true]</td>
+</tr>
+<tr>
+<td>max</td>
+<td></td>
+<td>-1</td>
+<td>The upper limit for the number of pods that can be set by the autoscaler. Required.</td>
+</tr>
+<tr>
+<td>min</td>
+<td></td>
+<td>-1</td>
+<td>The lower limit for the number of pods that can be set by the autoscaler. If it’s not specified or negative, the server will apply a default value.</td>
+</tr>
+<tr>
+<td>name</td>
+<td></td>
+<td></td>
+<td>The name for the newly created object. If not specified, the name of the input resource will be used.</td>
+</tr>
+<tr>
+<td>no-headers</td>
+<td></td>
+<td>false</td>
+<td>When using the default or custom-column output format, don’t print headers (default print headers).</td>
+</tr>
+<tr>
+<td>output</td>
+<td>o</td>
+<td></td>
+<td>Output format. One of: json|yaml|wide|name|custom-columns&#x3D;…|custom-columns-file&#x3D;…|go-template&#x3D;…|go-template-file&#x3D;…|jsonpath&#x3D;…|jsonpath-file&#x3D;… See custom columns [<a class="link"   target="_blank" rel="noopener" href="http://kubernetes.io/docs/user-guide/kubectl-overview/#custom-columns]" >http://kubernetes.io/docs/user-guide/kubectl-overview/#custom-columns]<i class="fas fa-external-link-alt"></i></a>, golang template [<a class="link"   target="_blank" rel="noopener" href="http://golang.org/pkg/text/template/#pkg-overview]" >http://golang.org/pkg/text/template/#pkg-overview]<i class="fas fa-external-link-alt"></i></a> and jsonpath template [<a class="link"   target="_blank" rel="noopener" href="http://kubernetes.io/docs/user-guide/jsonpath]" >http://kubernetes.io/docs/user-guide/jsonpath]<i class="fas fa-external-link-alt"></i></a>.</td>
+</tr>
+<tr>
+<td>output-version</td>
+<td></td>
+<td></td>
+<td>DEPRECATED: To use a specific API version, fully-qualify the resource, version, and group (for example: ‘jobs.v1.batch&#x2F;myjob’).</td>
+</tr>
+<tr>
+<td>record</td>
+<td></td>
+<td>false</td>
+<td>Record current kubectl command in the resource annotation. If set to false, do not record the command. If set to true, record the command. If not set, default to updating the existing annotation value only if one already exists.</td>
+</tr>
+<tr>
+<td>recursive</td>
+<td>R</td>
+<td>false</td>
+<td>Process the directory used in -f, –filename recursively. Useful when you want to manage related manifests organized within the same directory.</td>
+</tr>
+<tr>
+<td>save-config</td>
+<td></td>
+<td>false</td>
+<td>If true, the configuration of current object will be saved in its annotation. Otherwise, the annotation will be unchanged. This flag is useful when you want to perform kubectl apply on this object in the future.</td>
+</tr>
+<tr>
+<td>show-all</td>
+<td>a</td>
+<td>false</td>
+<td>When printing, show all resources (default hide terminated pods.)</td>
+</tr>
+<tr>
+<td>show-labels</td>
+<td></td>
+<td>false</td>
+<td>When printing, show all labels as the last column (default hide labels column)</td>
+</tr>
+<tr>
+<td>sort-by</td>
+<td></td>
+<td></td>
+<td>If non-empty, sort list types using this field specification. The field specification is expressed as a JSONPath expression (e.g. ‘{.metadata.name}’). The field in the API resource specified by this JSONPath expression must be an integer or a string.</td>
+</tr>
+<tr>
+<td>template</td>
+<td></td>
+<td></td>
+<td>Template string or path to template file to use when -o&#x3D;go-template, -o&#x3D;go-template-file. The template format is golang templates [<a class="link"   target="_blank" rel="noopener" href="http://golang.org/pkg/text/template/#pkg-overview]" >http://golang.org/pkg/text/template/#pkg-overview]<i class="fas fa-external-link-alt"></i></a>.</td>
+</tr>
+</tbody></table>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/Greenplum/ec69fc016f15/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">CentOS安装Greenplum5集群教程</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/Kubernetes/734004e6e6d6/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Kubernetes之node节点设置不可调度或者删除node节点</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Kubernetes%E4%B9%8BPod%E7%9A%84%E8%87%AA%E5%8A%A8%E6%B0%B4%E5%B9%B3%E4%BC%B8%E7%BC%A9-HPA"><span class="nav-text">Kubernetes之Pod的自动水平伸缩(HPA)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%88%E6%9C%AC"><span class="nav-text">版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-text">示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B2"><span class="nav-text">示例2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%98%E6%96%B9%E5%8F%82%E6%95%B0"><span class="nav-text">官方参数</span></a></li></ol></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>

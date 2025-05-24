@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            ELK+Filebeat+Kafka集群部署 |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">ELK+Filebeat+Kafka集群部署</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/ELK/">ELK</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        &gt; <a href="/categories/Kafka/">Kafka</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/ELK/">ELK</a>&nbsp;
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Kafka/">Kafka</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>3.3k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>16 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="ELK-Filebeat-Kafka集群部署"><a href="#ELK-Filebeat-Kafka集群部署" class="headerlink" title="ELK+Filebeat+Kafka集群部署"></a>ELK+Filebeat+Kafka集群部署</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>业务层可以直接写入到kafka队列中，不用担心elasticsearch的写入效率问题。</p>
+<h2 id="消息系统主要功能"><a href="#消息系统主要功能" class="headerlink" title="消息系统主要功能"></a>消息系统主要功能</h2><p>1、解耦<br>允许你独立的扩展或修改两边的处理过程，只要确保它们遵守同样的接口约束<br>2、冗余<br>消息队列把数据进行持久化直到它们已经被完全处理，通过这一方式规避了数据丢失风险。许多消息队列所采用的”插入-获取-删除”范式中，在把一个消息从队列中删除之前，需要你的处理系统明确的指出该消息已经被处理完毕，从而确保你的数据被安全的保存直到你使用完毕。<br>3、扩展性<br>因为消息队列解耦了你的处理过程，所以增大消息入队和处理的频率是很容易的，只要另外增加处理过程即可。<br>4、灵活性 &amp; 峰值处理能力<br>在访问量剧增的情况下，应用仍然需要继续发挥作用，但是这样的突发流量并不常见。<br>如果为以能处理这类峰值访问为标准来投入资源随时待命无疑是巨大的浪费。使用消息队列能够使关键组件顶住突发的访问压力，而不会因为突发的超负荷的请求而完全崩溃。<br>5、可恢复性<br>　系统的一部分组件失效时，不会影响到整个系统。<br>消息队列降低了进程间的耦合度，所以即使一个处理消息的进程挂掉，加入队列中的消息仍然可以在系统恢复后被处理。<br>6、顺序保证<br>在大多使用场景下，数据处理的顺序都很重要。<br>大部分消息队列本来就是排序的，并且能保证数据会按照特定的顺序来处理。（Kafka 保证一个 Partition 内的消息的有序性）<br>7、缓冲<br>有助于控制和优化数据流经过系统的速度，解决生产消息和消费消息的处理速度不一致的情况。<br>8、异步通信<br>很多时候，用户不想也不需要立即处理消息。<br>消息队列提供了异步处理机制，允许用户把一个消息放入队列，但并不立即处理它。想向队列中放入多少消息就放多少，然后在需要的时候再去处理它们。</p>
+<h2 id="Redis与Kafka"><a href="#Redis与Kafka" class="headerlink" title="Redis与Kafka"></a>Redis与Kafka</h2><p>我们都知道Redis是以key的hash方式来分散对列存储数据的，且Redis作为集群使用时，对应的应用对应一个Redis，在某种程度上会造成数据的倾斜性，从而导致数据的丢失。<br>而从之前我们部署Kafka集群来看，kafka的一个topic（主题），可以有多个partition（副本），而且是均匀的分布在Kafka集群上，这就不会出现redis那样的数据倾斜性。Kafka同时也具备Redis的冗余机制，像Redis集群如果有一台机器宕掉是很有可能造成数据丢失，而Kafka因为是均匀的分布在集群主机上，即使宕掉一台机器，是不会影响使用。同时Kafka作为一个订阅消息系统，还具备每秒百万级别的高吞吐量，持久性的、分布式的特点等。</p>
+<h2 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h2><p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/elk-3-1638168924614.png"
+                      alt="架构图"
+                ></p>
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>说明<br>1、可以使用一台Nginx代理访问kibana的请求;<br>2、三台es组成es集群，并且在三台es上面都安装kibana;（ 以下对elasticsearch简称es ），两台logstash;<br>3、中间三台服务器就是我的kafka(zookeeper)集群啦; 上面写的 消费者&#x2F;生产者 这是kafka(zookeeper)中的概念;<br>4、使用filebeat收集日志(windows linux等)</p>
+<h2 id="角色"><a href="#角色" class="headerlink" title="角色"></a>角色</h2><p>1.es1+zookeeper+kafka+logstash: 192.168.11.156</p>
+<p>2.es2+zookeeper+kafka+logstash: 192.168.11.157</p>
+<p>3.es3+zookeeper+kafka: 192.168.11.159</p>
+<p>4.kibana: 192.168.11.156</p>
+<p>5.filebeat：客户端安装</p>
+<h2 id="软件说明"><a href="#软件说明" class="headerlink" title="软件说明"></a>软件说明</h2><p>1.es : 7.14.0</p>
+<p>2.logstash : 7.14.0</p>
+<p>3.kibana : 7.14.0 </p>
+<p>4.filebeat : 7.14.0</p>
+<p>5.zookeeper :  3.4.14</p>
+<p>6.kafka : 2.13</p>
+<p>7.jdk : 1.8</p>
+<h2 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h2><p>1、ES集群安装配置;<br>2、Logstash客户端配置(直接写入数据到ES集群，写入系统messages日志);<br>3、Kafka+zookeeper集群配置;(Logstash写入数据到Kafka消息系统);<br>4、Kibana部署;<br>5、filebeat安装;</p>
+<h2 id="详细安装步骤"><a href="#详细安装步骤" class="headerlink" title="详细安装步骤"></a>详细安装步骤</h2><h3 id="一-安装es集群"><a href="#一-安装es集群" class="headerlink" title="一.安装es集群"></a>一.安装es集群</h3><p>1.上传elasticsearch-7.14.0-linux-x86_64.tar.gz安装包到服务器&#x2F;data下，并安装jdk；</p>
+<p>2.解压安装包；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /data</span><br><span class="line">tar -zxvf elasticsearch-7.14.0-linux-x86_64.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>3.修改服务器配置；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建elk用户</span></span><br><span class="line">useradd elk elk</span><br><span class="line"><span class="comment"># 修改elk用户拥有的内存权限至少需要262144；</span></span><br><span class="line">sysctl -w vm.max_map_count=262144</span><br><span class="line"><span class="comment"># 修改 /etc/sysctl.conf文件</span></span><br><span class="line">vm.max_map_count=262144</span><br><span class="line"><span class="comment"># 修改/etc/security/limits.conf</span></span><br><span class="line"><span class="comment"># 在文件末尾添加下面的参数值</span></span><br><span class="line">* soft nofile 65536</span><br><span class="line">* hard nofile 131072</span><br></pre></td></tr></table></figure>
+
+<p>4.修改es配置文件；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改相应的选项</span></span><br><span class="line">vi /data/elasticsearch-7.14.0/config/elasticsearch.yml</span><br></pre></td></tr></table></figure>
+
+
+<details>
+  <summary>elasticsearch.yml</summary>
+  <pre><code> 
+# ======================== Elasticsearch Configuration =========================
+#
+# NOTE: Elasticsearch comes with reasonable defaults for most settings.
+#       Before you set out to tweak and tune the configuration, make sure you
+#       understand what are you trying to accomplish and the consequences.
+#
+# The primary way of configuring a node is via this file. This template lists
+# the most important settings you may want to configure for a production cluster.
+#
+# Please consult the documentation for further information on configuration options:
+# https://www.elastic.co/guide/en/elasticsearch/reference/index.html
+#
+# ---------------------------------- Cluster -----------------------------------
+#
+# Use a descriptive name for your cluster:
+#
+# 集群名称
+cluster.name: elk-boer
+#
+# ------------------------------------ Node ------------------------------------
+#
+# Use a descriptive name for the node:
+#
+# 节点名称，不能重复
+node.name: elk01
+#
+# Add custom attributes to the node:
+#
+#node.attr.rack: r1
+#
+# 是否能当master
+node.master: true
+#
+# 是否能储存数据
+node.data: true
+#
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to directory where to store the data (separate multiple locations by comma):
+#
+path.data: /data/elasticsearch-7.14.0/data
+# 
+#
+# Path to log files:
+#
+#path.logs: /data/elasticsearch-7.14.0/logs
+#
+# ----------------------------------- Memory -----------------------------------
+#
+# Lock the memory on startup:
+#
+#bootstrap.memory_lock: true
+#
+# Make sure that the heap size is set to about half the memory available
+# on the system and that the owner of the process is allowed to use this
+# limit.
+#
+# Elasticsearch performs poorly when the system is swapping the memory.
+#
+# ---------------------------------- Network -----------------------------------
+#
+# By default Elasticsearch is only accessible on localhost. Set a different
+# address here to expose this node on the network:
+#
+#network.host: 192.168.0.1
+# 配置可以访问的IP,无其他要求不修改
+network.host: 0.0.0.0
+#
+# By default Elasticsearch listens for HTTP traffic on the first free port it
+# finds starting at 9200. Set a specific HTTP port here:
+#
+# es服务端口号
+http.port: 9200
+#
+# For more information, consult the network module documentation.
+#
+# --------------------------------- Discovery ----------------------------------
+#
+# Pass an initial list of hosts to perform discovery when this node is started:
+# The default list of hosts is ["127.0.0.1", "[::1]"]
+#
+#discovery.seed_hosts: ["host1", "host2"]
+# 集群配置
+discovery.seed_hosts: ["elk01", "elk02","elk03"]
+#
+# Bootstrap the cluster using an initial set of master-eligible nodes:
+#
+#cluster.initial_master_nodes: ["node-1", "node-2"]
+# 集群配置
+cluster.initial_master_nodes: ["elk01", "elk02","elk03"]
+#
+# For more information, consult the discovery and cluster formation module documentation.
+#
+# ---------------------------------- Various -----------------------------------
+#
+# Require explicit names when deleting indices:
+#
+#action.destructive_requires_name: true
+# 跨域
+http.cors.enabled: true 
+http.cors.allow-origin: "*"
+
+<p>  </code></pre></p>
+</details>
+
+
+<p>5.启动es；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="comment"># 用elk用户 -d参数后台启动,ES_JAVA_OPTS参数为内存的一半</span></span><br><span class="line"><span class="built_in">sudo</span> -u elk ES_JAVA_OPTS=<span class="string">&quot;-Xms8192m -Xmx8192m&quot;</span>  /data/elasticsearch-7.14.0/bin/elasticsearch  -d</span><br></pre></td></tr></table></figure>
+
+<p>6.访问IP:9200 ；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[root@elk01 elasticsearch-7.14.0]# curl http://192.168.11.157:9200</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;name&quot;</span> : <span class="string">&quot;elk02&quot;</span>,</span><br><span class="line">  <span class="string">&quot;cluster_name&quot;</span> : <span class="string">&quot;elk-boer&quot;</span>,</span><br><span class="line">  <span class="string">&quot;cluster_uuid&quot;</span> : <span class="string">&quot;QrvFk9tSQT2qPD7kBHPBLw&quot;</span>,</span><br><span class="line">  <span class="string">&quot;version&quot;</span> : &#123;</span><br><span class="line">    <span class="string">&quot;number&quot;</span> : <span class="string">&quot;7.14.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;build_flavor&quot;</span> : <span class="string">&quot;default&quot;</span>,</span><br><span class="line">    <span class="string">&quot;build_type&quot;</span> : <span class="string">&quot;tar&quot;</span>,</span><br><span class="line">    <span class="string">&quot;build_hash&quot;</span> : <span class="string">&quot;dd5a0a2acaa2045ff9624f3729fc8a6f40835aa1&quot;</span>,</span><br><span class="line">    <span class="string">&quot;build_date&quot;</span> : <span class="string">&quot;2021-07-29T20:49:32.864135063Z&quot;</span>,</span><br><span class="line">    <span class="string">&quot;build_snapshot&quot;</span> : <span class="literal">false</span>,</span><br><span class="line">    <span class="string">&quot;lucene_version&quot;</span> : <span class="string">&quot;8.9.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;minimum_wire_compatibility_version&quot;</span> : <span class="string">&quot;6.8.0&quot;</span>,</span><br><span class="line">    <span class="string">&quot;minimum_index_compatibility_version&quot;</span> : <span class="string">&quot;6.0.0-beta1&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">&quot;tagline&quot;</span> : <span class="string">&quot;You Know, for Search&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="二-安装zoopeeker"><a href="#二-安装zoopeeker" class="headerlink" title="二.安装zoopeeker"></a>二.安装zoopeeker</h3><p>1.安装jdk1.8，并解压zookeeper压缩包；</p>
+<p>2.修改&#x2F;etc&#x2F;profile；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vim  /etc/profile</span><br><span class="line"></span><br><span class="line">JAVA_HOME=/java/jdk1.8.0_161</span><br><span class="line">PATH=<span class="variable">$JAVA_HOME</span>/bin:<span class="variable">$PATH</span></span><br><span class="line">CLASSPATH=.:<span class="variable">$JAVA_HOME</span>/lib/dt.jar:<span class="variable">$JAVA_HOME</span>/lib/tools.jar</span><br><span class="line"><span class="built_in">export</span> JAVA_HOME</span><br><span class="line"><span class="built_in">export</span> PATH</span><br><span class="line"><span class="built_in">export</span> CLASSPATH</span><br></pre></td></tr></table></figure>
+
+<p>3.使用source命令使profile文件内容生效 ;</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span>  /etc/profile</span><br><span class="line">java -version</span><br></pre></td></tr></table></figure>
+
+<p>4.修改配置文件；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /data/zookeeper/conf</span><br><span class="line"><span class="built_in">mv</span>  zoo_sample.cfg  zoo.cfg</span><br><span class="line">vim  zoo.cfg</span><br></pre></td></tr></table></figure>
+
+<p>5.将 zookeeper集群的三台服务器地址填入,端口默认 ；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"># zookeeper1 配置文件实例</span><br><span class="line"># The number of milliseconds of each tick</span><br><span class="line">tickTime=2000</span><br><span class="line"># The number of ticks that the initial </span><br><span class="line"># synchronization phase can take</span><br><span class="line">initLimit=10</span><br><span class="line"># The number of ticks that can pass between </span><br><span class="line"># sending a request and getting an acknowledgement</span><br><span class="line">syncLimit=5</span><br><span class="line"># the directory where the snapshot is stored.</span><br><span class="line"># do not use /tmp for storage, /tmp here is just </span><br><span class="line"># example sakes.</span><br><span class="line">dataDir=/data/zookeeper</span><br><span class="line"># the port at which the clients will connect</span><br><span class="line">clientPort=2181</span><br><span class="line"># the maximum number of client connections.</span><br><span class="line"># increase this if you need to handle more clients</span><br><span class="line">#maxClientCnxns=60</span><br><span class="line">#</span><br><span class="line"># Be sure to read the maintenance section of the </span><br><span class="line"># administrator guide before turning on autopurge.</span><br><span class="line">#</span><br><span class="line"># http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_maintenance</span><br><span class="line">#</span><br><span class="line"># The number of snapshots to retain in dataDir</span><br><span class="line">#autopurge.snapRetainCount=3</span><br><span class="line"># Purge task interval in hours</span><br><span class="line"># Set to &quot;0&quot; to disable auto purge feature</span><br><span class="line">#autopurge.purgeInterval=1</span><br><span class="line">server.1=192.168.11.156:2888:3888</span><br><span class="line">server.2=192.168.11.157:2888:3888</span><br><span class="line">server.3=192.168.11.159:2888:3888</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>6.创建tmp文件夹以及创建myid文件 ；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span>  /data/zookeeper/</span><br><span class="line"><span class="built_in">echo</span> 1 &gt; myid   <span class="comment">#zookeeper1创建</span></span><br><span class="line"><span class="built_in">echo</span> 2 &gt; myid   <span class="comment">#zookeeper2创建</span></span><br><span class="line"><span class="built_in">echo</span> 3 &gt; myid   <span class="comment">#zookeeper3创建</span></span><br></pre></td></tr></table></figure>
+
+<p>7.启动所有Zookeeper ；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span>  /data/zookeeper/bin</span><br><span class="line">./zkServer.sh  start</span><br></pre></td></tr></table></figure>
+
+<p>8.注册服务</p>
+<h3 id="三-kafka"><a href="#三-kafka" class="headerlink" title="三.kafka"></a>三.kafka</h3><p>1.解压kafka_2.13-2.6.0.tgz压缩包；</p>
+<p>2.修改配置文件；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span>  /data/kafka/config</span><br><span class="line">vim  server.properties  </span><br><span class="line">broker.id=1                 <span class="comment">#三台服务器id分别为1、2、3</span></span><br><span class="line"></span><br><span class="line">listeners=PLAINTEXT://192.168.11.156:9092     <span class="comment">#本服务器地址（端口号默认）</span></span><br><span class="line"></span><br><span class="line">advertised.listeners=PLAINTEXT://192.168.11.156:9092     <span class="comment">#本服务器地址（端口号默认）</span></span><br><span class="line"></span><br><span class="line">log.dirs=/data/kafka/logs      <span class="comment">#log文件位置</span></span><br><span class="line"></span><br><span class="line">zookeeper.connect=192.168.11.156:2181,192.168.11.157:2181,192.168.11.159:2181    <span class="comment">#zookeeper服务器集群IP（端口号默认）</span></span><br></pre></td></tr></table></figure>
+
+<p>3.启动kafka</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span>  /data/kafka</span><br><span class="line">./bin/kafka-server-start.sh  -daemon  ./config/server.properties     <span class="comment">#-daemon为后台启动参数</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="四-安装Logstash"><a href="#四-安装Logstash" class="headerlink" title="四.安装Logstash"></a>四.安装Logstash</h3><p>1.上传并解压logstash-7.14.0-linux-x86_64.tar.gz；</p>
+<p>2.修改配置文件(没有可以创建)；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line">input&#123;</span><br><span class="line">    kafka &#123;</span><br><span class="line">        bootstrap_servers =&gt; <span class="string">&quot;192.168.11.156:9092,192.168.11.157:9092,192.168.11.159:9092&quot;</span> <span class="comment">#kafka服务器地址</span></span><br><span class="line">        topics =&gt; <span class="string">&quot;monitoring-log&quot;</span></span><br><span class="line">        group_id =&gt; <span class="string">&quot;elk-boer&quot;</span></span><br><span class="line">        decorate_events =&gt; <span class="literal">true</span> <span class="comment">#kafka标记</span></span><br><span class="line">        consumer_threads =&gt; 1</span><br><span class="line">        codec =&gt; <span class="string">&quot;json&quot;</span> <span class="comment">#写入的时候使用json编码，因为logstash收集后会转换成json格式</span></span><br><span class="line">        <span class="built_in">type</span> =&gt; <span class="string">&quot;monitoring-log&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">    kafka &#123;</span><br><span class="line">        bootstrap_servers =&gt; <span class="string">&quot;192.168.11.156:9092,192.168.11.157:9092,192.168.11.159:9092&quot;</span> <span class="comment">#kafka服务器地址</span></span><br><span class="line">        topics =&gt; <span class="string">&quot;metricbeat&quot;</span></span><br><span class="line">        group_id =&gt; <span class="string">&quot;elk-boer&quot;</span></span><br><span class="line">        decorate_events =&gt; <span class="literal">true</span> <span class="comment">#kafka标记</span></span><br><span class="line">        consumer_threads =&gt; 1</span><br><span class="line">        codec =&gt; <span class="string">&quot;json&quot;</span> <span class="comment">#写入的时候使用json编码，因为logstash收集后会转换成json格式</span></span><br><span class="line">        <span class="built_in">type</span> =&gt; <span class="string">&quot;metricbeat&quot;</span></span><br><span class="line">    &#125;      </span><br><span class="line">    kafka &#123;</span><br><span class="line">        bootstrap_servers =&gt; <span class="string">&quot;192.168.11.156:9092,192.168.11.157:9092,192.168.11.159:9092&quot;</span> <span class="comment">#kafka服务器地址</span></span><br><span class="line">        topics =&gt; <span class="string">&quot;oracle-irm&quot;</span></span><br><span class="line">        group_id =&gt; <span class="string">&quot;elk-boer&quot;</span></span><br><span class="line">        decorate_events =&gt; <span class="literal">true</span> <span class="comment">#kafka标记</span></span><br><span class="line">        consumer_threads =&gt; 1</span><br><span class="line">        codec =&gt; <span class="string">&quot;json&quot;</span> <span class="comment">#写入的时候使用json编码，因为logstash收集后会转换成json格式</span></span><br><span class="line">        <span class="built_in">type</span> =&gt; <span class="string">&quot;oracle-irm&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">filter&#123;</span><br><span class="line"><span class="comment">#    if [type] == &quot;monitoring-log&quot; &#123;</span></span><br><span class="line"><span class="comment">#        grok &#123;</span></span><br><span class="line"><span class="comment">#            match =&gt; &#123;</span></span><br><span class="line"><span class="comment">#                &quot;message&quot; =&gt; &quot;(?&lt;Date&gt;^%&#123;DAY&#125;\s%&#123;MONTH&#125;\s%&#123;MONTHDAY&#125;\s%&#123;TIME&#125;\s%&#123;YEAR&#125;).\[(?&lt;info&gt;[a-z]*)\].(?&lt;fangfa&gt;[%&#123;WORD&#125;-]*).(?&lt;yunaiz&gt;[%&#123;WORD&#125;-]*).(?&lt;yuanyin&gt;[%&#123;WORD&#125;-]+).(?&lt;mess&gt;.*)&quot;</span></span><br><span class="line"><span class="comment">#            &#125; </span></span><br><span class="line"><span class="comment">#            overwrite =&gt; [&quot;message&quot;]</span></span><br><span class="line"><span class="comment">#        &#125;</span></span><br><span class="line"><span class="comment">#    &#125;       </span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">output&#123;</span><br><span class="line">    <span class="keyword">if</span> [<span class="built_in">type</span>] == <span class="string">&quot;monitoring-log&quot;</span> &#123;</span><br><span class="line">        elasticsearch &#123;</span><br><span class="line">            user =&gt; <span class="string">&quot;elastic&quot;</span></span><br><span class="line">            password =&gt; <span class="string">&quot;Root@123&quot;</span></span><br><span class="line">            hosts =&gt; [<span class="string">&quot;192.168.11.156:9200&quot;</span>,</span><br><span class="line">                      <span class="string">&quot;192.168.11.157:9200&quot;</span>,</span><br><span class="line">                      <span class="string">&quot;192.168.11.159:9200&quot;</span>]</span><br><span class="line">            index =&gt; <span class="string">&quot;monitoring-log-%&#123;+YYYY.MM&#125;&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="keyword">if</span> [<span class="built_in">type</span>] == <span class="string">&quot;metricbeat&quot;</span> &#123;</span><br><span class="line">        elasticsearch &#123;</span><br><span class="line">            user =&gt; <span class="string">&quot;elastic&quot;</span></span><br><span class="line">            password =&gt; <span class="string">&quot;Root@123&quot;</span></span><br><span class="line">            hosts =&gt; [<span class="string">&quot;192.168.11.156:9200&quot;</span>,</span><br><span class="line">                      <span class="string">&quot;192.168.11.157:9200&quot;</span>,</span><br><span class="line">                      <span class="string">&quot;192.168.11.159:9200&quot;</span>]</span><br><span class="line">            index =&gt; <span class="string">&quot;metricbeat-%&#123;+YYYY.MM&#125;&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="keyword">if</span> [<span class="built_in">type</span>] == <span class="string">&quot;oracle-irm&quot;</span> &#123;</span><br><span class="line">        elasticsearch &#123;</span><br><span class="line">            user =&gt; <span class="string">&quot;elastic&quot;</span></span><br><span class="line">            password =&gt; <span class="string">&quot;Root@123&quot;</span></span><br><span class="line">            hosts =&gt; [<span class="string">&quot;192.168.11.156:9200&quot;</span>,</span><br><span class="line">                      <span class="string">&quot;192.168.11.157:9200&quot;</span>,</span><br><span class="line">                      <span class="string">&quot;192.168.11.159:9200&quot;</span>]</span><br><span class="line">            index =&gt; <span class="string">&quot;oracle-irm-%&#123;+YYYY.MM&#125;&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125; </span><br><span class="line"><span class="comment">#    stdout &#123; </span></span><br><span class="line"><span class="comment">#        codec =&gt; rubydebug</span></span><br><span class="line"><span class="comment">#    &#125;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>3.启动logstash；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="built_in">nohup</span> ./bin/logstash -f config/logstash.conf &amp; &gt;./nohup.out</span><br></pre></td></tr></table></figure>
+
+<h3 id="五-安装kibana"><a href="#五-安装kibana" class="headerlink" title="五.安装kibana"></a>五.安装kibana</h3><p>1.上传并解压kibana-7.14.0-linux-x86_64.tar.gz压缩包到&#x2F;data；</p>
+<p>2.修改配置文件；</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Kibana is served by a back end server. This setting specifies the port to use.</span></span><br><span class="line"><span class="comment">#server.port: 5601</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Specifies the address to which the Kibana server will bind. IP addresses and host names are both valid values.</span></span><br><span class="line"><span class="comment"># The default is &#x27;localhost&#x27;, which usually means remote machines will not be able to connect.</span></span><br><span class="line"><span class="comment"># To allow connections from remote users, set this parameter to a non-loopback address.</span></span><br><span class="line"><span class="comment">#server.host: &quot;localhost&quot;</span></span><br><span class="line"><span class="attr">server.host:</span> <span class="string">&quot;0.0.0.0&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Enables you to specify a path to mount Kibana at if you are running behind a proxy.</span></span><br><span class="line"><span class="comment"># Use the `server.rewriteBasePath` setting to tell Kibana if it should remove the basePath</span></span><br><span class="line"><span class="comment"># from requests it receives, and to prevent a deprecation warning at startup.</span></span><br><span class="line"><span class="comment"># This setting cannot end in a slash.</span></span><br><span class="line"><span class="comment">#server.basePath: &quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Specifies whether Kibana should rewrite requests that are prefixed with</span></span><br><span class="line"><span class="comment"># `server.basePath` or require that they are rewritten by your reverse proxy.</span></span><br><span class="line"><span class="comment"># This setting was effectively always `false` before Kibana 6.3 and will</span></span><br><span class="line"><span class="comment"># default to `true` starting in Kibana 7.0.</span></span><br><span class="line"><span class="comment">#server.rewriteBasePath: false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Specifies the public URL at which Kibana is available for end users. If</span></span><br><span class="line"><span class="comment"># `server.basePath` is configured this URL should end with the same basePath.</span></span><br><span class="line"><span class="comment">#server.publicBaseUrl: &quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The maximum payload size in bytes for incoming server requests.</span></span><br><span class="line"><span class="comment">#server.maxPayload: 1048576</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The Kibana server&#x27;s name.  This is used for display purposes.</span></span><br><span class="line"><span class="comment">#server.name: &quot;your-hostname&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The URLs of the Elasticsearch instances to use for all your queries.</span></span><br></pre></td></tr></table></figure>
+
+<p>3.启动kibana；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="built_in">sudo</span> -u elk /data/kibana-7.14.0/bin/kibana -c config/kibana.yml &amp; &gt;/data/kibana-7.14.0/kibana.log</span><br></pre></td></tr></table></figure>
+
+<h3 id="六-安装filebeat"><a href="#六-安装filebeat" class="headerlink" title="六.安装filebeat"></a>六.安装filebeat</h3><p>1.上传并解压filebeat-7.14.0-linux-x86_64.tar.gz文件到&#x2F;data;</p>
+<p>2.修改配置文件；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /data/filebeat-7.14.0</span><br><span class="line">vi filebeat.yml</span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>3.启动filebeat；</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="built_in">nohup</span> ./filebeat -e -c filebeat.yml &amp; &gt;./nohup.out</span><br></pre></td></tr></table></figure>
+
+<p>5.安装windows版本filebeat，上传filebeat-7.14.0-windows-x86.zip，并解压；</p>
+<p>6.修改配置文件同上；</p>
+<p>7.注册成windows服务(注意安装路径修改)</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sc create filebeat-<span class="number">7</span>.<span class="number">14</span>.<span class="number">0</span> binpath= &quot;D:\filebeat-<span class="number">7</span>.<span class="number">14</span>.<span class="number">0</span>\filebeat.exe -e -c D:\filebeat-<span class="number">7</span>.<span class="number">14</span>.<span class="number">0</span>\filebeat.yml&quot; <span class="built_in">type</span>= own <span class="built_in">start</span>= auto displayname= filebeat-<span class="number">7</span>.<span class="number">14</span>.<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p>8.启动windows服务；</p>
+<h3 id="七-访问kibana查看数据"><a href="#七-访问kibana查看数据" class="headerlink" title="七.访问kibana查看数据"></a>七.访问kibana查看数据</h3><p>1.<a class="link"   target="_blank" rel="noopener" href="http://192.168.11.156:5601/" >http://192.168.11.156:5601/<i class="fas fa-external-link-alt"></i></a></p>
+<p>如下图，为接入数据后的效果:</p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/ELK+Filebeat+Kafka%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/ELK+Filebeat+Kafka%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B21.png"
+                     
+                ></p>
+<p><img  
+                     lazyload
+                     src="/images/loading.svg"
+                     data-src="/images/ELK+Filebeat+Kafka%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/ELK+Filebeat+Kafka%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B22.png"
+                     
+                ></p>
+<p><code>完(持续更新)</code></p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/CentOS/219db4dbd72b/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">CentOS配置硬盘自动挂载</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/Kubernetes/cf45721301a0/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Kubernetes之kubeadm初始化k8s集群延长证书过期时间</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ELK-Filebeat-Kafka%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2"><span class="nav-text">ELK+Filebeat+Kafka集群部署</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E7%B3%BB%E7%BB%9F%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD"><span class="nav-text">消息系统主要功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E4%B8%8EKafka"><span class="nav-text">Redis与Kafka</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B4%E6%98%8E"><span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%92%E8%89%B2"><span class="nav-text">角色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E8%AF%B4%E6%98%8E"><span class="nav-text">软件说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4"><span class="nav-text">安装步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E5%AE%89%E8%A3%85%E6%AD%A5%E9%AA%A4"><span class="nav-text">详细安装步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80-%E5%AE%89%E8%A3%85es%E9%9B%86%E7%BE%A4"><span class="nav-text">一.安装es集群</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C-%E5%AE%89%E8%A3%85zoopeeker"><span class="nav-text">二.安装zoopeeker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89-kafka"><span class="nav-text">三.kafka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B-%E5%AE%89%E8%A3%85Logstash"><span class="nav-text">四.安装Logstash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94-%E5%AE%89%E8%A3%85kibana"><span class="nav-text">五.安装kibana</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD-%E5%AE%89%E8%A3%85filebeat"><span class="nav-text">六.安装filebeat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83-%E8%AE%BF%E9%97%AEkibana%E6%9F%A5%E7%9C%8B%E6%95%B0%E6%8D%AE"><span class="nav-text">七.访问kibana查看数据</span></a></li></ol></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>

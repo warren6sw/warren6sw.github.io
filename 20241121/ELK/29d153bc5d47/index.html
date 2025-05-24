@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            filebeat配置详解 |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">filebeat配置详解</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/ELK/">ELK</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/ELK/">ELK</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>5.2k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>21 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="filebeat配置详解"><a href="#filebeat配置详解" class="headerlink" title="filebeat配置详解"></a>filebeat配置详解</h1><p>Filebeat是本地文件的日志数据采集器。 作为服务器上的代理安装，Filebeat监视日志目录或特定日志文件，tail file，并将它们转发给Elasticsearch或Logstash进行索引、kafka 等。</p>
+<h2 id="工作原理："><a href="#工作原理：" class="headerlink" title="工作原理："></a>工作原理：</h2><p>Filebeat由两个主要组件组成：prospector 和harvester。这些组件一起工作来读取文件（tail file）并将事件数据发送到您指定的输出</p>
+<p>启动Filebeat时，它会启动一个或多个查找器，查看您为日志文件指定的本地路径。 对于prospector 所在的每个日志文件，prospector 启动harvester。 每个harvester都会为新内容读取单个日志文件，并将新日志数据发送到libbeat，后者将聚合事件并将聚合数据发送到您为Filebeat配置的输出。</p>
+<h2 id="harvester"><a href="#harvester" class="headerlink" title="harvester"></a>harvester</h2><p>harvester :负责读取单个文件的内容。读取每个文件，并将内容发送到 the output<br>每个文件启动一个harvester, harvester 负责打开和关闭文件，这意味着在运行时文件描述符保持打开状态<br>如果文件在读取时被删除或重命名，Filebeat将继续读取文件。<br>这有副作用，即在harvester关闭之前，磁盘上的空间被保留。默认情况下，Filebeat将文件保持打开状态，直到达到close_inactive状态</p>
+<p>关闭harvester会产生以下结果：<br>1）如果在harvester仍在读取文件时文件被删除，则关闭文件句柄，释放底层资源。<br>2）文件的采集只会在scan_frequency过后重新开始。<br>3）如果在harvester关闭的情况下移动或移除文件，则不会继续处理文件。</p>
+<p>要控制收割机何时关闭，请使用close_ *配置选项</p>
+<h2 id="prospector"><a href="#prospector" class="headerlink" title="prospector"></a>prospector</h2><p>prospector 负责管理harvester并找到所有要读取的文件来源。<br>如果输入类型为日志，则查找器将查找路径匹配的所有文件，并为每个文件启动一个harvester。<br>每个prospector都在自己的Go协程中运行。</p>
+<p>Filebeat目前支持两种prospector类型：log和stdin。<br>每个prospector类型可以定义多次。<br>日志prospector检查每个文件以查看harvester是否需要启动，是否已经运行，<br>或者该文件是否可以被忽略（请参阅ignore_older）。<br>只有在harvester关闭后文件的大小发生了变化，才会读取到新行。</p>
+<p>注：Filebeat prospector只能读取本地文件， 没有功能可以连接到远程主机来读取存储的文件或日志。</p>
+<p>Filebeat如何保持文件的状态？<br>Filebeat 保存每个文件的状态并经常将状态刷新到磁盘上的注册文件中。<br>该状态用于记住harvester正在读取的最后偏移量，并确保发送所有日志行。<br>如果输出（例如Elasticsearch或Logstash）无法访问，Filebeat会跟踪最后发送的行，并在输出再次可用时继续读取文件。<br>在Filebeat运行时，每个prospector内存中也会保存的文件状态信息，<br>当重新启动Filebeat时，将使用注册文件的数据来重建文件状态，Filebeat将每个harvester在从保存的最后偏移量继续读取。</p>
+<p>每个prospector为它找到的每个文件保留一个状态。<br>由于文件可以被重命名或移动，因此文件名和路径不足以识别文件。<br>对于每个文件，Filebeat存储唯一标识符以检测文件是否先前已采集过。</p>
+<p>如果您的使用案例涉及每天创建大量新文件，您可能会发现注册文件增长过大。请参阅注册表文件太大？编辑有关您可以设置以解决此问题的配置选项的详细信息。</p>
+<p>Filebeat如何确保至少一次交付<br>Filebeat保证事件至少会被传送到配置的输出一次，并且不会丢失数据。 Filebeat能够实现此行为，因为它将每个事件的传递状态存储在注册文件中。</p>
+<p>在输出阻塞或未确认所有事件的情况下，Filebeat将继续尝试发送事件，直到接收端确认已收到。</p>
+<p>如果Filebeat在发送事件的过程中关闭，它不会等待输出确认所有收到事件。<br>发送到输出但在Filebeat关闭前未确认的任何事件在重新启动Filebeat时会再次发送。<br>这可以确保每个事件至少发送一次，但最终会将重复事件发送到输出。<br>也可以通过设置shutdown_timeout选项来配置Filebeat以在关闭之前等待特定时间。</p>
+<p>注意：<br>Filebeat的至少一次交付保证包括日志轮换和删除旧文件的限制。如果将日志文件写入磁盘并且写入速度超过Filebeat可以处理的速度，或者在输出不可用时删除了文件，则可能会丢失数据。<br>在Linux上，Filebeat也可能因inode重用而跳过行。</p>
+<h2 id="filebeat配置详解-1"><a href="#filebeat配置详解-1" class="headerlink" title="filebeat配置详解"></a>filebeat配置详解</h2><p>filebeat.yml的格式如下，我们主要了解从log中输入的相应配置</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">filebeat.inputs:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">input_type:</span> <span class="string">log</span></span><br><span class="line"><span class="attr">paths:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">/var/log/apache/httpd-*.log</span></span><br><span class="line"><span class="attr">document_type:</span> <span class="string">apache</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">input_type:</span> <span class="string">log</span></span><br><span class="line"><span class="attr">paths:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">/var/log/messages</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">/var/log/*.log</span>　</span><br></pre></td></tr></table></figure>
+
+<p>Filebeat Options<br>input_type: log<br>指定输入类型<br>paths<br>支持基本的正则，所有golang glob都支持,支持&#x2F;var&#x2F;log&#x2F;*&#x2F;*.log<br>encoding</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">plain,</span> <span class="string">latin1,</span> <span class="string">utf-8,</span> <span class="string">utf-16be-bom,</span> <span class="string">utf-16be,</span> <span class="string">utf-16le,</span> <span class="string">big5,</span> <span class="string">gb18030,</span> <span class="string">gbk,</span> <span class="string">hz-gb-2312,</span></span><br><span class="line"><span class="string">euc-kr,</span> <span class="string">euc-jp,</span> <span class="string">iso-2022-jp,</span> <span class="string">shift-jis,</span> <span class="string">and</span> <span class="string">so</span> <span class="string">on</span></span><br><span class="line"><span class="string">exclude_lines</span></span><br></pre></td></tr></table></figure>
+
+<p>支持正则 排除匹配的行，如果有多行，合并成一个单一行来进行过滤<br>include_lines<br>支持正则 include_lines执行完毕之后会执行exclude_lines。<br>exclude_files<br>支持正则 排除匹配的文件<br>exclude_files: [‘.gz$’]<br>tags<br>列表中添加标签，用过过滤<br>filebeat.inputs:<br>- paths: [“&#x2F;var&#x2F;log&#x2F;app&#x2F;*.json”]<br>tags: [“json”]<br>fields<br>可选字段，选择额外的字段进行输出<br>可以是标量值，元组，字典等嵌套类型<br>默认在sub-dictionary 位置<br>filebeat.inputs:<br>- paths: [“&#x2F;var&#x2F;log&#x2F;app&#x2F;*.log”]<br>fields:<br>app_id: query_engine_12<br>fields_under_root<br>如果值为ture，那么fields存储在输出文档的顶级位置<br>如果与filebeat中字段冲突，自定义字段会覆盖其他字段</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">fields_under_root:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">fields:</span></span><br><span class="line"><span class="attr">instance_id:</span> <span class="string">i-10a64379</span></span><br><span class="line"><span class="attr">region:</span> <span class="string">us-east-1</span></span><br><span class="line"><span class="string">ignore_older</span></span><br></pre></td></tr></table></figure>
+
+<p>可以指定Filebeat忽略指定时间段以外修改的日志内容<br>文件被忽略之前，确保文件不在被读取，必须设置ignore older时间范围大于close_inactive<br>如果一个文件正在读取时候被设置忽略，它会取得到close_inactive后关闭文件，然后文件被忽略<br>close_*<br>close_ *配置选项用于在特定标准或时间之后关闭harvester。 关闭harvester意味着关闭文件处理程序。 如果在harvester关闭后文件被更新，则在scan_frequency过后，文件将被重新拾取。 但是，如果在harvester关闭时移动或删除文件，Filebeat将无法再次接收文件，并且harvester未读取的任何数据都将丢失。<br>close_inactive<br>启动选项时，如果在制定时间没有被读取，将关闭文件句柄<br>读取的最后一条日志定义为下一次读取的起始点，而不是基于文件的修改时间<br>如果关闭的文件发生变化，一个新的harverster将在scan_frequency运行后被启动<br>建议至少设置一个大于读取日志频率的值，配置多个prospector来实现针对不同更新速度的日志文件<br>使用内部时间戳机制，来反映记录日志的读取，每次读取到最后一行日志时开始倒计时<br>使用2h 5m 来表示</p>
+<p>recursive_glob.enabled 递归匹配日志文件，默认false<br>close_rename<br>当选项启动，如果文件被重命名和移动，filebeat关闭文件的处理读取<br>close_removed<br>当选项启动，文件被删除时，filebeat关闭文件的处理读取<br>这个选项启动后，必须启动clean_removed<br>close_eof<br>适合只写一次日志的文件，然后filebeat关闭文件的处理读取<br>close_timeout<br>当选项启动时，filebeat会给每个harvester设置预定义时间，不管这个文件是否被读取，达到设定时间后，将被关闭<br>close_timeout 不能等于ignore_older,会导致文件更新时，不会被读取<br>如果output一直没有输出日志事件，这个timeout是不会被启动的，至少要要有一个事件发送，然后haverter将被关闭<br>设置0 表示不启动<br>clean_inactived<br>从注册表文件中删除先前收获的文件的状态<br>设置必须大于ignore_older+scan_frequency，以确保在文件仍在收集时没有删除任何状态<br>配置选项有助于减小注册表文件的大小，特别是如果每天都生成大量的新文件<br>此配置选项也可用于防止在Linux上重用inode的Filebeat问题<br>clean_removed<br>启动选项后，如果文件在磁盘上找不到，将从注册表中清除filebeat<br>如果关闭close removed 必须关闭clean removed<br>scan_frequency<br>prospector　　检查指定用于收获的路径中的新文件的频率,默认10s<br>document_type<br>类型事件，被用于设置输出文档的type字段，默认是log<br>harvester_buffer_size<br>每次harvester读取文件缓冲字节数，默认是16384<br>max_bytes<br>对于多行日志信息，很有用，最大字节数<br>json<br>这些选项使Filebeat解码日志结构化为JSON消息<br>逐行进行解码json<br>keys_under_root<br>设置key为输出文档的顶级目录<br>overwrite_keys<br>覆盖其他字段<br>add_error_key<br>定一个json_error<br>message_key<br>指定json 关键建作为过滤和多行设置，与之关联的值必须是string<br>multiline<br>控制filebeat如何处理跨多行日志的选项，多行日志通常发生在java堆栈中<br>multiline.pattern: ‘^\[‘<br>multiline.negate: true<br>multiline.match: after<br>上面匹配是将多行日志所有不是以[符号开头的行合并成一行它可以将下面的多行日志进行合并成一行</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">Exception</span> <span class="string">in</span> <span class="string">thread</span> <span class="string">&quot;main&quot;</span> <span class="string">java.lang.NullPointerException</span></span><br><span class="line"><span class="string">at</span> <span class="string">com.example.myproject.Book.getTitle(Book.java:16)</span></span><br><span class="line"><span class="string">at</span> <span class="string">com.example.myproject.Author.getBookTitles(Author.java:25)</span></span><br><span class="line"><span class="string">at</span> <span class="string">com.example.myproject.Bootstrap.main(Bootstrap.java:14)</span></span><br><span class="line"><span class="string">multiline.pattern</span></span><br></pre></td></tr></table></figure>
+
+<p>指定匹配的正则表达式，filebeat支持的regexp模式与logstash支持的模式有所不同<br>pattern regexp<br>multiline.negate<br>定义上面的模式匹配条件的动作是 否定的，默认是false<br>假如模式匹配条件’^b’，默认是false模式，表示讲按照模式匹配进行匹配 将不是以b开头的日志行进行合并<br>如果是true，表示将不以b开头的日志行进行合并<br>multiline.match<br>指定Filebeat如何将匹配行组合成事件,在之前或者之后，取决于上面所指定的negate<br>multiline.max_lines<br>可以组合成一个事件的最大行数，超过将丢弃，默认500<br>multiline.timeout<br>定义超时时间，如果开始一个新的事件在超时时间内没有发现匹配，也将发送日志，默认是5s<br>tail_files<br>如果此选项设置为true，Filebeat将在每个文件的末尾开始读取新文件，而不是开头<br>此选项适用于Filebeat尚未处理的文件<br>symlinks<br>符号链接选项允许Filebeat除常规文件外,可以收集符号链接。收集符号链接时，即使报告了符号链接的路径，Filebeat也会打开并读取原始文件。<br>backoff<br>backoff选项指定Filebeat如何积极地抓取新文件进行更新。默认1s<br>backoff选项定义Filebeat在达到EOF之后再次检查文件之间等待的时间。<br>max_backoff<br>在达到EOF之后再次检查文件之前Filebeat等待的最长时间<br>backoff_factor<br>指定backoff尝试等待时间几次，默认是2<br>harvester_limit<br>harvester_limit选项限制一个prospector并行启动的harvester数量，直接影响文件打开数<br>enabled<br>控制prospector的启动和关闭<br>filebeat global<br>spool_size<br>事件发送的阀值，超过阀值，强制刷新网络连接<br>filebeat.spool_size: 2048<br>publish_async<br>异步发送事件，实验性功能<br>idle_timeout<br>事件发送的超时时间，即使没有超过阀值，也会强制刷新网络连接<br>filebeat.idle_timeout: 5s<br>registry_file<br>注册表文件的名称，如果使用相对路径，则被认为是相对于数据路径<br>有关详细信息，请参阅目录布局部分 默认值为${path.data}&#x2F;registry<br>filebeat.registry_file: registry<br>config_dir<br>包含额外的prospector配置文件的目录的完整路径<br>每个配置文件必须以.yml结尾<br>每个配置文件也必须指定完整的Filebeat配置层次结构，即使只处理文件的prospector部分。<br>所有全局选项（如spool_size）将被忽略<br>必须是绝对路径<br>filebeat.config_dir: path&#x2F;to&#x2F;configs<br>shutdown_timeout<br>Filebeat等待发布者在Filebeat关闭之前完成发送事件的时间。<br>Filebeat General<br>name<br>设置名字，如果配置为空，则用该服务器的主机名<br>name: “my-shipper”<br>queue_size<br>单个事件内部队列的长度 默认1000<br>bulk_queue_size<br>批量事件内部队列的长度<br>max_procs<br>设置最大使用cpu数量<br>geoip.paths<br>此配置选项目前仅由Packetbeat使用，它将在6.0版中删除<br>要使GeoIP支持功能正常，GeoLite City数据库是必需的。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">geoip:</span></span><br><span class="line"><span class="attr">paths:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;/usr/share/GeoIP/GeoLiteCity.dat&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;/usr/local/var/GeoIP/GeoLiteCity.dat&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>Filebeat reload<br>属于测试功能</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">path</span></span><br></pre></td></tr></table></figure>
+
+<p>定义要检查的配置路径</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">reload.enabled</span></span><br></pre></td></tr></table></figure>
+<p>设置为true时，启用动态配置重新加载。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">reload.period</span></span><br></pre></td></tr></table></figure>
+
+<p>定义要检查的间隔时间</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">filebeat.config.inputs:</span></span><br><span class="line"><span class="attr">path:</span> <span class="string">configs/\*.yml</span></span><br><span class="line"><span class="attr">reload.enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">reload.period:</span> <span class="string">10s</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="一般配置："><a href="#一般配置：" class="headerlink" title="一般配置："></a>一般配置：</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">###################### Filebeat Configuration Example #########################</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># This file is an example configuration file highlighting only the most common</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># options. The filebeat.reference.yml file from the same directory contains all the</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># supported options with more comments. You can use it as a reference.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># You can find the full configuration reference here:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># https://www.elastic.co/guide/en/beats/filebeat/index.html</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># For more available modules and options, please see the filebeat.reference.yml sample</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># configuration file.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#=========================== Filebeat inputs =============================</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#=========================== Filebeat 输入配置 ===========================</span></span><br><span class="line"></span><br><span class="line"><span class="attr">filebeat.inputs:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Each - is an input. Most options can be set at the input level, so</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># you can use different inputs for various configurations.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Below are the input specific configurations.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输入filebeat的类型，包括log(具体路径的日志),stdin(键盘输入),redis,udp,docker,tcp,syslog,可以同时配置多个(包括相同类型的)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体的每种类型的配置信息可以通过官网:https://www.elastic.co/guide/en/beats/filebeat/current/configuration-filebeat-options.html 了解</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> <span class="attr">type:</span> <span class="string">log</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Change to true to enable this input configuration.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 配置是否生效</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Paths that should be crawled and fetched. Glob based paths.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 指定要监控的日志，可以指定具体得文件或者目录</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">paths:</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#- /var/log/*.log (这是默认的,自行可以修改）</span></span><br><span class="line"></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/usr/local/tomcat/logs/catalina.out</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Exclude lines. A list of regular expressions to match. It drops the lines that are</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># matching any regular expression from the list.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 在输入中排除符合正则表达式列表的那些行。</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#exclude_lines: [&#x27;^DBG&#x27;]</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Include lines. A list of regular expressions to match. It exports the lines that are</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># matching any regular expression from the list.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 包含输入中符合正则表达式列表的那些行（默认包含所有行），include_lines执行完毕之后会执行exclude_lines</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#include_lines: [&#x27;^ERR&#x27;, &#x27;^WARN&#x27;]</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Exclude files. A list of regular expressions to match. Filebeat drops the files that</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># are matching any regular expression from the list. By default, no files are dropped.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 忽略掉符合正则表达式列表的文件</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#exclude_files: [&#x27;.gz$&#x27;]</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Optional additional fields. These fields can be freely picked</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># to add additional information to the crawled log files for filtering</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 向输出的每一条日志添加额外的信息，比如“level:debug”，方便后续对日志进行分组统计。</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 默认情况下，会在输出信息的fields子目录下以指定的新增fields建立子目录，例如fields.level</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 这个得意思就是会在es中多添加一个字段，格式为 &quot;filelds&quot;:&#123;&quot;level&quot;:&quot;debug&quot;&#125;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#fields:</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#  level: debug</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#  review: 1</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#  module: mock </span></span><br><span class="line"></span><br><span class="line">  <span class="comment">### Multiline options</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">### 日志中经常会出现多行日志在逻辑上属于同一条日志的情况，所以需要multiline参数来详细阐述。</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Multiline can be used for log messages spanning multiple lines. This is common</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># for Java Stack Traces or C-Line Continuation</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># The regexp Pattern that has to be matched. The example pattern matches all lines starting with [</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 多行匹配正则表达式，比如：用空格开头(^[[:space:]]),或者是否以[开头(^\[)。正则表达式是非常复杂的，详细见filebeat的正则表达式官方链接：https://www.elastic.co/guide/en/beats/filebeat/current/regexp-support.html</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">multiline.pattern:</span> <span class="string">^\[</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Defines if the pattern set under pattern should be negated or not. Default is false.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 该参数意思是是否否定多行融入。</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#multiline.negate: false</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Match can be set to &quot;after&quot; or &quot;before&quot;. It is used to define if lines should be append to a pattern</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># that was (not) matched before or after or as long as a pattern is not matched based on negate.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># <span class="doctag">Note:</span> After is the equivalent to previous and before is the equivalent to to next in Logstash</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 取值为after或before。该值与上面的pattern与negate值配合使用</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ----------------------------------------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#|multiline.pattern|multiline.negate|multiline.match|                      结论                      |</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ----------------------------------------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#|      true      |    true        |    before    |表示匹配行是结尾,和前面不匹配的组成一行完整的日志|</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ----------------------------------------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#|      true      |    true        |    after    |表示匹配行是开头,和后面不匹配的组成一行完整的日志|</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ----------------------------------------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#|      true      |    false      |    before    |表示匹配的行和后面不匹配的一行组成一行完整的日志 |</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ----------------------------------------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#|      true      |    false      |    after    |表示匹配的行和前面不匹配的一行组成一行完整的日志 |</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ----------------------------------------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">multiline.match:</span> <span class="string">after</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Specifies a regular expression, in which the current multiline will be flushed from memory, ending the multiline-message.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 表示符合该正则表达式的，将从内存刷入硬盘。</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#multiline.flush_pattern</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># The maximum number of lines that can be combined into one event.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># If the multiline message contains more than max_lines, any additional lines are discarded. The default is 500.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 表示如果多行信息的行数超过该数字，则多余的都会被丢弃。默认值为500行</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#multiline.max_lines: 500</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># After the specified timeout, Filebeat sends the multiline event even if no new pattern is found to start a new event. The default is 5s.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 表示超过timeout的时间(秒)还没有新的一行日志产生，则自动结束当前的多行、形成一条日志发出去</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#multiline.timeout: 5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#============================= Filebeat modules ===============================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 引入filebeat的module配置</span></span><br><span class="line"></span><br><span class="line"><span class="attr">filebeat.config.modules:</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Glob pattern for configuration loading</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">path:</span> <span class="string">$&#123;path.config&#125;/modules.d/*.yml</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Set to true to enable config reloading</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 是否允许重新加载</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">reload.enabled:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Period on which files under path should be checked for changes</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 重新加载的时间间隔</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#reload.period: 10s</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#==================== Elasticsearch template setting ==========================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Elasticsearch模板配置</span></span><br><span class="line"></span><br><span class="line"><span class="attr">setup.template.settings:</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 数据分片数</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">index.number_of_shards:</span> <span class="number">3</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 数据分片备份数</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#index.number_of_replicas: 1</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#index.codec: best_compression</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#_source.enabled: false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#================================ General =====================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The name of the shipper that publishes the network data. It can be used to group</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># all the transactions sent by a single shipper in the web interface.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置filebeat的名字，如果配置为空，则用该服务器的主机名</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#name:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The tags of the shipper are included in their own field with each</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># transaction published.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 额外添加的tag标签</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#tags: [&quot;service-X&quot;, &quot;web-tier&quot;]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Optional fields that you can specify to add additional information to the</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># output.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 额外添加的字段和值</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#fields:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#  env: staging</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#============================== Dashboards =====================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># dashboards的相关配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># These settings control loading the sample dashboards to the Kibana index. Loading</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># the dashboards is disabled by default and can be enabled either by setting the</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># options here, or by using the `-setup` CLI flag or the `setup` command.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 是否启用仪表盘</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#setup.dashboards.enabled: false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The URL from where to download the dashboards archive. By default this URL</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># has a value which is computed based on the Beat name and version. For released</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># versions, this URL points to the dashboard archive on the artifacts.elastic.co</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># website.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 仪表盘地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#setup.dashboards.url:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#============================== Kibana =====================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># kibana的相关配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Starting with Beats version 6.0.0, the dashboards are loaded via the Kibana API.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># This requires a Kibana endpoint configuration.</span></span><br><span class="line"></span><br><span class="line"><span class="attr">setup.kibana:</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Kibana Host</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Scheme and port can be left out and will be set to the default (http and 5601)</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># In case you specify and additional path, the scheme is required: http://localhost:5601/path</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># IPv6 addresses should always be defined as: https://[2001:db8::1]:5601</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># kibana地址</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#host: &quot;localhost:5601&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Kibana Space ID</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ID of the Kibana Space into which the dashboards should be loaded. By default,</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># the Default Space will be used.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># kibana的空间ID</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#space.id:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#============================= Elastic Cloud ==================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># These settings simplify using filebeat with the Elastic Cloud (https://cloud.elastic.co/).</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The cloud.id setting overwrites the `output.elasticsearch.hosts` and</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># `setup.kibana.host` options.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># You can find the `cloud.id` in the Elastic Cloud web UI.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#cloud.id:</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The cloud.auth setting overwrites the `output.elasticsearch.username` and</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># `output.elasticsearch.password` settings. The format is `&lt;user&gt;:&lt;pass&gt;`.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#cloud.auth:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#================================ Outputs =====================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出配置</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Configure what output to use when sending the data collected by the beat.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#-------------------------- Elasticsearch output ------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出到es</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#output.elasticsearch:</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Array of hosts to connect to.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ES地址</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># hosts: [&quot;localhost:9200&quot;]</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ES索引</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># index: &quot;filebeat-%&#123;[beat.version]&#125;-%&#123;+yyyy.MM.dd&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Optional protocol and basic auth credentials.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 协议</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#protocol: &quot;https&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ES用户名</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#username: &quot;elastic&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># ES密码</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#password: &quot;changeme&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#----------------------------- Logstash output --------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出到logstash</span></span><br><span class="line"></span><br><span class="line"><span class="attr">output.logstash:</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># The Logstash hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># logstash地址</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">hosts:</span> [<span class="string">&quot;localhost:5044&quot;</span>]</span><br><span class="line"></span><br><span class="line">  <span class="comment"># Optional SSL. By default is off.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># List of root certificates for HTTPS server verifications</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#ssl.certificate_authorities: [&quot;/etc/pki/root/ca.pem&quot;]</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Certificate for SSL client authentication</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#ssl.certificate: &quot;/etc/pki/client/cert.pem&quot;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Client Certificate Key</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#ssl.key: &quot;/etc/pki/client/cert.key&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#================================ Procesors =====================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Configure processors to enhance or manipulate events generated by the beat.</span></span><br><span class="line"></span><br><span class="line"><span class="attr">processors:</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#主机相关 信息</span></span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">add_host_metadata:</span> <span class="string">~</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 云服务器的元数据信息,包括阿里云ECS 腾讯云QCloud AWS的EC2的相关信息 </span></span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">add_cloud_metadata:</span> <span class="string">~</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#k8s元数据采集</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#- add_kubernetes_metadata: ~</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># docker元数据采集</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#- add_docker_metadata: ~</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 执行进程的相关数据</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">#- - add_process_metadata: ~</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#================================ Logging =====================================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Sets log level. The default log level is info.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Available log levels are: error, warning, info, debug</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#logging.level: debug</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># At debug level, you can selectively enable logging only for some components.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># To enable all selectors use [&quot;*&quot;]. Examples of other selectors are &quot;beat&quot;,</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># &quot;publish&quot;, &quot;service&quot;.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#logging.selectors: [&quot;*&quot;]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#============================== Xpack Monitoring ===============================</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># filebeat can export internal metrics to a central Elasticsearch monitoring</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cluster.  This requires xpack monitoring to be enabled in Elasticsearch.  The</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># reporting is disabled by default.</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Set to true to enable the monitoring reporter.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#xpack.monitoring.enabled: false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Uncomment to send the metrics to Elasticsearch. Most settings from the</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Elasticsearch output are accepted here as well. Any setting that is not set is</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># automatically inherited from the Elasticsearch output configuration, so if you</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># have the Elasticsearch output configured, you can simply uncomment the</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># following line.</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#xpack.monitoring.elasticsearch:</span></span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/Kubernetes/e133c536cdeb/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">docker下载k8s相关镜像1.17.3</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/CentOS/c457f0b0e4d0/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">yum自动下载RPM包及其所有依赖的包</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#filebeat%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3"><span class="nav-text">filebeat配置详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="nav-text">工作原理：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#harvester"><span class="nav-text">harvester</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#prospector"><span class="nav-text">prospector</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#filebeat%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3-1"><span class="nav-text">filebeat配置详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E9%85%8D%E7%BD%AE%EF%BC%9A"><span class="nav-text">一般配置：</span></a></li></ol></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>

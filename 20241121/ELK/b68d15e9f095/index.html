@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            ELK整体优化配置 |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">ELK整体优化配置</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/ELK/">ELK</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/ELK/">ELK</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>2.5k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>11 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="ELK整体优化配置"><a href="#ELK整体优化配置" class="headerlink" title="ELK整体优化配置"></a>ELK整体优化配置</h1><h2 id="一、elk-实用知识点总结"><a href="#一、elk-实用知识点总结" class="headerlink" title="一、elk 实用知识点总结"></a><strong>一、elk 实用知识点总结</strong></h2><h3 id="编码转换问题"><a href="#编码转换问题" class="headerlink" title="编码转换问题"></a>编码转换问题</h3><p>（1）input 中的codec &#x3D;&gt; plain 转码</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">codec =&gt; plain &#123;</span><br><span class="line">         charset =&gt; <span class="string">&quot;GB2312&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将GB2312 的文本编码，转为UTF-8 的编码</p>
+<p>（2）也可以在filebeat中实现编码的转换<strong>（推荐）</strong></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">filebeat.prospectors:</span><br><span class="line">- input_type: <span class="built_in">log</span></span><br><span class="line">  paths:</span><br><span class="line">    - c:\Users\Administrator\Desktop\performanceTrace.txt</span><br><span class="line">  encoding: GB2312</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除日志中的多余的行"><a href="#删除日志中的多余的行" class="headerlink" title="删除日志中的多余的行"></a>删除日志中的多余的行</h3><p>（1）logstash filter 中drop 删除</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ([message] =~ <span class="string">&quot;^20.*-\ task\ request,.*,start\ time.*&quot;</span>) &#123;   <span class="comment">#用正则需删除的多余行</span></span><br><span class="line">     drop &#123;&#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h3 id="grok-处理多种日志不同的行"><a href="#grok-处理多种日志不同的行" class="headerlink" title="grok 处理多种日志不同的行"></a>grok 处理多种日志不同的行</h3><p>（1）日志示例：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2018-03-20 10:44:01,523 [33]DEBUG Debug - task request,task Id:1cbb72f1-a5ea-4e73-957c-6d20e9e12a7a,start time:2018-03-20 10:43:59</span><br><span class="line">-- Request String : &#123;<span class="string">&quot;UserName&quot;</span>:<span class="string">&quot;15046699923&quot;</span>,<span class="string">&quot;Pwd&quot;</span>:<span class="string">&quot;ZYjyh727&quot;</span>,<span class="string">&quot;DeviceType&quot;</span>:2,<span class="string">&quot;DeviceId&quot;</span>:<span class="string">&quot;PC-20170525SADY&quot;</span>,<span class="string">&quot;EquipmentNo&quot;</span>:null,<span class="string">&quot;SSID&quot;</span>:<span class="string">&quot;pc&quot;</span>,<span class="string">&quot;RegisterPhones&quot;</span>:null,<span class="string">&quot;AppKey&quot;</span>:<span class="string">&quot;ab09d78e3b2c40b789ddfc81674bc24deac&quot;</span>,<span class="string">&quot;Version&quot;</span>:<span class="string">&quot;2.0.5.3&quot;</span>&#125; -- End</span><br><span class="line">-- Response String : &#123;<span class="string">&quot;ErrorCode&quot;</span>:0,<span class="string">&quot;Success&quot;</span>:<span class="literal">true</span>,<span class="string">&quot;ErrorMsg&quot;</span>:null,<span class="string">&quot;Result&quot;</span>:null,<span class="string">&quot;WaitInterval&quot;</span>:30&#125; -- End</span><br></pre></td></tr></table></figure>
+
+<p>（2）在logstash filter中grok 分别处理3行</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">match =&gt; &#123;</span><br><span class="line">    <span class="string">&quot;message&quot;</span> =&gt; <span class="string">&quot;^20.*-\ task\ request,.*,start\ time\:%&#123;TIMESTAMP_ISO8601:RequestTime&#125;&quot;</span></span><br><span class="line">match =&gt; &#123;</span><br><span class="line">    <span class="string">&quot;message&quot;</span> =&gt; <span class="string">&quot;^--\ Request\ String\ :\ \&#123;\&quot;UserName\&quot;:\&quot;%&#123;NUMBER:UserName:int&#125;\&quot;,\&quot;Pwd\&quot;:\&quot;(?&lt;Pwd&gt;.*)\&quot;,\&quot;DeviceType\&quot;:%&#123;NUMBER:DeviceType:int&#125;,\&quot;DeviceId\&quot;:\&quot;(?&lt;DeviceId&gt;.*)\&quot;,\&quot;EquipmentNo\&quot;:(?&lt;EquipmentNo&gt;.*),\&quot;SSID\&quot;:(?&lt;SSID&gt;.*),\&quot;RegisterPhones\&quot;:(?&lt;RegisterPhones&gt;.*),\&quot;AppKey\&quot;:\&quot;(?&lt;AppKey&gt;.*)\&quot;,\&quot;Version\&quot;:\&quot;(?&lt;Version&gt;.*)\&quot;\&#125;\ --\ \End.*&quot;</span>    </span><br><span class="line">&#125;</span><br><span class="line">match =&gt; &#123;</span><br><span class="line">    <span class="string">&quot;message&quot;</span> =&gt; <span class="string">&quot;^--\ Response\ String\ :\ \&#123;\&quot;ErrorCode\&quot;:%&#123;NUMBER:ErrorCode:int&#125;,\&quot;Success\&quot;:(?&lt;Success&gt;[a-z]*),\&quot;ErrorMsg\&quot;:(?&lt;ErrorMsg&gt;.*),\&quot;Result\&quot;:(?&lt;Result&gt;.*),\&quot;WaitInterval\&quot;:%&#123;NUMBER:WaitInterval:int&#125;\&#125;\ --\ \End.*&quot;</span></span><br><span class="line">&#125;</span><br><span class="line">... 等多行</span><br></pre></td></tr></table></figure>
+
+<h3 id="日志多行合并处理—multiline插件（重点）"><a href="#日志多行合并处理—multiline插件（重点）" class="headerlink" title="日志多行合并处理—multiline插件（重点）"></a><strong>日志多行合并处理—multiline插件（重点）</strong></h3><p>（1）日志示例：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">018-03-20 10:44:01,523 [33]DEBUG Debug - task request,task Id:1cbb72f1-a5ea-4e73-957c-6d20e9e12a7a,start time:2018-03-20 10:43:59</span><br><span class="line">-- Request String : &#123;<span class="string">&quot;UserName&quot;</span>:<span class="string">&quot;15046699923&quot;</span>,<span class="string">&quot;Pwd&quot;</span>:<span class="string">&quot;ZYjyh727&quot;</span>,<span class="string">&quot;DeviceType&quot;</span>:2,<span class="string">&quot;DeviceId&quot;</span>:<span class="string">&quot;PC-20170525SADY&quot;</span>,<span class="string">&quot;EquipmentNo&quot;</span>:null,<span class="string">&quot;SSID&quot;</span>:<span class="string">&quot;pc&quot;</span>,<span class="string">&quot;RegisterPhones&quot;</span>:null,<span class="string">&quot;AppKey&quot;</span>:<span class="string">&quot;ab09d78e3b2c40b789ddfc81674bc24deac&quot;</span>,<span class="string">&quot;Version&quot;</span>:<span class="string">&quot;2.0.5.3&quot;</span>&#125; -- End</span><br><span class="line">-- Response String : &#123;<span class="string">&quot;ErrorCode&quot;</span>:0,<span class="string">&quot;Success&quot;</span>:<span class="literal">true</span>,<span class="string">&quot;ErrorMsg&quot;</span>:null,<span class="string">&quot;Result&quot;</span>:null,<span class="string">&quot;WaitInterval&quot;</span>:30&#125; -- End</span><br></pre></td></tr></table></figure>
+
+<p>（2）logstash grok 对合并后多行的处理（合并多行后续都一样，如下）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">filter &#123;</span><br><span class="line">　　grok &#123;</span><br><span class="line">　　　　match =&gt; &#123;</span><br><span class="line">　　　　　　<span class="string">&quot;message&quot;</span> =&gt; <span class="string">&quot;^%&#123;TIMESTAMP_ISO8601:InsertTime&#125;\ .*-\ task\ request,.*,start\ time:%&#123;TIMESTAMP_ISO8601:RequestTime&#125;\n--\ Request\ String\ :\ \&#123;\&quot;UserName\&quot;:\&quot;%&#123;NUMBER:UserName:int&#125;\&quot;,\&quot;Pwd\&quot;:\&quot;(?&lt;Pwd&gt;.*)\&quot;,\&quot;DeviceType\&quot;:%&#123;NUMBER:DeviceType:int&#125;,\&quot;DeviceId\&quot;:\&quot;(?&lt;DeviceId&gt;.*)\&quot;,\&quot;EquipmentNo\&quot;:(?&lt;EquipmentNo&gt;.*),\&quot;SSID\&quot;:(?&lt;SSID&gt;.*),\&quot;RegisterPhones\&quot;:(?&lt;RegisterPhones&gt;.*),\&quot;AppKey\&quot;:\&quot;(?&lt;AppKey&gt;.*)\&quot;,\&quot;Version\&quot;:\&quot;(?&lt;Version&gt;.*)\&quot;\&#125;\ --\ \End\n--\ Response\ String\ :\ \&#123;\&quot;ErrorCode\&quot;:%&#123;NUMBER:ErrorCode:int&#125;,\&quot;Success\&quot;:(?&lt;Success&gt;[a-z]*),\&quot;ErrorMsg\&quot;:(?&lt;ErrorMsg&gt;.*),\&quot;Result\&quot;:(?&lt;Result&gt;.*),\&quot;WaitInterval\&quot;:%&#123;NUMBER:WaitInterval:int&#125;\&#125;\ --\ \End&quot;</span></span><br><span class="line">　　　　&#125;</span><br><span class="line">　　&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（3）<strong>在filebeat中使用multiline 插件</strong>（推荐）</p>
+<p>5.5版本之后（before为例）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">filebeat.prospectors:</span><br><span class="line">- input_type: <span class="built_in">log</span></span><br><span class="line">  paths:</span><br><span class="line">    - /root/performanceTrace*</span><br><span class="line">  fields:</span><br><span class="line">    <span class="built_in">type</span>: zidonghualog</span><br><span class="line">  multiline.pattern: <span class="string">&#x27;.*\&quot;WaitInterval\&quot;:.*--\ End&#x27;</span></span><br><span class="line">  multiline.negate: <span class="literal">true</span></span><br><span class="line">  multiline.match: before</span><br></pre></td></tr></table></figure>
+
+<p>5.5版本之前（after为例）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">filebeat.prospectors:</span><br><span class="line">- input_type: <span class="built_in">log</span> </span><br><span class="line">     paths:</span><br><span class="line">      - /root/performanceTrace*</span><br><span class="line">      input_type: <span class="built_in">log</span> </span><br><span class="line">      multiline:</span><br><span class="line">           pattern: <span class="string">&#x27;^20.*&#x27;</span></span><br><span class="line">           negate: <span class="literal">true</span></span><br><span class="line">           match: after</span><br></pre></td></tr></table></figure>
+
+<h3 id="logstash-filter-中的date使用"><a href="#logstash-filter-中的date使用" class="headerlink" title="logstash filter 中的date使用"></a><strong>logstash filter 中的date使用</strong></h3><p>（1） 日志示例</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2018-03-20 10:44:01 [33]DEBUG Debug - task request,task Id:1cbb72f1-a5ea-4e73-957c-6d20e9e12a7a,start time:2018-03-20 10:43:59</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>（2） date 使用</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">date</span> &#123;</span><br><span class="line">            match =&gt; [<span class="string">&quot;InsertTime&quot;</span>,<span class="string">&quot;YYYY-MM-dd HH:mm:ss &quot;</span>]</span><br><span class="line">            remove_field =&gt; <span class="string">&quot;InsertTime&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">match =&gt; [<span class="string">&quot;timestamp&quot;</span> ,<span class="string">&quot;dd/MMM/YYYY H:m:s Z&quot;</span>]</span><br><span class="line"></span><br><span class="line">　　匹配这个字段，字段的格式为：日日/月月月/年年年年 时/分/秒 时区</span><br><span class="line"></span><br><span class="line">也可以写为：match =&gt; [<span class="string">&quot;timestamp&quot;</span>,<span class="string">&quot;ISO8601&quot;</span>]（推荐）</span><br></pre></td></tr></table></figure>
+
+<p>（3）date 介绍</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">就是将匹配日志中时间的key 替换为@timestamp 的时间，因为@timestamp 的时间是日志送到logstash 的时间，并不是日志中真正的时间。</span><br></pre></td></tr></table></figure>
+
+<h3 id="对多类日志分类处理（重点）"><a href="#对多类日志分类处理（重点）" class="headerlink" title="对多类日志分类处理（重点）"></a><strong>对多类日志分类处理（重点）</strong></h3><p> 在filebeat 的配置中添加type 分类</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">filebeat:</span><br><span class="line">  prospectors:</span><br><span class="line">    -</span><br><span class="line">      paths:</span><br><span class="line">        <span class="comment">#- /mnt/data/WebApiDebugLog.txt*</span></span><br><span class="line">        - /mnt/data_total/WebApiDebugLog.txt*</span><br><span class="line">      fields:</span><br><span class="line">        <span class="built_in">type</span>: WebApiDebugLog_total</span><br><span class="line">    -</span><br><span class="line">      paths:</span><br><span class="line">        - /mnt/data_request/WebApiDebugLog.txt*</span><br><span class="line">        <span class="comment">#- /mnt/data/WebApiDebugLog.txt*</span></span><br><span class="line">      fields:</span><br><span class="line">        <span class="built_in">type</span>: WebApiDebugLog_request</span><br><span class="line">    -</span><br><span class="line">      paths:</span><br><span class="line">        - /mnt/data_report/WebApiDebugLog.txt*</span><br><span class="line">        <span class="comment">#- /mnt/data/WebApiDebugLog.txt*</span></span><br><span class="line">      fields:</span><br><span class="line">        <span class="built_in">type</span>: WebApiDebugLog_report</span><br></pre></td></tr></table></figure>
+
+<p>在logstash filter中使用if，可进行对不同类进行不同处理</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">filter &#123;</span><br><span class="line">   <span class="keyword">if</span> [fields][<span class="built_in">type</span>] == <span class="string">&quot;WebApiDebugLog_request&quot;</span> &#123;   <span class="comment">#对request 类日志</span></span><br><span class="line">        <span class="keyword">if</span> ([message] =~ <span class="string">&quot;^20.*-\ task\ report,.*,start\ time.*&quot;</span>) &#123;   <span class="comment">#删除report 行</span></span><br><span class="line">                drop &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    grok &#123;</span><br><span class="line">        match =&gt; &#123;<span class="string">&quot;... ...&quot;</span>&#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在logstash output中使用if</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [fields][<span class="built_in">type</span>] == <span class="string">&quot;WebApiDebugLog_total&quot;</span> &#123;</span><br><span class="line">    elasticsearch &#123;</span><br><span class="line">        hosts =&gt; [<span class="string">&quot;6.6.6.6:9200&quot;</span>]</span><br><span class="line">        index =&gt; <span class="string">&quot;logstashl-WebApiDebugLog_total-%&#123;+YYYY.MM.dd&#125;&quot;</span></span><br><span class="line">        document_type =&gt; <span class="string">&quot;WebApiDebugLog_total_logs&quot;</span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h2 id="二、对elk-整体性能的优化"><a href="#二、对elk-整体性能的优化" class="headerlink" title="二、对elk 整体性能的优化"></a><strong>二、对elk 整体性能的优化</strong></h2><h3 id="关于收集日志的选择：logstash-x2F-filter"><a href="#关于收集日志的选择：logstash-x2F-filter" class="headerlink" title="关于收集日志的选择：logstash&#x2F;filter"></a><strong>关于收集日志的选择：logstash&#x2F;filter</strong></h3><p>1）没有原则要求使用filebeat或logstash，两者作为shipper的功能是一样的，区别在于：</p>
+<p>① <strong>logstash</strong>由于集成了众多插件，如grok，ruby，所以相比beat是<strong>重量级</strong>的；</p>
+<p>② logstash启动后占用资源更多，如果硬件资源足够则无需考虑二者差异；</p>
+<p>③ logstash基于JVM，支持跨平台；而<strong>beat使用golang编写</strong>，AIX不支持；</p>
+<p>④ AIX 64bit平台上需要安装jdk（jre） 1.7 32bit，64bit的不支持；</p>
+<p>⑤ filebeat可以直接输入到ES，但是系统中存在logstash直接输入到ES的情况，这将造成不同的索引类型造成检索复杂，最好统一输入到els 的源。</p>
+<p>（2）总结</p>
+<p>　　logstash&#x2F;filter 总之各有千秋，但是，我推荐选择：在每个需要收集的日志服务器上配置filebeat，因为轻量级，用于收集日志；再统一输出给logstash，做对日志的处理；最后统一由logstash 输出给els。</p>
+<h3 id="logstash的优化相关配置"><a href="#logstash的优化相关配置" class="headerlink" title="logstash的优化相关配置"></a><strong>logstash的优化相关配置</strong></h3><p>（1）可以优化的参数，可根据自己的硬件进行优化配置</p>
+<p><strong>① pipeline 线程数</strong>，官方建议是等于CPU内核数</p>
+<p>默认配置 —&gt; <strong>pipeline.workers:</strong> 2</p>
+<p>可优化为 —&gt; pipeline.workers: CPU内核数（或几倍cpu内核数）</p>
+<p><strong>② 实际output 时的线程数</strong></p>
+<p>默认配置 —&gt; <strong>pipeline.output.workers:</strong> 1</p>
+<p>可优化为 —&gt; pipeline.output.workers: 不超过pipeline 线程数</p>
+<p>③ 每次发送的事件数</p>
+<p>默认配置 —&gt; pipeline.batch.size: 125</p>
+<p>可优化为 —&gt; pipeline.batch.size: 1000</p>
+<p>④ 发送延时</p>
+<p>默认配置 —&gt; pipeline.batch.delay: 5</p>
+<p>可优化为 —&gt; pipeline.batch.size: 10</p>
+<p>（2）总结</p>
+<p>　　通过设置-w参数指定pipeline worker数量，也可直接修改配置文件logstash.yml。这会提高filter和output的线程数，如果需要的话，<strong>将其设置为cpu核心数的几倍是安全的</strong>，线程在I&#x2F;O上是空闲的。</p>
+<p>　　默认每个输出在一个pipeline worker线程上活动，可以在输出output 中设置workers设置，不要将该值设置大于pipeline worker数。</p>
+<p>　　还可以设置输出的batch_size数，例如ES输出与batch size一致。</p>
+<p>　　filter设置multiline后，pipline worker会自动将为1，如果使用filebeat，建议在beat中就使用multiline，如果使用logstash作为shipper，建议在input 中设置multiline，不要在filter中设置multiline。</p>
+<p>（3）Logstash中的JVM配置文件</p>
+<p>　　Logstash是一个基于Java开发的程序，需要运行在JVM中，可以通过配置jvm.options来针对JVM进行设定。比如内存的最大最小、垃圾清理机制等等。JVM的内存分配不能太大不能太小，太大会拖慢操作系统。太小导致无法启动。默认如下：</p>
+<p>-Xms256m #最小使用内存</p>
+<p>-Xmx1g #最大使用内存</p>
+<h3 id="elasticsearch-节点优化配置"><a href="#elasticsearch-节点优化配置" class="headerlink" title="elasticsearch 节点优化配置"></a><strong>elasticsearch 节点优化配置</strong></h3><p>（1）服务器硬件配置，OS 参数</p>
+<p>（a） &#x2F;etc&#x2F;sysctl.conf 配置</p>
+<p>vim &#x2F;etc&#x2F;sysctl.conf</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vm.swappiness = 1                     <span class="comment">#ES 推荐将此参数设置为 1，大幅降低 swap 分区的大小，强制最大程度的使用内存，注意，这里不要设置为 0, 这会很可能会造成 OOM</span></span><br><span class="line">net.core.somaxconn = 65535     <span class="comment">#定义了每个端口最大的监听队列的长度</span></span><br><span class="line">vm.max_map_count= 262144    <span class="comment">#限制一个进程可以拥有的VMA(虚拟内存区域)的数量。虚拟内存区域是一个连续的虚拟地址空间区域。当VMA 的数量超过这个值，OOM</span></span><br><span class="line">fs.file-max = 518144                   <span class="comment">#设置 Linux 内核分配的文件句柄的最大数量</span></span><br></pre></td></tr></table></figure>
+
+<p>[root@elasticsearch]# sysctl -p 生效一下</p>
+<p>（b）limits.conf 配置</p>
+<p>vim &#x2F;etc&#x2F;security&#x2F;limits.conf</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">elasticsearch    soft    nofile          65535</span><br><span class="line">elasticsearch    hard    nofile          65535</span><br><span class="line">elasticsearch    soft    memlock         unlimited</span><br><span class="line">elasticsearch    hard    memlock         unlimited</span><br></pre></td></tr></table></figure>
+
+<p>（c）为了使以上参数永久生效，还要设置两个地方</p>
+<p>vim &#x2F;etc&#x2F;pam.d&#x2F;common-session-noninteractive</p>
+<p>vim &#x2F;etc&#x2F;pam.d&#x2F;common-session</p>
+<p>添加如下属性：</p>
+<p>session required pam_limits.so</p>
+<p>可能需重启后生效</p>
+<p>（2）elasticsearch 中的JVM配置文件</p>
+<p>-Xms2g</p>
+<p>-Xmx2g</p>
+<p>① 将最小堆大小（Xms）和最大堆大小（Xmx）设置为彼此相等。</p>
+<p>② Elasticsearch可用的堆越多，可用于缓存的内存就越多。但请注意，太多的堆可能会使您长时间垃圾收集暂停。</p>
+<p>③ 设置Xmx为不超过物理RAM的50％，以确保有足够的物理内存留给内核文件系统缓存。</p>
+<p>④ 不要设置Xmx为JVM用于压缩对象指针的临界值以上；确切的截止值有所不同，但接近32 GB。不要超过32G，如果空间大，多跑几个实例，不要让一个实例太大内存</p>
+<p>（3）elasticsearch 配置文件优化参数</p>
+<p>① vim elasticsearch.yml</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">bootstrap.memory_lock: <span class="literal">true</span>  <span class="comment">#锁住内存，不使用swap</span></span><br><span class="line"><span class="comment">#缓存、线程等优化如下</span></span><br><span class="line">bootstrap.mlockall: <span class="literal">true</span></span><br><span class="line">transport.tcp.compress: <span class="literal">true</span></span><br><span class="line">indices.fielddata.cache.size: 40%</span><br><span class="line">indices.cache.filter.size: 30%</span><br><span class="line">indices.cache.filter.terms.size: 1024mb</span><br><span class="line">threadpool:</span><br><span class="line">    search:</span><br><span class="line">        <span class="built_in">type</span>: cached</span><br><span class="line">        size: 100</span><br><span class="line">        queue_size: 2000</span><br></pre></td></tr></table></figure>
+
+<p>② 设置环境变量</p>
+<p>vim &#x2F;etc&#x2F;profile.d&#x2F;elasticsearch.sh export ES_HEAP_SIZE&#x3D;2g  #Heap Size不超过物理内存的一半，且小于32G</p>
+<p>（4）集群的优化</p>
+<p>① ES是分布式存储，当设置同样的cluster.name后会自动发现并加入集群；</p>
+<p>② 集群会自动选举一个master，当master宕机后重新选举；</p>
+<p>③ 为防止”脑裂”，集群中个数最好为奇数个</p>
+<p>④ 为有效管理节点，可关闭广播 discovery.zen.ping.multicast.enabled: false，并设置单播节点组discovery.zen.ping.unicast.hosts: [“ip1”, “ip2”, “ip3”]</p>
+<p>来自[<a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/along21/" >阿龙<i class="fas fa-external-link-alt"></i></a><a class="link"   target="_blank" rel="noopener" href="https://www.cnblogs.com/along21/archive/2018/03/21/8613115.html" >ELK重难点总结和整体优化配置 <i class="fas fa-external-link-alt"></i></a>]</p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/ELK/a15a7bd2d657/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">ELK定时清理索引</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/Kubernetes/a85e20a04aa8/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Kubernetes之命令补齐</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ELK%E6%95%B4%E4%BD%93%E4%BC%98%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-text">ELK整体优化配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81elk-%E5%AE%9E%E7%94%A8%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93"><span class="nav-text">一、elk 实用知识点总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E8%BD%AC%E6%8D%A2%E9%97%AE%E9%A2%98"><span class="nav-text">编码转换问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%97%A5%E5%BF%97%E4%B8%AD%E7%9A%84%E5%A4%9A%E4%BD%99%E7%9A%84%E8%A1%8C"><span class="nav-text">删除日志中的多余的行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grok-%E5%A4%84%E7%90%86%E5%A4%9A%E7%A7%8D%E6%97%A5%E5%BF%97%E4%B8%8D%E5%90%8C%E7%9A%84%E8%A1%8C"><span class="nav-text">grok 处理多种日志不同的行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%A4%9A%E8%A1%8C%E5%90%88%E5%B9%B6%E5%A4%84%E7%90%86%E2%80%94multiline%E6%8F%92%E4%BB%B6%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="nav-text">日志多行合并处理—multiline插件（重点）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logstash-filter-%E4%B8%AD%E7%9A%84date%E4%BD%BF%E7%94%A8"><span class="nav-text">logstash filter 中的date使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E5%A4%9A%E7%B1%BB%E6%97%A5%E5%BF%97%E5%88%86%E7%B1%BB%E5%A4%84%E7%90%86%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="nav-text">对多类日志分类处理（重点）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AF%B9elk-%E6%95%B4%E4%BD%93%E6%80%A7%E8%83%BD%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-text">二、对elk 整体性能的优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%94%B6%E9%9B%86%E6%97%A5%E5%BF%97%E7%9A%84%E9%80%89%E6%8B%A9%EF%BC%9Alogstash-x2F-filter"><span class="nav-text">关于收集日志的选择：logstash&#x2F;filter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logstash%E7%9A%84%E4%BC%98%E5%8C%96%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE"><span class="nav-text">logstash的优化相关配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#elasticsearch-%E8%8A%82%E7%82%B9%E4%BC%98%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-text">elasticsearch 节点优化配置</span></a></li></ol></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>

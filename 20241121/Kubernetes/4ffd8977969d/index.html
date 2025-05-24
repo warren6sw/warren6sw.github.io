@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="Hexo Theme Keep">
+    <meta name="author" content="LiuSw">
+    
+    <title>
+        
+            KubeSphere部署 |
+        
+        Warren&#39; Blog
+    </title>
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <link rel="shortcut icon" href="/images/logo.ico">
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"example.com","root":"/","language":"zh-CN","path":"search.json"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":false,"expand_all":true,"init_open":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.ico","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"心若有所向往，何惧道阻且长。   ▶️"},"scroll":{"progress_bar":{"enable":true},"percent":{"enable":true}}},"local_search":{"enable":true,"preload":false},"code_copy":{"enable":true,"style":"mac"},"pjax":{"enable":true},"lazyload":{"enable":true},"version":"3.4.3"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+<div class="progress-bar-container">
+    
+        <span class="scroll-progress-bar"></span>
+    
+
+    
+        <span class="pjax-progress-bar"></span>
+        <span class="pjax-progress-icon">
+            <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+    
+</div>
+
+
+<main class="page-container">
+
+    
+
+    <div class="page-main-content">
+
+        <div class="page-main-content-top">
+            <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            
+            <a class="logo-title" href="/">
+                Warren&#39; Blog
+            </a>
+        </div>
+
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/categories"
+                            >
+                                分类
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/navigate"
+                            >
+                                导航
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/categories">分类</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/navigate">导航</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+        </div>
+
+        <div class="page-main-content-middle">
+
+            <div class="main-content">
+
+                
+                    <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">KubeSphere部署</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span class="name">LiuSw</span>
+                        
+                            <span class="author-label">Lv6</span>
+                        
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-edit"></i>&nbsp;2024-11-21 19:09:48
+    </span>
+    
+        <span class="article-categories article-meta-item">
+            <i class="fas fa-folder"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/categories/Kubernetes/">Kubernetes</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>&nbsp;
+            <ul>
+                
+                    <li>
+                        <a href="/tags/Kubernetes/">Kubernetes</a>&nbsp;
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i>&nbsp;<span>2.4k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i>&nbsp;<span>12 分钟</span>
+        </span>
+    
+    
+        <span class="article-pv article-meta-item">
+            <i class="fas fa-eye"></i>&nbsp;<span id="busuanzi_value_page_pv"></span>
+        </span>
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="KubeSphere部署"><a href="#KubeSphere部署" class="headerlink" title="KubeSphere部署"></a>KubeSphere部署</h1><h3 id="1-基础环境依赖"><a href="#1-基础环境依赖" class="headerlink" title="1.基础环境依赖"></a>1.基础环境依赖</h3><ul>
+<li>可以基于linux裸操作系统部署</li>
+<li>可以在K8S的基础上部署（本次部署）</li>
+</ul>
+<blockquote>
+<p>已经提前准备好Docker、harbor（镜像仓库）和K8S基础环境</p>
+</blockquote>
+<h3 id="2-安装前准备"><a href="#2-安装前准备" class="headerlink" title="2.安装前准备"></a>2.安装前准备</h3><ul>
+<li>(1).安装socat 到所有节点</li>
+</ul>
+<blockquote>
+<p>其功能与有瑞士军刀之称的 Netcat 类似，可以在两个流之间建立通道）helm依赖于socat,将socat-1.7.3.2-2.el7.x86_64拷贝的所有节点，并安装</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh socat-1.7.3.2-2.el7.x86_64</span><br><span class="line"></span><br><span class="line">socat -V</span><br><span class="line"><span class="comment"># [root@master01 ~]# socat -V</span></span><br><span class="line"><span class="comment"># socat by Gerhard Rieger and contributors - see www.dest-unreach.org</span></span><br><span class="line"><span class="comment"># socat version 1.7.3.2 on Aug  4 2017 04:57:10</span></span><br><span class="line"><span class="comment">#    running on Linux version #1 SMP Thu Nov 8 23:39:32 UTC 2018, release 3.10.0-957.el7.x86_64, machine x86_64</span></span><br><span class="line"><span class="comment"># features:</span></span><br><span class="line">  <span class="comment">#define WITH_STDIO 1</span></span><br><span class="line">  <span class="comment">#define WITH_FDNUM 1</span></span><br><span class="line">  <span class="comment">#define WITH_FILE 1</span></span><br><span class="line">  <span class="comment">#define WITH_CREAT 1</span></span><br><span class="line">  <span class="comment">#define WITH_GOPEN 1</span></span><br><span class="line">  <span class="comment">#define WITH_TERMIOS 1</span></span><br><span class="line">  <span class="comment">#define WITH_PIPE 1</span></span><br><span class="line">  <span class="comment">#define WITH_UNIX 1</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>(2).安装helm</li>
+</ul>
+<blockquote>
+<p>（helm分为客户端（helm）和服务端（tiller））（helm可以理解为k8s的yum，可以用chart的方式在线安装deployment）</p>
+</blockquote>
+<ol>
+<li>拷贝helm-v2.16.9-linux-amd64.tar到所有节点，解压后将linux-amd64下的helm拷贝到系统的&#x2F;usr&#x2F;local&#x2F;bin&#x2F;下，这样就可以使用helm命令<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf helm-v2.16.2-linux-amd64.tar.gz</span><br><span class="line"><span class="built_in">cp</span> helm /usr/local/bin/</span><br></pre></td></tr></table></figure></li>
+<li>拷贝tiller_v2.16.2到一个master节点，通过 docker load命令将其中的镜像解压到本地<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker load &lt; tiller_v2.16.2</span><br></pre></td></tr></table></figure></li>
+<li>重新tag tiller:v2.16.2镜像，并推送到镜像仓库<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker tag 192.168.11.6:8083/kubesphere/tiller:v2.16.2  192.168.201.6:81/kubesphere/tiller:v2.16.2</span><br><span class="line">docker push 192.168.201.6:81/kubesphere/tiller:v2.16.2</span><br></pre></td></tr></table></figure></li>
+<li>将rbac-config.yaml拷贝到一个master节点，通过kubectl create命令创建tiller使用的service account: tiller并分配合适的角色给它（不执行此步的话tiller容器起不来）<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f rbac-config.yaml</span><br></pre></td></tr></table></figure></li>
+<li>将tiller-deploy.yaml拷贝到一个master节点，编辑将上面push的tiller镜像地址填入<br><code>vim  tiller-deploy.yaml修改2处地址</code><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TILLER_NAMESPACE</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">kube-system</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">TILLER_HISTORY_MAX</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;0&quot;</span></span><br><span class="line">        <span class="attr">image:</span> <span class="number">192.168</span><span class="number">.201</span><span class="number">.6</span><span class="string">:81/kubesphere/tiller:v2.16.2</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line"> <span class="string">---</span></span><br><span class="line">      <span class="attr">dnsPolicy:</span> <span class="string">ClusterFirst</span></span><br><span class="line">      <span class="attr">imagePullSecrets:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="number">192.168</span><span class="number">.201</span><span class="number">.6</span></span><br><span class="line">      <span class="attr">restartPolicy:</span> <span class="string">Always</span></span><br><span class="line">      <span class="attr">schedulerName:</span> <span class="string">default-scheduler</span></span><br><span class="line">      <span class="attr">securityContext:</span></span><br><span class="line">        <span class="attr">seLinuxOptions:</span> &#123;&#125;</span><br><span class="line">      <span class="attr">serviceAccount:</span> <span class="string">tiller</span></span><br><span class="line">      <span class="attr">serviceAccountName:</span> <span class="string">tiller</span></span><br><span class="line">      <span class="attr">terminationGracePeriodSeconds:</span> <span class="number">30</span></span><br></pre></td></tr></table></figure></li>
+<li>通过kubectl create命令创建tiller的deploy和pod<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f  tiller-deploy.yaml  -n kube-system</span><br></pre></td></tr></table></figure>
+<code>查询pod已经正常运行，helm也获取到了server</code><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -n kube-system</span><br><span class="line">helm version</span><br></pre></td></tr></table></figure></li>
+</ol>
+<ul>
+<li>(3).安装NFS文件系统</li>
+</ul>
+<blockquote>
+<p>注意：NFS文件系统只负责存储资源共享，和k8s没有其他关系，后面要部署的存储持久化也只是调用NFS的服务地址而已</p>
+</blockquote>
+<ol>
+<li>拷贝nfs-utils-1.3.0-0.66.el7.x86_64和rpcbind-0.2.0-49.el7.x86_64的rpm安装包到nfs服务器</li>
+<li>安装<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#服务器安装</span></span><br><span class="line">rpm -ivh nfs-utils-1.3.0-0.66.el7.x86_64 </span><br><span class="line"><span class="comment">#服务器客户端都安装</span></span><br><span class="line">rpm -ivh rpcbind-0.2.0-49.el7.x86_64</span><br></pre></td></tr></table></figure></li>
+<li>在nfs服务器上修改exports配置文件，填写需要共享的路径和权限（*代表所有服务器都可以访问）<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/exports</span><br><span class="line"><span class="comment"># [root@master01 ~]#vi /etc/exports</span></span><br><span class="line"><span class="comment"># /nfs/data *(rw,no_root_squash,sync)</span></span><br></pre></td></tr></table></figure></li>
+<li>启动并设置自启动nfs和rpcbind服务<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systemctl  <span class="built_in">enable</span>  nfs</span><br><span class="line">systemctl  <span class="built_in">enable</span>  rpcbind</span><br><span class="line">systemctl  start  nfs</span><br><span class="line">systemctl  start  rpcbind</span><br></pre></td></tr></table></figure></li>
+<li>在任意非nfs服务器系统上执行 showmount -e &lt;nfs服务器ip&gt;，可以得到共享信息即可<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">showmount -e 192.168.201.6</span><br><span class="line"><span class="comment"># [root@master02 ~]# showmount -e 192.168.201.6</span></span><br><span class="line"><span class="comment"># Export list for 192.168.201.6:</span></span><br><span class="line"><span class="comment"># /nfs/data     *</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<ul>
+<li>(4).持久化存储部署（基于nfs文件系统的动态pv）</li>
+</ul>
+<ol>
+<li><p>拷贝并导入nfs-client-provisioner镜像到任意一个节点</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker load &lt; nfs-client-provisioner_v3.1.0-k8s1.11</span><br></pre></td></tr></table></figure></li>
+<li><p>tag并上传到harbor</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker tag  192.168.11.6:8083/kubesphere/nfs-client-provisioner:v3.1.0-k8s1.11 192.168.201.6:81/kubesphere/nfs-6.55/kubesphere/nfs-client-provisioner:v3.1.0-k8s1.11</span><br><span class="line">docker push 192.168.201.6:81/kubesphere/nfs-client-provisioner:v3.1.0-k8s1.11</span><br></pre></td></tr></table></figure></li>
+<li><p>因为有了helm，可以用helm离线方式安装nfs-client-provisioner，上传nfs-client-provisioner-1.2.8.tgz，并解压缩，编辑values.yaml，更改仓库地址及nfs地址</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tar  -zxvf  nfs-client-provisioner-1.2.8.tgz</span><br><span class="line"><span class="built_in">cd</span>  nfs-client-provisioner</span><br><span class="line">vim  valuse.yaml</span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Default values for nfs-client-provisioner.</span></span><br><span class="line"><span class="comment"># This is a YAML-formatted file.</span></span><br><span class="line"><span class="comment"># Declare variables to be passed into your templates.</span></span><br><span class="line"><span class="attr">replicaCount:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">strategyType:</span> <span class="string">Recreate</span></span><br><span class="line"><span class="attr">image:</span></span><br><span class="line">	<span class="attr">repository:</span> <span class="number">192.168</span><span class="number">.201</span><span class="number">.6</span><span class="string">:81/kubesphere/nfs-client-provisioner</span></span><br><span class="line">	<span class="attr">tag:</span> <span class="string">v3.1.0-k8s1.11</span></span><br><span class="line">	<span class="attr">pullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line"><span class="attr">nfs:</span></span><br><span class="line">	<span class="attr">server:</span> <span class="number">192.168</span><span class="number">.201</span><span class="number">.6</span></span><br><span class="line">	<span class="attr">path:</span> <span class="string">/nfs/data</span></span><br><span class="line">	  <span class="attr">mountOptions:</span></span><br><span class="line"><span class="comment"># For creating the StorageClass automatically:</span></span><br><span class="line"><span class="attr">storageClass:</span></span><br><span class="line">	<span class="attr">create:</span> <span class="literal">true</span></span><br><span class="line">	<span class="comment"># Set a provisioner name. If unset, a name will be generated.</span></span><br><span class="line">	<span class="comment"># provisionerName:</span></span><br><span class="line">	<span class="comment"># Set StorageClass as the default StorageClass</span></span><br><span class="line">	<span class="comment"># Ignored if storageClass.create is false</span></span><br><span class="line">	<span class="attr">defaultClass:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> nfs-client-provisioner</span><br><span class="line">helm install ./</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在values.yaml所在文件夹内执行helm install .&#x2F; 成功安装后查看pod已经running，查看sc资源已经有了nfs-client，代表成功</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl get sc</span><br><span class="line"><span class="comment"># [root@master01 ~]# kubectl get sc</span></span><br><span class="line"><span class="comment"># NAME                   PROVISIONER                                       RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE</span></span><br><span class="line"><span class="comment"># nfs-client (default)   cluster.local/fancy-gnat-nfs-client-provisioner   Delete          Immediate           true                   2d5h</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -n default</span><br><span class="line"><span class="comment"># [root@master01 nfs-client-provisioner]# kubectl get pod -n default</span></span><br><span class="line"><span class="comment"># NAME                                                 READY   STATUS    RESTARTS   AGE</span></span><br><span class="line"><span class="comment"># fancy-gnat-nfs-client-provisioner-598546c7d9-bcsft   1/1     Running   0          2d5h</span></span><br></pre></td></tr></table></figure></li>
+<li><p>按照kubesphere教程要求设置默认存储(重要)</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch storageclass nfs-client -p <span class="string">&#x27;&#123;&quot;metadata&quot;: &#123;&quot;annotations&quot;:&#123;&quot;storageclass.kubernetes.io/is-default-class&quot;:&quot;true&quot;&#125;&#125;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>到此准备工作全部完成，可以开始离线安装kubesphere了</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="3-在k8s集群上部署"><a href="#3-在k8s集群上部署" class="headerlink" title="3.在k8s集群上部署"></a>3.在k8s集群上部署</h3><ul>
+<li>在线部署</li>
+</ul>
+<p><code>执行以下命令以开始安装：</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://github.com/kubesphere/ks-installer/releases/download/v3.0.0/kubesphere-installer.yaml</span><br><span class="line">kubectl apply -f https://github.com/kubesphere/ks-installer/releases/download/v3.0.0/cluster-configuration.yaml</span><br></pre></td></tr></table></figure>
+<p><code>检查安装日志：</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs -n kubesphere-system $(kubectl get pod -n kubesphere-system -l app=ks-install -o jsonpath=<span class="string">&#x27;&#123;.items[0].metadata.name&#125;&#x27;</span>) -f</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>离线部署</li>
+</ul>
+<ol>
+<li><p>将7.2G的全包上传到服务器中，解压缩后得到如下tar包</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar  -zxvf  kubesphere-images-v2.1.1.tar.gz</span><br></pre></td></tr></table></figure></li>
+<li><p>将tar包内的镜像全部load到当前服务器<br><code>可能会失败，多尝试几次</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker load &lt; ks_minimal_images.tar</span><br><span class="line">docker load &lt; openpitrix_images.tar</span><br><span class="line">docker load &lt; ks_logging_images.tar</span><br><span class="line">docker load &lt; ks_devops_images.tar</span><br><span class="line">docker load &lt; istio_images.tar</span><br><span class="line">docker load &lt; ks_notification_images.tar</span><br><span class="line">docker load &lt; example_images.tar</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>load后本地会加载大量的镜像，不要慌，kubeshpere提供工具自动tag并上传到harbor（镜像仓库）</p>
+</blockquote>
+</li>
+<li><p>使用kubesphere工具tag并上传镜像</p>
+</li>
+</ol>
+<ul>
+<li>(1).将ks-installer.tar.gz拷贝到服务器并解压缩，进入ks-installer&#x2F;scrip目录后编辑create_project_harbor.sh，将harbor地址填入（用户不能用admin）</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim create_project_harbor.sh</span><br><span class="line"><span class="comment"># url=&quot;http://192.168.201.6:81&quot;</span></span><br><span class="line"><span class="comment"># user=&quot;admin&quot;</span></span><br><span class="line"><span class="comment"># passwd=&quot;Harbor12345&quot;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>新版的harbor仓库接口可能更换了，脚本不好使可以去web界面手动创建项目，大概30-40个项目。</p>
+</blockquote>
+<ul>
+<li><p>(2).执行create_project_harbor.sh，这一步会在harbor中创建一系列的项目</p>
+</li>
+<li><p>(3).执行.&#x2F;push-image-list.sh 192.168.201.6:81（后面的IP为harbor地址）将镜像推送到harbor，因为镜像很多，需要大概半小时（根据网络速度不同）</p>
+</li>
+</ul>
+<blockquote>
+<p>注意，这里的kubesphere&#x2F;jenkins-uc镜像，程序没有自动tar上传，但是安装kubesphere时用到了，请自行tag和推送</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker tag kubesphere/jenkins-uc:v2.1.1  192.168.201.6:81/kubesphere/jenkins-uc:v2.1.1</span><br><span class="line">docker push  192.168.201.6:81/kubesphere/jenkins-uc:v2.1.1 </span><br></pre></td></tr></table></figure>
+<p><code>上传完毕后请去harbor检查镜像情况</code></p>
+<ul>
+<li>(4).编辑ks-installer目录下的kubesphere-minimal.yaml，修改harbor地址和修改ks-installer镜像地址</li>
+</ul>
+<blockquote>
+<p>这里采取最小化安装，安装完成后需要开启其他功能，可以自己选择增加</p>
+</blockquote>
+<p><code>vi kubesphere-minimal.yaml 修改相应的仓库地址</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Namespace</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">kubesphere-system</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">ks-config.yaml:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    ---</span></span><br><span class="line"><span class="string"></span></span><br><span class="line">    <span class="attr">persistence:</span></span><br><span class="line">      <span class="attr">storageClass:</span> <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">etcd:</span></span><br><span class="line">      <span class="attr">monitoring:</span> <span class="literal">False</span></span><br><span class="line">      <span class="attr">endpointIps:</span> <span class="number">192.168</span><span class="number">.201</span><span class="number">.6</span><span class="string">,192.168.201.7,192.168.201.8</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">2379</span></span><br><span class="line">      <span class="attr">tlsEnable:</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">common:</span></span><br><span class="line">      <span class="attr">mysqlVolumeSize:</span> <span class="string">20Gi</span></span><br><span class="line">      <span class="attr">minioVolumeSize:</span> <span class="string">20Gi</span></span><br><span class="line">      <span class="attr">etcdVolumeSize:</span> <span class="string">20Gi</span></span><br><span class="line">      <span class="attr">openldapVolumeSize:</span> <span class="string">2Gi</span></span><br><span class="line">      <span class="attr">redisVolumSize:</span> <span class="string">2Gi</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">metrics_server:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">console:</span></span><br><span class="line">      <span class="attr">enableMultiLogin:</span> <span class="literal">True</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">30880</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">monitoring:</span></span><br><span class="line">      <span class="attr">prometheusReplicas:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">prometheusMemoryRequest:</span> <span class="string">400Mi</span></span><br><span class="line">      <span class="attr">prometheusVolumeSize:</span> <span class="string">20Gi</span></span><br><span class="line">      <span class="attr">grafana:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">logging:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">True</span></span><br><span class="line">      <span class="attr">elasticsearchMasterReplicas:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">elasticsearchDataReplicas:</span> <span class="number">1</span></span><br><span class="line">      <span class="attr">logsidecarReplicas:</span> <span class="number">2</span></span><br><span class="line">      <span class="attr">elasticsearchMasterVolumeSize:</span> <span class="string">4Gi</span></span><br><span class="line">      <span class="attr">elasticsearchDataVolumeSize:</span> <span class="string">20Gi</span></span><br><span class="line">      <span class="attr">logMaxAge:</span> <span class="number">7</span></span><br><span class="line">      <span class="attr">elkPrefix:</span> <span class="string">logstash</span></span><br><span class="line">      <span class="attr">containersLogMountedPath:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">      <span class="attr">kibana:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">openpitrix:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">devops:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">True</span></span><br><span class="line">      <span class="attr">jenkinsMemoryLim:</span> <span class="string">2Gi</span></span><br><span class="line">      <span class="attr">jenkinsMemoryReq:</span> <span class="string">1500Mi</span></span><br><span class="line">      <span class="attr">jenkinsVolumeSize:</span> <span class="string">8Gi</span></span><br><span class="line">      <span class="attr">jenkinsJavaOpts_Xms:</span> <span class="string">512m</span></span><br><span class="line">      <span class="attr">jenkinsJavaOpts_Xmx:</span> <span class="string">512m</span></span><br><span class="line">      <span class="attr">jenkinsJavaOpts_MaxRAM:</span> <span class="string">2g</span></span><br><span class="line">      <span class="attr">sonarqube:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">False</span></span><br><span class="line">        <span class="attr">postgresqlVolumeSize:</span> <span class="string">8Gi</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">servicemesh:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">notification:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="attr">alerting:</span></span><br><span class="line">      <span class="attr">enabled:</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ks-installer</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kubesphere-system</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ks-installer</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kubesphere-system</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="literal">null</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ks-installer</span></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">apps</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">extensions</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">batch</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">apiregistration.k8s.io</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">apiextensions.k8s.io</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">tenant.kubesphere.io</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">certificates.k8s.io</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">devops.kubesphere.io</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">monitoring.coreos.com</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">logging.kubesphere.io</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">jaegertracing.io</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">storage.k8s.io</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">apiGroups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">admissionregistration.k8s.io</span></span><br><span class="line">  <span class="attr">resources:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line">  <span class="attr">verbs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&#x27;*&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterRoleBinding</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">rbac.authorization.k8s.io/v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ks-installer</span></span><br><span class="line"><span class="attr">subjects:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">kind:</span> <span class="string">ServiceAccount</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ks-installer</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kubesphere-system</span></span><br><span class="line"><span class="attr">roleRef:</span></span><br><span class="line">  <span class="attr">kind:</span> <span class="string">ClusterRole</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ks-installer</span></span><br><span class="line">  <span class="attr">apiGroup:</span> <span class="string">rbac.authorization.k8s.io</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ks-installer</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kubesphere-system</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">ks-install</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">ks-install</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">ks-install</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">serviceAccountName:</span> <span class="string">ks-installer</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">installer</span></span><br><span class="line">        <span class="attr">image:</span> <span class="number">192.168</span><span class="number">.201</span><span class="number">.6</span><span class="string">:81/kubesphere/ks-installer:v2.1.1</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">&quot;Always&quot;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>(5).确认helm 存储持久化 kubelet的正确，确认 node全部正常，kube-system的容器全部正常</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">helm version</span><br><span class="line">kubectl get nodes</span><br><span class="line">kubectl get sc</span><br><span class="line">kubectl get pod -n kube-system</span><br></pre></td></tr></table></figure>
+<ul>
+<li>(6).执行安装命令</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f kubesphere-minimal.yaml</span><br></pre></td></tr></table></figure>
+<p><code>命令执行成功，pod为Running时，观察日志</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl logs -n kubesphere-system $(kubectl get pod -n kubesphere-system -l app=ks-install -o jsonpath=<span class="string">&#x27;&#123;.items[0].metadata.name&#125;&#x27;</span>) -f</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>日志可能会报一些错误，观察错误模块，到对应的容器内查看并解决错误,node或者master可能会拉取镜像到本地不成功，这时候需要手动拉取</p>
+</blockquote>
+<h3 id="4-验证"><a href="#4-验证" class="headerlink" title="4.验证"></a>4.验证</h3><p><code>看到以下界面完成安装，等待所有pod完成后登录验证</code><br><code>http://localhost:30880</code></p>
+<blockquote>
+<p>账号：admin<br>密码：P@88w0rd</p>
+</blockquote>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#####################################################</span><br><span class="line">###              Welcome to KubeSphere!           ###</span><br><span class="line">#####################################################</span><br><span class="line"></span><br><span class="line">Console: http://localhost:30880</span><br><span class="line">Account: admin</span><br><span class="line">Password: P@88w0rd</span><br><span class="line"></span><br><span class="line">NOTES：</span><br><span class="line">  1. After logging into the console, please check the</span><br><span class="line">     monitoring status of service components in</span><br><span class="line">     the &quot;Cluster Status&quot;. If the service is not</span><br><span class="line">     ready, please wait patiently. You can start</span><br><span class="line">     to use when all components are ready.</span><br><span class="line">  2. Please modify the default password after login.</span><br><span class="line"></span><br><span class="line">#####################################################</span><br></pre></td></tr></table></figure>
+<h3 id="5-遇到的问题"><a href="#5-遇到的问题" class="headerlink" title="5.遇到的问题"></a>5.遇到的问题</h3><ul>
+<li>(1).拉取镜像失败,手动进行pull后重新tag<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull 192.168.201.6:81/kubesphere/node-exporter:ks-v0.16.0</span><br><span class="line">docker tag 192.168.201.6:81/kubesphere/node-exporter:ks-v0.16.0 kubesphere/node-exporter:ks-v0.16.0</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/20241121/Greenplum/0723f01d081e/"
+                        >
+                            <span class="left arrow-icon flex-center">
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">CentOS安装Greenplum教程-由单机master到集群</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/20241121/Kubernetes/3ad8d6c826e0/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Kubernetes之Master也能当作Node使用的方法</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    <div class="comment-area-title">
+        <i class="fas fa-comments">&nbsp;评论</i>
+    </div>
+    
+
+        
+            
+    <div class="valine-container">
+        <script data-pjax
+                src="//cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script>
+        <div id="vcomments"></div>
+        <script data-pjax>
+            function loadValine() {
+                new Valine({
+                    el: '#vcomments',
+                    appId: 'BEMpJudeFXa6gjjzQJLS7NdH-gzGzoHsz',
+                    appKey: 'AQI7N2UG34MNLRmctkce1siE',
+                    meta: ['nick', 'mail', 'link'],
+                    avatar: 'wavatar',
+                    enableQQ: true,
+                    placeholder: '客官,留下点什么吧!',
+                    lang: 'zh-CN'.toLowerCase()
+                });
+
+                function getAuthor(language) {
+                    switch (language) {
+                        case 'en':
+                            return 'Author';
+                        case 'zh-CN':
+                            return '博主';
+                        default:
+                            return 'Master';
+                    }
+                }
+
+                // Add "Author" identify
+                const getValineDomTimer = setInterval(() => {
+                    const vcards = document.querySelectorAll('#vcomments .vcards .vcard');
+                    if (vcards.length > 0) {
+                        let author = 'LiuSw';
+
+                        if (author) {
+                            for (let vcard of vcards) {
+                                const vnick_dom = vcard.querySelector('.vhead .vnick');
+                                const vnick = vnick_dom.innerHTML;
+                                if (vnick === author) {
+                                    vnick_dom.innerHTML = `${vnick} <span class="author">${getAuthor(KEEP.hexo_config.language)}</span>`
+                                }
+                            }
+                        }
+                        clearInterval(getValineDomTimer);
+                    } else {
+                        clearInterval(getValineDomTimer);
+                    }
+                }, 2000);
+            }
+
+            if ('true') {
+                const loadValineTimeout = setTimeout(() => {
+                    loadValine();
+                    clearTimeout(loadValineTimeout);
+                }, 1000);
+            } else {
+                window.addEventListener('DOMContentLoaded', loadValine);
+            }
+        </script>
+    </div>
+
+
+
+        
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                
+            </div>
+
+        </div>
+
+        <div class="page-main-content-bottom">
+            <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span>
+              -
+            
+            2025&nbsp;<i class="fas fa-heart icon-animate"></i>&nbsp;<a href="/">LiuSw</a>
+        </div>
+        
+            <script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <div class="website-count info-item">
+                
+                    <span id="busuanzi_container_site_uv">
+                        访问人数&nbsp;<span id="busuanzi_value_site_uv"></span>&ensp;
+                    </span>
+                
+                
+                    <span id="busuanzi_container_site_pv">
+                        总访问量&nbsp;<span id="busuanzi_value_site_pv"></span>
+ 
+                   <!-- 特殊符号显示ღゝ◡╹)ノ♡  -->
+                   <span id="binft" class="my-face" style="color:#FF00FF">ღゝ◡╹)ノ♡</span>
+                    <script>
+                      var binft = function (r) {
+                        function t() {
+                        return b[Math.floor(Math.random() * b.length)]
+                      }  
+                      function e() {
+                        return String.fromCharCode(94 * Math.random() + 1)
+                      }
+                      function n(r) {
+                        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {
+                          var l = document.createElement("span");
+                          l.textContent = e(), l.style.color = t(), n.appendChild(l)
+                        }
+                        return n
+                      }
+                      function i() {
+                        var t = o[c.skillI];
+                        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
+                      }
+                      var l = "",
+                      o = ["ღ","ღゝ◡","ღゝ◡╹)","ღゝ◡╹)ノ♡"].map(function (r) {
+                      return r + ""
+                      }),
+                      a = 2,
+                      g = 1,
+                      s = 5,
+                      d = 75,
+                      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],
+                      c = {
+                        text: "",
+                        prefixP: -s,
+                        skillI: 0,
+                        skillP: 0,
+                        direction: "forward",
+                        delay: a,
+                        step: g
+                      };
+                      i()
+                      };
+                      binft(document.getElementById('binft'));
+                    </script>
+                   <!--特殊符号代码结束 -->
+
+
+                   <!--新增天数代码 -->
+                    <span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
+                      <script>
+                        var now = new Date(); 
+                        function createtime() { 
+                          var grt= new Date("01/01/2019 00:00:00");//在此处修改你的建站时间
+                          now.setTime(now.getTime()+250); 
+                          days = (now - grt ) / 1000 / 60 / 60 / 24; dnum = Math.floor(days); 
+                          hours = (now - grt ) / 1000 / 60 / 60 - (24 * dnum); hnum = Math.floor(hours); 
+                          if(String(hnum).length ==1 ){hnum = "0" + hnum;} minutes = (now - grt ) / 1000 /60 - (24 * 60 * dnum) - (60 * hnum); 
+                          mnum = Math.floor(minutes); if(String(mnum).length ==1 ){mnum = "0" + mnum;} 
+                          seconds = (now - grt ) / 1000 - (24 * 60 * 60 * dnum) - (60 * 60 * hnum) - (60 * mnum); 
+                          snum = Math.round(seconds); if(String(snum).length ==1 ){snum = "0" + snum;} 
+                          document.getElementById("timeDate").innerHTML = "<br> 本站已安全运行 " + '<font style=color:#0aa858>' + dnum + '</font>' + " 天 "; 
+                          document.getElementById("times").innerHTML = ' <font style=color:#2d85f0>' + hnum + '</font>' + " 小时 " + '<font style=color:#f4433c>' + mnum + '</font>' + " 分 " + '<font style=color:#ffbc32>' + snum + '</font>' + " 秒"; 
+                        } 
+                        setInterval("createtime()",250);
+                      </script>
+                     <!--新增天数结束 -->
+
+                    </span>
+                
+            </div>
+        
+        <div class="theme-info info-item">
+          <!--  由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动&nbsp;|&nbsp;主题&nbsp;<a class="theme-version" target="_blank" href="https://github.com/XPoet/hexo-theme-keep">Keep v3.4.3</a> -->
+        </div>
+        
+            <div class="icp-info info-item"><a target="_blank" rel="nofollow" href="https://beian.miit.gov.cn"> <img style="margin:0 0 -4px 0" src="/images/备案图标.png" />  吉ICP备 2020008057号-1</a></div>
+        
+        
+    </div>
+
+
+</footer>
+
+        </div>
+    </div>
+
+    
+        <div class="post-tools">
+            <div class="post-tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <!-- rss -->
+        
+
+        
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="exposed-tools-list">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+        
+            <li class="tools-item tool-scroll-to-top flex-center">
+                <i class="arrow-up fas fa-arrow-up"></i>
+                <span class="percent"></span>
+            </li>
+        
+    </ul>
+</div>
+
+    </div>
+
+    
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#KubeSphere%E9%83%A8%E7%BD%B2"><span class="nav-text">KubeSphere部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E4%BE%9D%E8%B5%96"><span class="nav-text">1.基础环境依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%89%E8%A3%85%E5%89%8D%E5%87%86%E5%A4%87"><span class="nav-text">2.安装前准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%9C%A8k8s%E9%9B%86%E7%BE%A4%E4%B8%8A%E9%83%A8%E7%BD%B2"><span class="nav-text">3.在k8s集群上部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E9%AA%8C%E8%AF%81"><span class="nav-text">4.验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-text">5.遇到的问题</span></a></li></ol></li></ol></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+    
+        <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+</main>
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+
+    
+<script src="/js/lazyload.js"></script>
+
+
+
+<div class="post-scripts pjax">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+    
+<script src="/js/libs/pjax.min.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        window.pjax = new Pjax({
+            selectors: [
+                'head title',
+                '.page-container',
+                '.pjax'
+            ],
+            history: true,
+            debug: false,
+            cacheBust: false,
+            timeout: 0,
+            analytics: false,
+            currentUrlFullReload: false,
+            scrollRestoration: false,
+            // scrollTo: true,
+        });
+
+        document.addEventListener('pjax:send', () => {
+            KEEP.utils.pjaxProgressBarStart();
+        });
+
+        document.addEventListener('pjax:complete', () => {
+            KEEP.utils.pjaxProgressBarEnd();
+            window.pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+            KEEP.refresh();
+        });
+    });
+</script>
+
+
+
+
+
+<script type="text/javascript" src="https://libs.baidu.com/jquery/1.8.3/jquery.min.js"></script>
+<!-- 页面点击小红心 -->
+<!-- <script type="text/javascript" src="/js/love.js"></script> -->
+<!-- 浏览器搞笑标题 -->
+<script type="text/javascript" src="/js/FunnyTitle.js"></script>
+<!-- 雪花特效 -->
+<!-- < script type="text/javascript" src="/js/snow.js"></script> -->
+<!-- 左下小人 -->
+<script type="text/javascript" src="/js/wali-svg.js"></script>
+<!-- 点击烟花 -->
+<script type="text/javascript" src="/js/yanhua.js"></script>
+<!-- 背景添加动态线条效果 -->
+<script type="text/javascript" color="102,204,255" opacity='4' zIndex="1" count="60" src="/js/canvas-nest.min.js" ></script> 
+<!-- 样式二（飘动的彩带） -->
+<script type="text/javascript" src="/js/ribbon.js"></script>
+
+
+</body>
+</html>
